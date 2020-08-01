@@ -1,3 +1,6 @@
 [submodule "static/css"]
 	path = static/css
 	url = https://github.com/go-ushio/css
+[submodule "layout"]
+	path = layout
+	url = https://github.com/go-ushio/layout
