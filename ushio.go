@@ -21,7 +21,7 @@ var (
 // u.Start("8080")
 // u.Start(":8080")
 // u.Start("127.0.0.1:8080")
-func Start(address string, config *Config) error {
+func Start(address string, conf *Config) error {
 	if locked {
 		return errors.New("one instance only")
 	}
@@ -31,15 +31,23 @@ func Start(address string, config *Config) error {
 		locked = false
 	}()
 
+	config = conf
+
 	engine := html.New("./views", ".html")
+	engine.Reload(config.TemplatesReload)
+	engine.Debug(config.TemplatesDebug)
 
 	err := data.Init("mysql", config.SQL)
 	if err != nil {
 		return err
 	}
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		Views: engine,
+	})
+
 	app.Static("/static/", config.Static)
 	app.Get("/u/:name", UserHandler)
+
 	return app.Listen(address)
 }

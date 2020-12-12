@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {{ template "head" }}
+    {{- template "head" . -}}
 </head>
+{{- template "navbar" . -}}
 <body>
-
+{{- template "body" . -}}
 </body>
+{{- template "footer" -}}
 </html>

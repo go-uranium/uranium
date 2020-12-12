@@ -36,12 +36,13 @@ func UserHandler(c *fiber.Ctx) error {
 		}
 	}
 
-	err = c.JSON(u)
+	err = c.Render("body/user", fiber.Map{
+		"Config": config,
+		"Data":   u,
+	}, "_base", "body/user", "head", "nav", "footer")
 	if err != nil {
 		return err
 	}
-
-	c.Render()
 
 	return nil
 }
