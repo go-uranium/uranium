@@ -1,42 +1,45 @@
 package ushio
 
 import (
-	"log"
-	"os"
+	"errors"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/html"
 
-	"github.com/go-ushio/ushio/route"
-	"github.com/go-ushio/ushio/utils/render"
+	"github.com/go-ushio/ushio/data"
 )
 
-type Ushio struct {
-	App *fiber.App
-	Layout string
-	Static string
-	Logger *log.Logger
-}
+var (
+	config *Config
+	locked bool
+)
 
-func NewUshio(app *fiber.App) *Ushio {
-	return &Ushio{
-		App:app,
-		Layout:"layout/",
-		Static:"static/",
-		Logger:log.New(os.Stdout,"",log.Flags()),
+// Start starts an instance of ushio.
+// You can pass an optional *tls.Config to enable TLS.
+//
+// u.Start(8080)
+// u.Start("8080")
+// u.Start(":8080")
+// u.Start("127.0.0.1:8080")
+func Start(address string, config *Config) error {
+	if locked {
+		return errors.New("one instance only")
 	}
-}
+	locked = true
+	defer func() {
+		data.Quit()
+		locked = false
+	}()
 
-func (u *Ushio)Start() error {
-	u.Logger.Println("Ushio is Starting...")
+	engine := html.New("./views", ".html")
 
-	// set renderer
-	u.App.Settings.Views = render.New("layout","layout/partials",".html")
+	err := data.Init("mysql", config.SQL)
+	if err != nil {
+		return err
+	}
 
-	// set route
-	route.Set(u.App)
-
-	u.App.Static("static","static")
-
-	u.Logger.Println("Ushio is Running!")
-	return u.App.Listen(":8044")
+	app := fiber.New()
+	app.Static("/static/", config.Static)
+	app.Get("/u/:name", UserHandler)
+	return app.Listen(address)
 }
