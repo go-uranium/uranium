@@ -2,6 +2,7 @@ package ushio
 
 import (
 	"errors"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -42,6 +43,17 @@ func Start(address string, conf *Config) error {
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
+		ErrorHandler: func(ctx *fiber.Ctx, e error) error {
+			switch e.(type) {
+			case *fiber.Error:
+				return ctx.Render("_error", e, "_error")
+			default:
+				log.Println(e)
+				return ctx.Render("_error",
+					fiber.Map{"Code": 500, "Message": "An unexpected error occurred!"},
+					"_error")
+			}
+		},
 	})
 
 	app.Static("/static/", config.Static)
@@ -50,6 +62,10 @@ func Start(address string, conf *Config) error {
 	})
 	app.Get("/home", HomeHandler)
 	app.Get("/u/:name", UserHandler)
+
+	app.Get("/*", func(c *fiber.Ctx) error {
+		return fiber.NewError(404, "Not found!!1")
+	})
 
 	return app.Listen(address)
 }
