@@ -36,9 +36,9 @@ func UserHandler(c *fiber.Ctx) error {
 		}
 	}
 
-	err = c.Render("body/user", fiber.Map{
+	err = c.Render("_base", fiber.Map{
 		"Config": config,
-		"Data":   u,
+		"User":   u,
 	}, "_base", "body/user", "head", "nav", "footer")
 	if err != nil {
 		return err

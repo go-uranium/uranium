@@ -1886,13 +1886,13 @@ fieldset[disabled] .button {
 
 @media screen and (min-width: 1216px) {
     .container {
-        max-width: 1152px;
+        max-width: 970px;
     }
 }
 
 @media screen and (min-width: 1408px) {
     .container {
-        max-width: 1344px;
+        max-width: 970px;
     }
 }
 
@@ -3061,6 +3061,8 @@ a.tag:hover {
 }
 
 .title,
+.name,
+.username,
 .subtitle {
     word-break: break-word;
 }
@@ -3087,7 +3089,7 @@ a.tag:hover {
     vertical-align: middle;
 }
 
-.title {
+.title, .name {
     color: #363636;
     font-size: 2rem;
     font-weight: 600;
@@ -3135,7 +3137,7 @@ a.tag:hover {
     font-size: 0.75rem;
 }
 
-.subtitle {
+.subtitle, .username {
     color: #4a4a4a;
     font-size: 1.25rem;
     font-weight: 400;
@@ -6226,6 +6228,10 @@ a.navbar-item:focus, a.navbar-item:focus-within, a.navbar-item:hover, a.navbar-i
     body.has-navbar-fixed-bottom-touch {
         padding-bottom: 3.25rem;
     }
+
+    .section {
+        margin: 1rem 1rem;
+    }
 }
 
 @media screen and (min-width: 1024px) {
@@ -6243,6 +6249,10 @@ a.navbar-item:focus, a.navbar-item:focus-within, a.navbar-item:hover, a.navbar-i
 
     .navbar.is-spaced {
         padding: 1rem 2rem;
+    }
+
+    .section {
+        padding: 3rem 7.5rem;
     }
 
     .navbar.is-spaced .navbar-start,
@@ -11739,11 +11749,7 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 .hero-body {
     flex-grow: 1;
     flex-shrink: 0;
-    padding: 3rem 1.5rem;
-}
-
-.section {
-    padding: 3rem 1.5rem;
+    padding: 3rem 7.5rem;
 }
 
 @media screen and (min-width: 1024px) {

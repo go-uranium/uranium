@@ -4,9 +4,9 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html"
 
 	"github.com/go-ushio/ushio/data"
+	"github.com/go-ushio/ushio/utils/render"
 )
 
 var (
@@ -33,9 +33,7 @@ func Start(address string, conf *Config) error {
 
 	config = conf
 
-	engine := html.New("./views", ".html")
-	engine.Reload(config.TemplatesReload)
-	engine.Debug(config.TemplatesDebug)
+	engine := render.New("./views/", ".html")
 
 	err := data.Init("mysql", config.SQL)
 	if err != nil {
@@ -47,6 +45,10 @@ func Start(address string, conf *Config) error {
 	})
 
 	app.Static("/static/", config.Static)
+	app.Get("/", func(ctx *fiber.Ctx) error {
+		return ctx.Redirect("/home", 307)
+	})
+	app.Get("/home", HomeHandler)
 	app.Get("/u/:name", UserHandler)
 
 	return app.Listen(address)

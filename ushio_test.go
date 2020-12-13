@@ -9,8 +9,6 @@ import (
 
 func TestStart(t *testing.T) {
 	ushio.DefaultConfig.SQL = os.Getenv("DATA_SOURCE_NAME")
-	ushio.DefaultConfig.TemplatesDebug = true
-	ushio.DefaultConfig.TemplatesReload = true
 	err := ushio.Start(":8888", ushio.DefaultConfig)
 	if err != nil {
 		return
