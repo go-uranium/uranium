@@ -11,6 +11,6 @@ type Session struct {
 	Expire time.Time
 }
 
-func (s *Session) Valid() bool {
-	return time.Now().Before(s.Expire)
+func (s *Session) IsValid() bool {
+	return time.Now().After(s.Expire)
 }
