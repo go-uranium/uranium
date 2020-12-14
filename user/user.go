@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/go-ushio/ushio/utils/flags"
@@ -9,10 +10,11 @@ import (
 )
 
 type User struct {
-	UID       int          `json:"uid"`
-	Name      string       `json:"name"`
-	Username  string       `json:"username"`
-	Email     string       `json:"-"`
+	UID      int    `json:"uid"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Email    string `json:"-"`
+	// hashed password
 	Password  []byte       `json:"-"`
 	CreatedAt time.Time    `json:"created_at"`
 	IsAdmin   bool         `json:"is_admin"`
@@ -31,4 +33,9 @@ func (u *User) Json() ([]byte, error) {
 
 func (u *User) Valid(password string) bool {
 	return hash.Compare(u.Password, password)
+}
+
+func (u *User) Tidy() {
+	u.Username = strings.ToLower(u.Username)
+	u.Email = strings.ToLower(u.Email)
 }

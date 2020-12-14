@@ -117,3 +117,75 @@ func TestInsertUser(t *testing.T) {
 	}
 
 }
+
+func TestUsernameExists(t *testing.T) {
+	// Connect
+	err := data.Init("mysql", os.Getenv("DATA_SOURCE_NAME"))
+	if err != nil {
+		t.Error(err)
+	}
+	defer data.Quit()
+
+	// Test 1
+	e, err := data.UsernameExists("iochen")
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(e)
+	if !e {
+		t.Error("want: true, get: false")
+	}
+
+	// Test 2
+	e, err = data.UsernameExists("IOChen")
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(e)
+	if !e {
+		t.Error("want: true, get: false")
+	}
+
+	// Test 3
+	e, err = data.UsernameExists("not-exist")
+	fmt.Println(e)
+	if e {
+		t.Error("want: false, get: true")
+	}
+}
+
+func TestEmailExists(t *testing.T) {
+	// Connect
+	err := data.Init("mysql", os.Getenv("DATA_SOURCE_NAME"))
+	if err != nil {
+		t.Error(err)
+	}
+	defer data.Quit()
+
+	// Test 1
+	e, err := data.EmailExists("i@iochen.com")
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(e)
+	if !e {
+		t.Error("want: true, get: false")
+	}
+
+	// Test 2
+	e, err = data.EmailExists("i@ioChen.COM")
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(e)
+	if !e {
+		t.Error("want: true, get: false")
+	}
+
+	// Test 3
+	e, err = data.UsernameExists("not-exist")
+	fmt.Println(e)
+	if e {
+		t.Error("want: false, get: true")
+	}
+}
