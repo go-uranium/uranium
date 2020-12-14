@@ -263,7 +263,7 @@ func TestDeleteUser(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	u, err = data.UserByUsername(u.Username)
+	_, err = data.UserByUsername(u.Username)
 	if err == nil {
 		t.Error("want: error(no rows), get nil")
 	} else if err != sql.ErrNoRows {
