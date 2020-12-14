@@ -55,6 +55,8 @@ func TestUserByEmail(t *testing.T) {
 	_, err = data.UserByEmail("not-exist@iochen.com")
 	if err != sql.ErrNoRows {
 		t.Error("want: error(no rows), get nil")
+	} else if err != sql.ErrNoRows {
+		t.Error(fmt.Sprintf("want: error(no rows), get %s", err))
 	}
 }
 
@@ -77,6 +79,8 @@ func TestUserByUsername(t *testing.T) {
 	_, err = data.UserByUsername("not-exist")
 	if err != sql.ErrNoRows {
 		t.Error("want: error(no rows), get nil")
+	} else if err != sql.ErrNoRows {
+		t.Error(fmt.Sprintf("want: error(no rows), get %s", err))
 	}
 }
 
@@ -187,5 +191,82 @@ func TestEmailExists(t *testing.T) {
 	fmt.Println(e)
 	if e {
 		t.Error("want: false, get: true")
+	}
+}
+
+func TestUpdateUser(t *testing.T) {
+	// Connect
+	err := data.Init("mysql", os.Getenv("DATA_SOURCE_NAME"))
+	if err != nil {
+		t.Error(err)
+	}
+	defer data.Quit()
+
+	// Create a test user
+	rand.Seed(time.Now().UnixNano())
+	r := strconv.Itoa(rand.Intn(999999))
+	u := &user.User{
+		Name:     "Test User" + r,
+		Username: "t" + r,
+		Password: hash.Hash(r),
+		Email:    r + "@iochen.com",
+	}
+
+	err = data.InsertUser(u)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// TEST
+	u, err = data.UserByUsername(u.Username)
+	if err != nil {
+		t.Error(err)
+	}
+	u.Name = "UPDATED!!"
+	u.Username = "UPD" + u.Username
+	u.Email = r + "@new.iochen.com"
+	err = data.UpdateUser(u)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestDeleteUser(t *testing.T) {
+	// Connect
+	err := data.Init("mysql", os.Getenv("DATA_SOURCE_NAME"))
+	if err != nil {
+		t.Error(err)
+	}
+	defer data.Quit()
+
+	// Create a test user
+	rand.Seed(time.Now().UnixNano())
+	r := strconv.Itoa(rand.Intn(999999))
+	u := &user.User{
+		Name:     "Test User" + r,
+		Username: "t" + r,
+		Password: hash.Hash(r),
+		Email:    r + "@iochen.com",
+	}
+
+	err = data.InsertUser(u)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// TEST
+	u, err = data.UserByUsername(u.Username)
+	if err != nil {
+		t.Error(err)
+	}
+	err = data.DeleteUser(u.UID)
+	if err != nil {
+		t.Error(err)
+	}
+	u, err = data.UserByUsername(u.Username)
+	if err == nil {
+		t.Error("want: error(no rows), get nil")
+	} else if err != sql.ErrNoRows {
+		t.Error(fmt.Sprintf("want: error(no rows), get %s", err))
 	}
 }
