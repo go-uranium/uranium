@@ -11771,4 +11771,8 @@ footer a {
     color: #444444;
 }
 
+.g-recaptcha {
+    padding-bottom: 1em;
+}
+
 /*# sourceMappingURL=bulma.css.map */
