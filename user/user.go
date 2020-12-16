@@ -23,6 +23,12 @@ type User struct {
 	Flags     *flags.Flags `json:"-"`
 }
 
+type SimpleUser struct {
+	UID      int    `json:"uid"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+}
+
 func (u *User) Json() ([]byte, error) {
 	j, err := json.Marshal(u)
 	if err != nil {
