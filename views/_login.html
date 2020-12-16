@@ -7,10 +7,13 @@
 <body>
 <section class="section">
 	<div class="container">
-
-
 		<form action="/login" method="post">
 			<h1 class="title has-text-centered">Login</h1>
+            {{ if .Warn }}
+				<div class="notification is-danger is-light">
+                    {{- .Warn -}}
+				</div>
+            {{ end }}
 			<div class="field" id="username-field">
 				<label class="label">Username</label>
 				<div class="control has-icons-left">
@@ -105,7 +108,7 @@
 
 			<div class="field is-grouped">
 				<div class="control">
-					<button class="button is-link" id="login" disabled>Login</button>
+					<button class="button is-link" id="login">Login</button>
 				</div>
 			</div>
 		</form>
