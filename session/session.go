@@ -11,6 +11,16 @@ type Session struct {
 	Expire time.Time
 }
 
+type SimpleSession struct {
+	UID    int
+	Token  string
+	Expire time.Time
+}
+
 func (s *Session) IsValid() bool {
-	return time.Now().After(s.Expire)
+	return time.Now().Before(s.Expire)
+}
+
+func (ss *SimpleSession) IsValid() bool {
+	return time.Now().Before(ss.Expire)
 }
