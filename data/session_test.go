@@ -52,7 +52,7 @@ func TestSessionsByUID(t *testing.T) {
 	fmt.Println(user)
 
 	// Test 2
-	_, err = data.SessionsByUID(-1)
+	_, err = data.SessionsByUID(-5)
 	if err != sql.ErrNoRows {
 		t.Error("want: error(no rows), get nil")
 	}
