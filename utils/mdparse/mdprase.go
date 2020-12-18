@@ -1,22 +1,23 @@
 package mdparse
 
 import (
-	"fmt"
-	"html"
-	"regexp"
-
-	"github.com/russross/blackfriday/v2"
+	"html/template"
+	"io/ioutil"
+	"net/http"
+	"strings"
 )
 
-func Parse(in string) []byte {
-	s := html.EscapeString(in)
-	run := blackfriday.Run([]byte(s))
-	imgCom := regexp.MustCompile(`<img src="((?:(?!(?:(?:.+\.|)iochen\.com)).)+)" alt="(?:.+|)" />`)
-	imgSrcList := imgCom.FindAllStringSubmatch(string(run), 1)
-	fmt.Println(len(imgSrcList))
-	for i := range imgSrcList {
-		fmt.Println(imgSrc[i])
+func Parse(in string) (*template.HTML, error) {
+	r := strings.NewReader(in)
+	resp, err := http.Post("https://api.github.com/markdown/raw", "text/plain", r)
+	if err != nil {
+		return nil, err
 	}
-
-	return run
+	defer resp.Body.Close()
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	html := template.HTML(bytes)
+	return &html, nil
 }

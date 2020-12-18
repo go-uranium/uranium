@@ -18,12 +18,15 @@ func TestParse(t *testing.T) {
 * **Bold** 
 * ***Italian Bold***
 
-<a href="javascript:alert('XSS1')" onmouseover="alert('XSS2')">XSS<a>
 ![](https://fff.com)
-` + "```" + "go" +
+` + "```" + "go\n" +
 			`<a href="javascript:alert('XSS1')" onmouseover="alert('XSS2')">XSS<a>
 
 ` + "```"
 
-	fmt.Println(string(mdparse.Parse(testStr)))
+	html, err := mdparse.Parse(testStr)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(*html)
 }
