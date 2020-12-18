@@ -36,8 +36,14 @@ func UserHandler(c *fiber.Ctx) error {
 		}
 	}
 
+	nav, err := NavFromCtx(c)
+	if err != nil {
+		return err
+	}
+
 	err = c.Render("_base", fiber.Map{
 		"Config": config,
+		"Nav":    nav,
 		"User":   u,
 	}, "_base", "body/user", "head", "nav", "footer")
 	if err != nil {

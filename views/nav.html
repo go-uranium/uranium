@@ -24,20 +24,20 @@
 					<a href="/home" class="navbar-item">
 						Home
 					</a>
-                    {{if .Session.LoggedIn }}
+                    {{if .LoggedIn }}
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a href="#" class="navbar-link">
-                                {{.Session.User.Username}}
+                                {{- .User.Name -}}
 							</a>
 							<div class="navbar-dropdown">
-								<a href="/u/{{.Session.User.Username}}" class="navbar-item">
+								<a href="/u/{{- .User.Username -}}" class="navbar-item">
 									Profile
 								</a>
-								<a href="settings" class="navbar-item">
+								<a href="/settings" class="navbar-item">
 									Settings
 								</a>
 								<hr class="navbar-divider">
-								<a href="logout" class="navbar-item has-text-danger">
+								<a href="/logout" class="navbar-item has-text-danger">
 									Logout
 								</a>
 							</div>
