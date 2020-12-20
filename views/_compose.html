@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{- template "head" . -}}
+    {{- template "editor_head" -}}
+</head>
+{{- template "navbar" .Nav -}}
+<body>
+
+<section class="section">
+	<div class="container">
+		<form method="post" action="/compose" id="compose">
+			<div class="field">
+				<div class="control">
+					<input id="title" name="title" class="input is-large" type="text" placeholder="Title" maxlength="80"
+						   required pattern=".{1,80}">
+				</div>
+			</div>
+
+			<div class="field">
+				<div class="control">
+					<label>
+						<textarea id="compose-content" name="compose-content" class="textarea"
+								  placeholder="Your post..." maxlength="20000"></textarea>
+					</label>
+				</div>
+			</div>
+
+			<div class="buttons has-addons is-right">
+				<div class="field is-grouped">
+					<p class="control">
+						<button class="button is-link">
+							Post
+						</button>
+					</p>
+				</div>
+			</div>
+		</form>
+
+	</div>
+</section>
+<script>
+    var simplemde = new SimpleMDE({
+        autofocus: true,
+        autosave: {
+            enabled: true,
+            uniqueId: "compose-autosave",
+            delay: 1000,
+        },
+        hideIcons: ["fullscreen", "side-by-side", "heading", "guide"],
+        showIcons: ["heading-2", "heading-3"],
+        element: document.getElementById("compose-content")
+    });
+</script>
+
+</body>
+{{- template "footer" -}}
+</html>

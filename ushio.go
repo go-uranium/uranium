@@ -65,6 +65,8 @@ func Start(address string, conf *Config) error {
 	app.Get("/login", LoginHandler)
 	app.Post("/login", LoginPostHandler)
 	app.Get("/sign_up", SignUpHandler)
+	app.Get("/compose", ComposeHandler)
+	app.Post("/compose", ComposePostHandler)
 
 	app.Get("/*", func(c *fiber.Ctx) error {
 		return fiber.NewError(404, "Not found!!1")
