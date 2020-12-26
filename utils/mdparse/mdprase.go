@@ -1,23 +1,35 @@
 package mdparse
 
 import (
+	"bytes"
+	"encoding/json"
 	"html/template"
 	"io/ioutil"
 	"net/http"
-	"strings"
 )
 
 func Parse(in string) (*template.HTML, error) {
-	r := strings.NewReader(in)
-	resp, err := http.Post("https://api.github.com/markdown/raw", "text/plain", r)
+	body := struct {
+		Text string `json:"text"`
+		Mode string `json:"mode"`
+	}{
+		Text: in,
+		Mode: "gfm",
+	}
+	ma, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	r := bytes.NewReader(ma)
+	resp, err := http.Post("https://api.github.com/markdown", "application/json", r)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	bytes, err := ioutil.ReadAll(resp.Body)
+	all, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	html := template.HTML(bytes)
+	html := template.HTML(all)
 	return &html, nil
 }

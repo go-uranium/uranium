@@ -257,21 +257,6 @@ h6 {
     margin: 0;
     padding: 0;
 }
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-size: 100%;
-    font-weight: normal;
-}
-
-ul {
-    list-style: none;
-}
-
 button,
 input,
 select,
@@ -11775,4 +11760,7 @@ footer a {
     padding-bottom: 1em;
 }
 
+.markdown-body {
+    padding-left: 1rem;
+}
 /*# sourceMappingURL=bulma.css.map */

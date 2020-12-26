@@ -9,8 +9,7 @@ import (
 
 func TestParse(t *testing.T) {
 	testStr :=
-		`
-# H1
+		`# H1
 ## H2
 ### H3
 #### H4

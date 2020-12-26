@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/go-ushio/ushio/data"
+	"github.com/go-ushio/ushio/utils/mdparse"
 	"github.com/go-ushio/ushio/utils/render"
 )
 
@@ -67,6 +68,14 @@ func Start(address string, conf *Config) error {
 	app.Get("/sign_up", SignUpHandler)
 	app.Get("/compose", ComposeHandler)
 	app.Post("/compose", ComposePostHandler)
+
+	app.Post("/md_parse", func(ctx *fiber.Ctx) error {
+		html, e := mdparse.Parse(string(ctx.Body()))
+		if e != nil {
+			return e
+		}
+		return ctx.SendString(string(*html))
+	})
 
 	app.Get("/*", func(c *fiber.Ctx) error {
 		return fiber.NewError(404, "Not found!!1")

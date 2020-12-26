@@ -44,11 +44,30 @@
         autofocus: true,
         autosave: {
             enabled: true,
-            uniqueId: "compose-autosave",
+            uniqueId: location.pathname,
             delay: 1000,
         },
+        autoDownloadFontAwesome: false,
         hideIcons: ["fullscreen", "side-by-side", "heading", "guide"],
         showIcons: ["heading-2", "heading-3"],
+        renderingConfig: {
+            codeSyntaxHighlighting: true,
+        },
+        previewRender: function (plainText, preview) { // Async method
+            setTimeout(function () {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (this.status === 200) {
+                        preview.innerHTML = '<article class="markdown-body">' + this.responseText + '</article>';
+                    }
+                };
+                xhr.open("POST", '/md_parse', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(plainText);
+            }, 250);
+
+            return "Loading...";
+        },
         element: document.getElementById("compose-content")
     });
 </script>
