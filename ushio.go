@@ -69,6 +69,11 @@ func Start(address string, conf *Config) error {
 	app.Get("/compose", ComposeHandler)
 	app.Post("/compose", ComposePostHandler)
 
+	app.Get("/logout", func(ctx *fiber.Ctx) error {
+		ctx.ClearCookie("token")
+		return ctx.Redirect("/", 307)
+	})
+
 	app.Post("/md_parse", func(ctx *fiber.Ctx) error {
 		html, e := mdparse.Parse(string(ctx.Body()))
 		if e != nil {
