@@ -63,6 +63,7 @@ func Start(address string, conf *Config) error {
 	})
 	app.Get("/home", HomeHandler)
 	app.Get("/u/:name", UserHandler)
+	app.Get("/p/:post", PostHandler)
 	app.Get("/login", LoginHandler)
 	app.Post("/login", LoginPostHandler)
 	app.Get("/sign_up", SignUpHandler)
