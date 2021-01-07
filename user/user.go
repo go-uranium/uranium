@@ -1,6 +1,8 @@
 package user
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"strings"
 	"time"
@@ -15,12 +17,13 @@ type User struct {
 	Username string `json:"username"`
 	Email    string `json:"-"`
 	// hashed password
-	Password  []byte       `json:"-"`
-	CreatedAt time.Time    `json:"created_at"`
-	IsAdmin   bool         `json:"is_admin"`
-	Banned    bool         `json:"-"`
-	Locked    bool         `json:"-"`
-	Flags     *flags.Flags `json:"-"`
+	Password    []byte       `json:"-"`
+	HashedEmail string       `json:"hashed_email"`
+	CreatedAt   time.Time    `json:"created_at"`
+	IsAdmin     bool         `json:"is_admin"`
+	Banned      bool         `json:"-"`
+	Locked      bool         `json:"-"`
+	Flags       *flags.Flags `json:"-"`
 }
 
 type SimpleUser struct {
@@ -42,6 +45,13 @@ func (u *User) Valid(password string) bool {
 }
 
 func (u *User) Tidy() {
+	u.Username = strings.TrimSpace(u.Username)
+	u.Email = strings.TrimSpace(u.Email)
 	u.Username = strings.ToLower(u.Username)
 	u.Email = strings.ToLower(u.Email)
+}
+
+func (u *User) HashEmail() {
+	h := md5.Sum([]byte(u.Email))
+	u.HashedEmail = hex.EncodeToString(h[:])
 }

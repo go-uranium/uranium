@@ -10,8 +10,8 @@ func HomeHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Render("_base", fiber.Map{
+	return c.Render("home", fiber.Map{
 		"Nav":    nav,
 		"Config": config,
-	}, "_base", "body/home", "head", "nav", "footer")
+	})
 }

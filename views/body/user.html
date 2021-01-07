@@ -1,19 +1,19 @@
-{{define "body"}}
-	<section class="section">
-		<div class="container">
-			<div style="display: table-cell">
-				<figure class="image is-128x128">
-					<img class="is-rounded" src="/static/avatar/{{ .User.UID }}.jpeg">
-				</figure>
-			</div>
-			<div style="display: table-cell;vertical-align: middle;padding-left: 1.7em">
-				<h1 class="name">{{ .User.Name }}</h1>
-				<h2 class="username">@{{ .User.Username }}</h2>
-			</div>
+{{define "body/user"}}
+    <section class="section">
+        <div class="container">
+            <div style="display: table-cell">
+                <figure class="image is-128x128">
+                    <img class="is-rounded" src="https://www.gravatar.com/avatar/{{ .User.HashedEmail }}?s=256">
+                </figure>
+            </div>
+            <div style="display: table-cell;vertical-align: middle;padding-left: 1.7em">
+                <h1 class="name">{{ .User.Name }}</h1>
+                <h2 class="username">@{{ .User.Username }}</h2>
+            </div>
 
-			<section style="float: right">
+            <section style="float: right">
 
-			</section>
-		</div>
-	</section>
+            </section>
+        </div>
+    </section>
 {{ end }}

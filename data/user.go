@@ -30,6 +30,7 @@ func UserByUID(uid int) (*user.User, error) {
 	if err != nil {
 		return &user.User{}, err
 	}
+	u.HashEmail()
 	return u, nil
 }
 
@@ -43,6 +44,7 @@ func UserByEmail(email string) (*user.User, error) {
 	if err != nil {
 		return &user.User{}, err
 	}
+	u.HashEmail()
 	return u, nil
 }
 
@@ -56,6 +58,7 @@ func UserByUsername(username string) (*user.User, error) {
 	if err != nil {
 		return &user.User{}, err
 	}
+	u.HashEmail()
 	return u, nil
 }
 

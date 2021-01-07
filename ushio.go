@@ -5,10 +5,10 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/html"
 
 	"github.com/go-ushio/ushio/data"
 	"github.com/go-ushio/ushio/utils/mdparse"
-	"github.com/go-ushio/ushio/utils/render"
 )
 
 var (
@@ -17,30 +17,32 @@ var (
 )
 
 // Start starts an instance of ushio.
-// You can pass an optional *tls.Config to enable TLS.
-//
-// u.Start(8080)
-// u.Start("8080")
-// u.Start(":8080")
-// u.Start("127.0.0.1:8080")
 func Start(address string, conf *Config) error {
 	if locked {
 		return errors.New("one instance only")
 	}
 	locked = true
 	defer func() {
-		data.Quit()
+		if err := data.Quit(); err != nil {
+			log.Fatalln(err)
+		}
 		locked = false
 	}()
+	return start(address, conf)
+}
 
+func start(address string, conf *Config) error {
 	config = conf
-
-	engine := render.New("./views/", ".html")
-
 	err := data.Init("mysql", config.SQL)
 	if err != nil {
 		return err
 	}
+
+	engine := html.New("./views", ".html")
+
+	engine.Reload(true)
+
+	engine.Debug(true)
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
