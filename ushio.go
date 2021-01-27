@@ -1,77 +1,41 @@
 package ushio
 
 import (
-	"errors"
-	"log"
+	"database/sql"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html"
 
+	"github.com/go-ushio/ushio/cache"
 	"github.com/go-ushio/ushio/data"
 	"github.com/go-ushio/ushio/utils/mdparse"
 )
 
-var (
-	config *Config
-	locked bool
-)
-
-// Start starts an instance of ushio.
-func Start(address string, conf *Config) error {
-	if locked {
-		return errors.New("one instance only")
-	}
-	locked = true
-	defer func() {
-		if err := data.Quit(); err != nil {
-			log.Fatalln(err)
-		}
-		locked = false
-	}()
-	return start(address, conf)
+type Ushio struct {
+	Data  *data.Data
+	Cache cache.Cacher
 }
 
-func start(address string, conf *Config) error {
-	config = conf
-	err := data.Init("mysql", config.SQL)
-	if err != nil {
-		return err
+func New(db *sql.DB, sentence data.Sentence) *Ushio {
+	d := data.New(db, sentence)
+	c := cache.New(d)
+	return &Ushio{
+		Data:  d,
+		Cache: c,
 	}
+}
 
-	engine := html.New("./views", ".html")
-
-	engine.Reload(true)
-
-	engine.Debug(true)
-
-	app := fiber.New(fiber.Config{
-		Views: engine,
-		ErrorHandler: func(ctx *fiber.Ctx, e error) error {
-			switch e.(type) {
-			case *fiber.Error:
-				return ctx.Render("_error", e, "_error")
-			default:
-				log.Println(e)
-				return ctx.Render("_error",
-					fiber.Map{"Code": 500, "Message": "An unexpected error occurred!"},
-					"_error")
-			}
-		},
-	})
-
-	app.Static("/static/", config.Static)
+func (ushio *Ushio) Configure(app *fiber.App) {
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return ctx.Redirect("/home", 307)
 	})
-	app.Get("/home", HomeHandler)
-	app.Get("/u/:name", UserHandler)
-	app.Get("/p/:post", PostHandler)
-	app.Get("/login", LoginHandler)
-	app.Post("/login", LoginPostHandler)
-	app.Get("/sign_up", SignUpHandler)
-	app.Get("/compose", ComposeHandler)
-	app.Post("/compose", ComposePostHandler)
-
+	app.Get("/home", ushio.HomeHandler())
+	app.Get("/u/:name", ushio.UserHandler())
+	app.Get("/p/:post", ushio.PostHandler())
+	app.Get("/login", ushio.LoginHandler())
+	app.Post("/login", ushio.LoginPostHandler())
+	app.Get("/sign_up", ushio.SignUpHandler())
+	app.Get("/compose", ushio.ComposeHandler())
+	app.Post("/compose", ushio.ComposePostHandler())
 	app.Get("/logout", func(ctx *fiber.Ctx) error {
 		ctx.ClearCookie("token")
 		return ctx.Redirect("/", 307)
@@ -84,10 +48,4 @@ func start(address string, conf *Config) error {
 		}
 		return ctx.SendString(string(*html))
 	})
-
-	app.Get("/*", func(c *fiber.Ctx) error {
-		return fiber.NewError(404, "Not found!!1")
-	})
-
-	return app.Listen(address)
 }

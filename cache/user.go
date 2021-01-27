@@ -1,41 +1,38 @@
 package cache
 
 import (
-	"github.com/go-ushio/ushio/data"
-	"github.com/go-ushio/ushio/user"
+	"github.com/go-ushio/ushio/core/user"
 )
 
-var userByUID = map[int]*user.SimpleUser{}
-
-var userByUsername = map[string]*user.SimpleUser{}
-
-func UserByUID(uid int) (*user.SimpleUser, error) {
-	v, ok := userByUID[uid]
+func (cache *Cache) UserByUID(uid int) (*user.SimpleUser, error) {
+	v, ok := cache.userByUID[uid]
 	if ok {
 		return v, nil
 	}
 
-	u, err := data.UserByUID(uid)
+	u, err := cache.data.UserByUID(uid)
 	if err != nil {
 		return &user.SimpleUser{}, err
 	}
+	u.HashEmail()
 
 	su := &user.SimpleUser{
-		UID:      u.UID,
-		Name:     u.Name,
-		Username: u.Username,
+		UID:         u.UID,
+		Name:        u.Name,
+		Username:    u.Username,
+		HashedEmail: u.HashedEmail,
 	}
-	userByUID[u.UID] = su
+	cache.userByUID[u.UID] = su
 	return su, nil
 }
 
-func UserByUsername(username string) (*user.SimpleUser, error) {
-	v, ok := userByUsername[username]
+func (cache *Cache) UserByUsername(username string) (*user.SimpleUser, error) {
+	v, ok := cache.userByUsername[username]
 	if ok {
 		return v, nil
 	}
 
-	u, err := data.UserByUsername(username)
+	u, err := cache.data.UserByUsername(username)
 	if err != nil {
 		return &user.SimpleUser{}, err
 	}
@@ -45,6 +42,11 @@ func UserByUsername(username string) (*user.SimpleUser, error) {
 		Name:     u.Name,
 		Username: u.Username,
 	}
-	userByUsername[u.Username] = su
+	cache.userByUsername[u.Username] = su
 	return su, nil
+}
+
+func (cache *Cache) UserDrop() error {
+
+	return nil
 }

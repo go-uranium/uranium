@@ -1,3 +1,53 @@
 {{define "body/home"}}
-   <h1>HOME</h1>
+	<section class="section">
+		<div class="container">
+			<table class="topic-list">
+
+				<thead>
+				<tr>
+					<th data-sort-order="default" class="default">Topic</th>
+
+					<th data-sort-order="posters" class="posters" aria-label="Posters"></th>
+
+					<th data-sort-order="posts" class="posts sortable num">Replies</th>
+
+					<th data-sort-order="views" class="views sortable num">Views</th>
+
+					<th data-sort-order="activity" class="activity sortable num">Activity</th>
+				</tr>
+				</thead>
+
+				<tbody>
+                {{range $post := .Data}}
+					<tr>
+						<td>
+							<a href="/p/{{- $post.Post.PID -}}" class="topic-title">{{- $post.Post.Title -}}</a>
+							<div></div>
+							<span title="{{- $post.Post.CreatedAt -}}">{{- $post.Post.CreatedAt -}}</span>
+						</td>
+						<td>
+							<a href="/u/{{- $post.User.Username -}}">
+								<figure class="image is-64x64">
+									<img src="https://www.gravatar.com/avatar/{{ $post.User.HashedEmail }}?s=128"
+										 alt="{{- $post.User.Username -}}">
+								</figure>
+							</a>
+						</td>
+						<td style="padding-left: 1rem">
+                        <span>
+                           <a href="/p/{{- $post.Post.PID -}}" class="topic-title">{{- $post.Post.Title -}}</a></span>
+							<div></div>
+							<span class="topic-list">
+                           <strong><a class="topic-list"
+									  href="/u/{{- $post.User.Username -}}">{{- $post.User.Username -}}</a>
+                           </strong> &nbsp;•&nbsp; <span
+										title="{{- $post.Post.CreatedAt -}}">{{- $post.Post.CreatedAt -}}</span>
+                        </span>
+						</td>
+					</tr>
+                {{end}}
+				</tbody>
+			</table>
+		</div>
+	</section>
 {{ end }}

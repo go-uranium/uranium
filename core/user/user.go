@@ -27,9 +27,10 @@ type User struct {
 }
 
 type SimpleUser struct {
-	UID      int    `json:"uid"`
-	Name     string `json:"name"`
-	Username string `json:"username"`
+	UID         int    `json:"uid"`
+	Name        string `json:"name"`
+	Username    string `json:"username"`
+	HashedEmail string `json:"hashed_email"`
 }
 
 func (u *User) Json() ([]byte, error) {

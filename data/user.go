@@ -5,24 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-ushio/ushio/user"
+	"github.com/go-ushio/ushio/core/user"
 )
 
-var (
-	SQLUserByUID      = `SELECT uid, name, username, email, password, created_at, is_admin, banned, locked, flags FROM ushio.user WHERE uid = ?;`
-	SQLUserByEmail    = `SELECT uid, name, username, email, password, created_at, is_admin, banned, locked, flags FROM ushio.user WHERE email = ?;`
-	SQLUserByUsername = `SELECT uid, name, username, email, password, created_at, is_admin, banned, locked, flags FROM ushio.user WHERE username = ?;`
-
-	SQLInsertUser = `INSERT INTO ushio.user(name, username, email, password) VALUES (?,?,?,?);`
-	SQLUpdateUser = `UPDATE ushio.user SET name=?, username=?, email=?, password=?, is_admin=?, banned=?, locked=?, flags=? WHERE uid=?;`
-	SQLDeleteUser = `DELETE FROM ushio.user WHERE uid=?;`
-
-	SQLUsernameExists = `SELECT EXISTS(SELECT * FROM ushio.user WHERE username=?);`
-	SQLEmailExists    = `SELECT EXISTS(SELECT * FROM ushio.user WHERE email=?);`
-)
-
-func UserByUID(uid int) (*user.User, error) {
-	row := db.QueryRow(SQLUserByUID, strconv.Itoa(uid))
+func (data *Data) UserByUID(uid int) (*user.User, error) {
+	row := data.db.QueryRow(data.sentence.SQLUserByUID, strconv.Itoa(uid))
 	u := &user.User{}
 	err := row.Scan(&u.UID, &u.Name, &u.Username, &u.Email,
 		&u.Password, &u.CreatedAt, &u.IsAdmin,
@@ -34,9 +21,9 @@ func UserByUID(uid int) (*user.User, error) {
 	return u, nil
 }
 
-func UserByEmail(email string) (*user.User, error) {
+func (data *Data) UserByEmail(email string) (*user.User, error) {
 	email = strings.ToLower(email)
-	row := db.QueryRow(SQLUserByEmail, email)
+	row := data.db.QueryRow(data.sentence.SQLUserByEmail, email)
 	u := &user.User{}
 	err := row.Scan(&u.UID, &u.Name, &u.Username, &u.Email,
 		&u.Password, &u.CreatedAt, &u.IsAdmin,
@@ -48,9 +35,9 @@ func UserByEmail(email string) (*user.User, error) {
 	return u, nil
 }
 
-func UserByUsername(username string) (*user.User, error) {
+func (data *Data) UserByUsername(username string) (*user.User, error) {
 	username = strings.ToLower(username)
-	row := db.QueryRow(SQLUserByUsername, username)
+	row := data.db.QueryRow(data.sentence.SQLUserByUsername, username)
 	u := &user.User{}
 	err := row.Scan(&u.UID, &u.Name, &u.Username, &u.Email,
 		&u.Password, &u.CreatedAt, &u.IsAdmin,
@@ -62,9 +49,9 @@ func UserByUsername(username string) (*user.User, error) {
 	return u, nil
 }
 
-func InsertUser(u *user.User) error {
+func (data *Data) InsertUser(u *user.User) error {
 	u.Tidy()
-	_, err := db.Exec(SQLInsertUser, u.Name, u.Username,
+	_, err := data.db.Exec(data.sentence.SQLInsertUser, u.Name, u.Username,
 		u.Email, u.Password)
 	if err != nil {
 		return err
@@ -72,10 +59,10 @@ func InsertUser(u *user.User) error {
 	return nil
 }
 
-func UpdateUser(u *user.User) error {
+func (data *Data) UpdateUser(u *user.User) error {
 	u.Tidy()
 	fmt.Println(u)
-	_, err := db.Exec(SQLUpdateUser, u.Name, u.Username,
+	_, err := data.db.Exec(data.sentence.SQLUpdateUser, u.Name, u.Username,
 		u.Email, u.Password, u.IsAdmin, u.Banned, u.Locked, u.Flags, u.UID)
 	if err != nil {
 		return err
@@ -83,17 +70,17 @@ func UpdateUser(u *user.User) error {
 	return nil
 }
 
-func DeleteUser(uid int) error {
-	_, err := db.Exec(SQLDeleteUser, uid)
+func (data *Data) DeleteUser(uid int) error {
+	_, err := data.db.Exec(data.sentence.SQLDeleteUser, uid)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func UsernameExists(username string) (bool, error) {
+func (data *Data) UsernameExists(username string) (bool, error) {
 	username = strings.ToLower(username)
-	row := db.QueryRow(SQLUsernameExists, username)
+	row := data.db.QueryRow(data.sentence.SQLUsernameExists, username)
 	e := true
 	err := row.Scan(&e)
 	if err != nil {
@@ -102,9 +89,9 @@ func UsernameExists(username string) (bool, error) {
 	return e, nil
 }
 
-func EmailExists(email string) (bool, error) {
+func (data *Data) EmailExists(email string) (bool, error) {
 	email = strings.ToLower(email)
-	row := db.QueryRow(SQLEmailExists, email)
+	row := data.db.QueryRow(data.sentence.SQLEmailExists, email)
 	e := true
 	err := row.Scan(&e)
 	if err != nil {

@@ -5,8 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/go-ushio/ushio/cache"
-	"github.com/go-ushio/ushio/user"
+	"github.com/go-ushio/ushio/core/user"
 )
 
 type Nav struct {
@@ -14,12 +13,12 @@ type Nav struct {
 	LoggedIn bool
 }
 
-func NavFromCtx(c *fiber.Ctx) (*Nav, error) {
+func (ushio *Ushio) NavFromCtx(c *fiber.Ctx) (*Nav, error) {
 	sessionToken := c.Cookies("token")
 	nav := &Nav{
 		LoggedIn: false,
 	}
-	ss, err := cache.SessionByToken(sessionToken)
+	ss, err := ushio.Cache.SessionByToken(sessionToken)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nav, nil
@@ -30,7 +29,7 @@ func NavFromCtx(c *fiber.Ctx) (*Nav, error) {
 		return nav, nil
 	}
 
-	u, err := cache.UserByUID(ss.UID)
+	u, err := ushio.Cache.UserByUID(ss.UID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return &Nav{}, nil

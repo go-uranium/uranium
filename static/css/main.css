@@ -420,16 +420,6 @@ pre code {
     padding: 0;
 }
 
-table td,
-table th {
-    vertical-align: top;
-}
-
-table td:not([align]),
-table th:not([align]) {
-    text-align: inherit;
-}
-
 table th {
     color: #363636;
 }
@@ -11762,5 +11752,27 @@ footer a {
 
 .markdown-body {
     padding-left: 1rem;
+}
+
+.topic-list {
+    color: #919191;
+    width: 100%;
+}
+
+a.topic-title {
+    color: #222222;
+    font-size: 1.1487em;
+}
+
+.topic-list td {
+    padding: 12px 5px;
+}
+
+tr {
+    border-bottom: 1px solid #e9e9e9;
+}
+
+tbody {
+    border-top: 3px solid #e9e9e9;
 }
 /*# sourceMappingURL=bulma.css.map */
