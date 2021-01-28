@@ -7,13 +7,15 @@ import (
 )
 
 type Cacher interface {
-	UserByUID(uid int) (*user.SimpleUser, error)
-	UserByUsername(username string) (*user.SimpleUser, error)
+	UserByUID(uid int) (*user.User, error)
+	UserByUsername(username string) (*user.User, error)
 	UserDrop() error
 
 	IndexPostInfo(size int) ([]*post.Info, error)
 	IndexPostInfoDrop() error
 
-	SessionByToken(token string) (*session.SimpleSession, error)
+	SessionByToken(token string) (*session.Basic, error)
 	SessionDrop() error
+
+	DropAll() error
 }

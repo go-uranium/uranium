@@ -7,25 +7,42 @@ import (
 )
 
 type Sentence struct {
-	SQLPostByPID      string
-	SQLMarkdownByPID  string
+	SQLPostByPID     string
+	SQLPostInfoByPID string
+	// SQLPostInfoByPage ignores post with `hidden` true
 	SQLPostInfoByPage string
 	SQLInsertPost     string
+	SQLInsertPostInfo string
+	SQLUpdatePost     string
+	SQLUpdatePostInfo string
+	SQLPostNewReply   string
+	SQLPostNewView    string
 
-	SQLSessionByToken  string
-	SQLSessionsByUID   string
-	SQLInsertSession   string
-	SQLDisableSessions string
-	SQLDeleteSessions  string
+	SQLSessionByToken      string
+	SQLSessionsByUID       string
+	SQLSessionBasicByToken string
+	SQLInsertSession       string
+	SQLDeleteUserSessions  string
 
 	SQLUserByUID      string
 	SQLUserByEmail    string
 	SQLUserByUsername string
+	SQLUserAuthByUID  string
 	SQLInsertUser     string
+	SQLInsertUserAuth string
 	SQLUpdateUser     string
+	SQLUpdateUserAuth string
+	// SQLDeleteUser also deletes session and user_auth at the same time
 	SQLDeleteUser     string
 	SQLUsernameExists string
 	SQLEmailExists    string
+
+	SQLInsertMessage     string
+	SQLMessageByMID      string
+	SQLMessageByReceiver string
+	SQLMessageBySender   string
+	SQLMessageHasRead    string
+	SQLDeleteMessage     string
 }
 
 type Data struct {
@@ -40,26 +57,52 @@ func New(db *sql.DB, sentence Sentence) *Data {
 	}
 }
 
-func MySQLSentence() Sentence {
+func SQLSentence() Sentence {
 	return Sentence{
-		SQLPostByPID:      `SELECT pid, title, creator, content, created_at, last_mod, hidden, anonymous FROM ushio.post WHERE pid = ?;`,
-		SQLMarkdownByPID:  `SELECT md_raw FROM ushio.post WHERE pid = ?;`,
-		SQLPostInfoByPage: `SELECT pid, title, creator, created_at, last_mod, hidden, anonymous FROM ushio.post ORDER BY pid DESC LIMIT ?,?;`,
-		SQLInsertPost:     `INSERT INTO ushio.post(title, creator, content, hidden, anonymous, md_raw) VALUES (?,?,?,?,?,?);`,
+		SQLPostByPID: `SELECT pid, content, markdown FROM ushio.post WHERE pid = ?;`,
+		SQLPostInfoByPID: `SELECT pid, title, creator, created_at, last_mod, replies, 
+views, activity, hidden, anonymous FROM ushio.post_info WHERE pid=? AND hidden=0;`,
+		SQLPostInfoByPage: `SELECT pid, title, creator, created_at, last_mod, replies, 
+views, activity, hidden, anonymous FROM ushio.post_info ORDER BY pid DESC LIMIT ?,?;`,
+		SQLInsertPost: `INSERT INTO ushio.post(content, markdown) VALUES (?,?);`,
+		SQLInsertPostInfo: `INSERT INTO ushio.post_info(pid, title, creator, created_at, 
+last_mod, replies, views, activity, hidden, anonymous) VALUES (?,?,?,?,?,?,?,?,?,?);`,
+		SQLUpdatePost:     ``,
+		SQLUpdatePostInfo: ``,
+		SQLPostNewReply:   ``,
+		SQLPostNewView:    ``,
 
-		SQLSessionByToken:  `SELECT token, uid, UA, IP, time, expire_at FROM ushio.session WHERE token=?;`,
-		SQLSessionsByUID:   `SELECT token, uid, UA, IP, time, expire_at FROM ushio.session WHERE uid=?;`,
-		SQLInsertSession:   `INSERT INTO ushio.session(token, uid, UA, IP, time, expire_at) VALUES (?,?,?,?,?,?);`,
-		SQLDisableSessions: `UPDATE ushio.session SET expire_at = NOW() WHERE uid=?;`,
-		SQLDeleteSessions:  `DELETE FROM ushio.session WHERE uid=?;`,
+		SQLSessionByToken: `SELECT token, uid, UA, IP, time, expire_at 
+FROM ushio.session WHERE token=?;`,
+		SQLSessionsByUID: `SELECT token, uid, UA, IP, time, expire_at 
+FROM ushio.session WHERE uid=?;`,
+		SQLSessionBasicByToken: `SELECT token, uid, expire_at FROM ushio.session WHERE token=?;`,
+		SQLInsertSession: `INSERT INTO ushio.session(token, uid, UA, IP, time, expire_at) 
+VALUES (?,?,?,?,?,?);`,
+		SQLDeleteUserSessions: `DELETE FROM ushio.session WHERE uid=?;`,
 
-		SQLUserByUID:      `SELECT uid, name, username, email, password, created_at, is_admin, banned, locked, flags FROM ushio.user WHERE uid = ?;`,
-		SQLUserByEmail:    `SELECT uid, name, username, email, password, created_at, is_admin, banned, locked, flags FROM ushio.user WHERE email = ?;`,
-		SQLUserByUsername: `SELECT uid, name, username, email, password, created_at, is_admin, banned, locked, flags FROM ushio.user WHERE username = ?;`,
-		SQLInsertUser:     `INSERT INTO ushio.user(name, username, email, password) VALUES (?,?,?,?);`,
-		SQLUpdateUser:     `UPDATE ushio.user SET name=?, username=?, email=?, password=?, is_admin=?, banned=?, locked=?, flags=? WHERE uid=?;`,
-		SQLDeleteUser:     `DELETE FROM ushio.user WHERE uid=?;`,
-		SQLUsernameExists: `SELECT EXISTS(SELECT * FROM ushio.user WHERE username=?);`,
-		SQLEmailExists:    `SELECT EXISTS(SELECT * FROM ushio.user WHERE email=?);`,
+		SQLUserByUID: `SELECT uid, name, username, email, avatar, created_at, 
+is_admin, banned, flags FROM ushio.user WHERE uid=?;`,
+		SQLUserByEmail: `SELECT uid, name, username, email, avatar, created_at, 
+is_admin, banned, flags FROM ushio.user WHERE email=?;`,
+		SQLUserByUsername: `SELECT uid, name, username, email, avatar, created_at, 
+is_admin, banned, flags FROM ushio.user WHERE username=?;`,
+		SQLUserAuthByUID:  `SELECT uid, password, locked, security_email FROM ushio.user_auth WHERE uid=?;`,
+		SQLInsertUser:     `INSERT INTO ushio.user(name, username, email, avatar, created_at, is_admin, banned, flags) VALUES (?,?,?,?,?,?,?,?);`,
+		SQLInsertUserAuth: `INSERT INTO ushio.user_auth(uid, password, locked, security_email) VALUES (?,?,?,?);`,
+		SQLUpdateUser:     `UPDATE ushio.user SET name=?, username=?, email=?, avatar=?, created_at=?, is_admin=?, banned=?, flags=? WHERE uid=?;`,
+		SQLUpdateUserAuth: `UPDATE ushio.user_auth SET password=?, locked=?, security_email=? WHERE uid=?;`,
+		SQLDeleteUser: `DELETE ushio.user, ushio.user_auth, ushio.session FROM ushio.user 
+INNER JOIN ushio.user_auth, ushio.session 
+WHERE ushio.user_auth.uid=ushio.session.uid  and ushio.user.uid=?;`,
+		SQLUsernameExists: `SELECT EXISTS(SELECT uid FROM ushio.user WHERE username=?);`,
+		SQLEmailExists:    `SELECT EXISTS(SELECT uid FROM ushio.user WHERE email=?);`,
+
+		SQLInsertMessage:     ``,
+		SQLMessageByMID:      ``,
+		SQLMessageByReceiver: ``,
+		SQLMessageBySender:   ``,
+		SQLMessageHasRead:    ``,
+		SQLDeleteMessage:     ``,
 	}
 }

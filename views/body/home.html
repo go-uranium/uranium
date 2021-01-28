@@ -5,15 +5,15 @@
 
 				<thead>
 				<tr>
-					<th data-sort-order="default" class="default">Topic</th>
+					<th data-sort-order="default">Topic</th>
 
-					<th data-sort-order="posters" class="posters" aria-label="Posters"></th>
+					<th data-sort-order="posters" aria-label="Posters"></th>
 
-					<th data-sort-order="posts" class="posts sortable num">Replies</th>
+					<th data-sort-order="posts">Replies</th>
 
-					<th data-sort-order="views" class="views sortable num">Views</th>
+					<th data-sort-order="views">Views</th>
 
-					<th data-sort-order="activity" class="activity sortable num">Activity</th>
+					<th data-sort-order="activity">Activity</th>
 				</tr>
 				</thead>
 
@@ -21,28 +21,27 @@
                 {{range $post := .Data}}
 					<tr>
 						<td>
-							<a href="/p/{{- $post.Post.PID -}}" class="topic-title">{{- $post.Post.Title -}}</a>
+							<a href="/p/{{- $post.Info.PID -}}" class="topic-title">{{- $post.Info.Title -}}</a>
 							<div></div>
-							<span title="{{- $post.Post.CreatedAt -}}">{{- $post.Post.CreatedAt -}}</span>
+							<span title="{{- $post.Info.CreatedAt -}}">{{- $post.Info.CreatedAt | dateFormat -}}</span>
 						</td>
 						<td>
 							<a href="/u/{{- $post.User.Username -}}">
 								<figure class="image is-64x64">
-									<img src="https://www.gravatar.com/avatar/{{ $post.User.HashedEmail }}?s=128"
+									<img class="is-rounded"
+										 src="https://www.gravatar.com/avatar/{{ $post.User.Avatar }}?s=128&d=identicon"
 										 alt="{{- $post.User.Username -}}">
 								</figure>
 							</a>
 						</td>
-						<td style="padding-left: 1rem">
-                        <span>
-                           <a href="/p/{{- $post.Post.PID -}}" class="topic-title">{{- $post.Post.Title -}}</a></span>
-							<div></div>
-							<span class="topic-list">
-                           <strong><a class="topic-list"
-									  href="/u/{{- $post.User.Username -}}">{{- $post.User.Username -}}</a>
-                           </strong> &nbsp;•&nbsp; <span
-										title="{{- $post.Post.CreatedAt -}}">{{- $post.Post.CreatedAt -}}</span>
-                        </span>
+						<td>
+                            {{- $post.Info.Replies | numFormat -}}
+						</td>
+						<td>
+                            {{- $post.Info.Views | numFormat -}}
+						</td>
+						<td>
+                            {{- $post.Info.Activity | dateFormat -}}
 						</td>
 					</tr>
                 {{end}}

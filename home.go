@@ -1,48 +1,59 @@
 package ushio
 
 import (
+	"database/sql"
+
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/go-ushio/ushio/core/post"
 	"github.com/go-ushio/ushio/core/user"
 )
 
-type Present struct {
-	Post *post.Info
-	User *user.SimpleUser
+type IndexPosts struct {
+	Info *post.Info
+	User *user.User
 }
 
-func (ushio *Ushio) HomeHandler() func(c *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
-		nav, err := ushio.NavFromCtx(c)
-		if err != nil {
+func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
+	nav, err := ushio.NavFromCtx(c)
+	if err != nil {
+		return err
+	}
+
+	sps, err := ushio.Cache.IndexPostInfo(25)
+	if err != nil {
+		if err != sql.ErrNoRows {
 			return err
 		}
+	}
 
-		sps, err := ushio.Data.SimplePosts(0, 25)
+	var ps []IndexPosts
+
+	for i := range sps {
+		sp := sps[i]
+		user, err := ushio.Cache.UserByUID(sp.Creator)
 		if err != nil {
-			return err
-		}
-
-		var ps []Present
-
-		for i := range sps {
-			sp := sps[i]
-			simpleUser, err := ushio.Cache.UserByUID(sp.Creator)
+			if err != sql.ErrNoRows {
+				return err
+			}
+			user, err = ushio.Cache.UserByUID(0)
 			if err != nil {
 				return err
 			}
-			ps = append(ps,
-				Present{
-					sps[i],
-					simpleUser,
-				})
 		}
-
-		return c.Render("home", fiber.Map{
-			"Nav":    nav,
-			"Config": config,
-			"Data":   ps,
-		})
+		ps = append(ps,
+			IndexPosts{
+				sps[i],
+				user,
+			})
 	}
+
+	return c.Render("home", fiber.Map{
+		"Meta": Meta{
+			Config:      *ushio.Config,
+			CurrentPage: "home",
+		},
+		"Nav":  nav,
+		"Data": ps,
+	})
 }

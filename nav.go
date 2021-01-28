@@ -9,7 +9,7 @@ import (
 )
 
 type Nav struct {
-	User     *user.SimpleUser
+	User     *user.User
 	LoggedIn bool
 }
 

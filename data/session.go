@@ -45,19 +45,3 @@ func (data *Data) InsertSession(s *session.Session) error {
 	}
 	return nil
 }
-
-func (data *Data) DisableSessions(uid int) error {
-	_, err := data.db.Exec(data.sentence.SQLDisableSessions, uid)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (data *Data) DeleteSessions(uid int) error {
-	_, err := data.db.Exec(data.sentence.SQLDeleteSessions, uid)
-	if err != nil {
-		return err
-	}
-	return nil
-}

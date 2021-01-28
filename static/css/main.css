@@ -1,22 +1,3 @@
-/*! bulma.io v0.9.0 | MIT License | github.com/jgthms/bulma */
-@-webkit-keyframes spinAround {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(359deg);
-    }
-}
-
-@keyframes spinAround {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(359deg);
-    }
-}
-
 .delete, .modal-close, .button, .file, .breadcrumb, .pagination-previous,
 .pagination-next,
 .pagination-link,
@@ -183,10 +164,7 @@
     height: 2.5em;
     justify-content: flex-start;
     line-height: 1.5;
-    padding-bottom: calc(0.5em - 1px);
-    padding-left: calc(0.75em - 1px);
-    padding-right: calc(0.75em - 1px);
-    padding-top: calc(0.5em - 1px);
+    padding: calc(0.5em - 1px) calc(0.75em - 1px);
     position: relative;
     vertical-align: top;
 }
@@ -309,7 +287,6 @@ html {
     -webkit-text-size-adjust: 100%;
     -moz-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
-    text-size-adjust: 100%;
 }
 
 article,
@@ -333,7 +310,6 @@ textarea {
 code,
 pre {
     -moz-osx-font-smoothing: auto;
-    -webkit-font-smoothing: auto;
     font-family: monospace;
 }
 
@@ -427,7 +403,7 @@ table th {
 .box {
     background-color: white;
     border-radius: 6px;
-    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
     color: #4a4a4a;
     display: block;
     padding: 1.25rem;
@@ -448,10 +424,7 @@ a.box:active {
     color: #363636;
     cursor: pointer;
     justify-content: center;
-    padding-bottom: calc(0.5em - 1px);
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-top: calc(0.5em - 1px);
+    padding: calc(0.5em - 1px) 1em;
     text-align: center;
     white-space: nowrap;
 }
@@ -1724,7 +1697,6 @@ fieldset[disabled] .button {
     position: absolute;
     left: calc(50% - (1em / 2));
     top: calc(50% - (1em / 2));
-    position: absolute !important;
 }
 
 .button.is-static {
@@ -2030,7 +2002,6 @@ fieldset[disabled] .button {
 
 .content table td,
 .content table th {
-    border: 1px solid #dbdbdb;
     border-width: 0 0 1px;
     padding: 0.5em 0.75em;
     vertical-align: top;
@@ -2602,8 +2573,6 @@ fieldset[disabled] .button {
 
 .table td,
 .table th {
-    border: 1px solid #dbdbdb;
-    border-width: 0 0 1px;
     padding: 0.5em 0.75em;
     vertical-align: top;
 }
@@ -4574,7 +4543,7 @@ fieldset[disabled] .select select:hover {
 
 .card {
     background-color: white;
-    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
     color: #4a4a4a;
     max-width: 100%;
     position: relative;
@@ -4678,7 +4647,7 @@ fieldset[disabled] .select select:hover {
 .dropdown-content {
     background-color: white;
     border-radius: 4px;
-    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
     padding-bottom: 0.5rem;
     padding-top: 0.5rem;
 }
@@ -6610,7 +6579,7 @@ a.navbar-item:focus, a.navbar-item:focus-within, a.navbar-item:hover, a.navbar-i
 
 .panel {
     border-radius: 6px;
-    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+    box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
     font-size: 1rem;
 }
 
@@ -7117,11 +7086,11 @@ label.panel-block:hover {
 
 .columns.is-mobile > .column.is-0 {
     flex: none;
-    width: 0%;
+    width: 0;
 }
 
 .columns.is-mobile > .column.is-offset-0 {
-    margin-left: 0%;
+    margin-left: 0;
 }
 
 .columns.is-mobile > .column.is-1 {
@@ -7325,11 +7294,11 @@ label.panel-block:hover {
 
     .column.is-0-mobile {
         flex: none;
-        width: 0%;
+        width: 0;
     }
 
     .column.is-offset-0-mobile {
-        margin-left: 0%;
+        margin-left: 0;
     }
 
     .column.is-1-mobile {
@@ -7534,11 +7503,11 @@ label.panel-block:hover {
 
     .column.is-0, .column.is-0-tablet {
         flex: none;
-        width: 0%;
+        width: 0;
     }
 
     .column.is-offset-0, .column.is-offset-0-tablet {
-        margin-left: 0%;
+        margin-left: 0;
     }
 
     .column.is-1, .column.is-1-tablet {
@@ -7743,11 +7712,11 @@ label.panel-block:hover {
 
     .column.is-0-touch {
         flex: none;
-        width: 0%;
+        width: 0;
     }
 
     .column.is-offset-0-touch {
-        margin-left: 0%;
+        margin-left: 0;
     }
 
     .column.is-1-touch {
@@ -7952,11 +7921,11 @@ label.panel-block:hover {
 
     .column.is-0-desktop {
         flex: none;
-        width: 0%;
+        width: 0;
     }
 
     .column.is-offset-0-desktop {
-        margin-left: 0%;
+        margin-left: 0;
     }
 
     .column.is-1-desktop {
@@ -8161,11 +8130,11 @@ label.panel-block:hover {
 
     .column.is-0-widescreen {
         flex: none;
-        width: 0%;
+        width: 0;
     }
 
     .column.is-offset-0-widescreen {
-        margin-left: 0%;
+        margin-left: 0;
     }
 
     .column.is-1-widescreen {
@@ -8370,11 +8339,11 @@ label.panel-block:hover {
 
     .column.is-0-fullhd {
         flex: none;
-        width: 0%;
+        width: 0;
     }
 
     .column.is-offset-0-fullhd {
-        margin-left: 0%;
+        margin-left: 0;
     }
 
     .column.is-1-fullhd {
@@ -9086,8 +9055,6 @@ label.panel-block:hover {
     flex-basis: 0;
     flex-grow: 1;
     flex-shrink: 1;
-    min-height: -webkit-min-content;
-    min-height: -moz-min-content;
     min-height: min-content;
 }
 
@@ -11775,4 +11742,3 @@ tr {
 tbody {
     border-top: 3px solid #e9e9e9;
 }
-/*# sourceMappingURL=bulma.css.map */

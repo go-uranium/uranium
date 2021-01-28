@@ -4,7 +4,7 @@ import (
 	"github.com/go-ushio/ushio/core/session"
 )
 
-func (cache *Cache) SessionByToken(token string) (*session.SimpleSession, error) {
+func (cache *Cache) SessionByToken(token string) (*session.Basic, error) {
 	v, ok := cache.sessionByToken[token]
 	if ok {
 		return v, nil
@@ -12,11 +12,11 @@ func (cache *Cache) SessionByToken(token string) (*session.SimpleSession, error)
 
 	s, err := cache.data.SessionByToken(token)
 	if err != nil {
-		return &session.SimpleSession{}, err
+		return &session.Basic{}, err
 	}
-	ss := &session.SimpleSession{
-		UID:    s.UID,
+	ss := &session.Basic{
 		Token:  s.Token,
+		UID:    s.UID,
 		Expire: s.Expire,
 	}
 	cache.sessionByToken[s.Token] = ss
@@ -24,6 +24,6 @@ func (cache *Cache) SessionByToken(token string) (*session.SimpleSession, error)
 }
 
 func (cache *Cache) SessionDrop() error {
-
+	cache.sessionByToken = map[string]*session.Basic{}
 	return nil
 }

@@ -1,81 +1,79 @@
 package data
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
+	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/core/user"
+	"github.com/go-ushio/ushio/utils/clean"
 )
 
 func (data *Data) UserByUID(uid int) (*user.User, error) {
 	row := data.db.QueryRow(data.sentence.SQLUserByUID, strconv.Itoa(uid))
-	u := &user.User{}
-	err := row.Scan(&u.UID, &u.Name, &u.Username, &u.Email,
-		&u.Password, &u.CreatedAt, &u.IsAdmin,
-		&u.Banned, &u.Locked, &u.Flags)
+	u, err := user.ScanUser(row)
 	if err != nil {
 		return &user.User{}, err
 	}
-	u.HashEmail()
+	u.Tidy()
 	return u, nil
 }
 
 func (data *Data) UserByEmail(email string) (*user.User, error) {
-	email = strings.ToLower(email)
+	email = clean.String(email)
 	row := data.db.QueryRow(data.sentence.SQLUserByEmail, email)
-	u := &user.User{}
-	err := row.Scan(&u.UID, &u.Name, &u.Username, &u.Email,
-		&u.Password, &u.CreatedAt, &u.IsAdmin,
-		&u.Banned, &u.Locked, &u.Flags)
+	u, err := user.ScanUser(row)
 	if err != nil {
 		return &user.User{}, err
 	}
-	u.HashEmail()
+	u.Tidy()
 	return u, nil
 }
 
 func (data *Data) UserByUsername(username string) (*user.User, error) {
-	username = strings.ToLower(username)
-	row := data.db.QueryRow(data.sentence.SQLUserByUsername, username)
-	u := &user.User{}
-	err := row.Scan(&u.UID, &u.Name, &u.Username, &u.Email,
-		&u.Password, &u.CreatedAt, &u.IsAdmin,
-		&u.Banned, &u.Locked, &u.Flags)
+	username = clean.String(username)
+	row := data.db.QueryRow(data.sentence.SQLUserByEmail, username)
+	u, err := user.ScanUser(row)
 	if err != nil {
 		return &user.User{}, err
 	}
-	u.HashEmail()
+	u.Tidy()
 	return u, nil
+}
+
+func (data *Data) UserAuthByUID(uid int) (*user.Auth, error) {
+	row := data.db.QueryRow(data.sentence.SQLUserAuthByUID, strconv.Itoa(uid))
+	auth, err := user.ScanAuth(row)
+	if err != nil {
+		return &user.Auth{}, err
+	}
+	return auth, nil
 }
 
 func (data *Data) InsertUser(u *user.User) error {
 	u.Tidy()
-	_, err := data.db.Exec(data.sentence.SQLInsertUser, u.Name, u.Username,
-		u.Email, u.Password)
-	if err != nil {
-		return err
-	}
-	return nil
+	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertUser)
+	_, err := u.Put(putter)
+	return err
+}
+
+func (data *Data) InsertUserAuth(auth *user.Auth) error {
+	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertUserAuth)
+	_, err := auth.PutWithUIDFirst(putter)
+	return err
 }
 
 func (data *Data) UpdateUser(u *user.User) error {
 	u.Tidy()
-	fmt.Println(u)
-	_, err := data.db.Exec(data.sentence.SQLUpdateUser, u.Name, u.Username,
-		u.Email, u.Password, u.IsAdmin, u.Banned, u.Locked, u.Flags, u.UID)
-	if err != nil {
-		return err
-	}
-	return nil
+	putter := put.PutterFromDBExec(data.db, data.sentence.SQLUpdateUser)
+	_, err := u.PutWithUID(putter)
+	return err
 }
 
-func (data *Data) DeleteUser(uid int) error {
-	_, err := data.db.Exec(data.sentence.SQLDeleteUser, uid)
-	if err != nil {
-		return err
-	}
-	return nil
+func (data *Data) UpdateUserAuth(auth *user.Auth) error {
+	putter := put.PutterFromDBExec(data.db, data.sentence.SQLUpdateUserAuth)
+	_, err := auth.PutWithUIDLast(putter)
+	return err
 }
 
 func (data *Data) UsernameExists(username string) (bool, error) {

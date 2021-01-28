@@ -11,17 +11,36 @@ type Cache struct {
 	data *data.Data
 
 	indexPostInfo  []*post.Info
-	userByUID      map[int]*user.SimpleUser
-	userByUsername map[string]*user.SimpleUser
-	sessionByToken map[string]*session.SimpleSession
+	postsNotEnough bool
+	userByUID      map[int]*user.User
+	userByUsername map[string]*user.User
+	sessionByToken map[string]*session.Basic
 }
 
 func New(data *data.Data) *Cache {
 	return &Cache{
-		data:           data,
+		data: data,
+
 		indexPostInfo:  []*post.Info{},
-		userByUID:      map[int]*user.SimpleUser{},
-		userByUsername: map[string]*user.SimpleUser{},
-		sessionByToken: map[string]*session.SimpleSession{},
+		postsNotEnough: false,
+		userByUID:      map[int]*user.User{},
+		userByUsername: map[string]*user.User{},
+		sessionByToken: map[string]*session.Basic{},
 	}
+}
+
+func (cache *Cache) DropAll() error {
+	err := cache.UserDrop()
+	if err != nil {
+		return err
+	}
+	err = cache.IndexPostInfoDrop()
+	if err != nil {
+		return err
+	}
+	err = cache.SessionDrop()
+	if err != nil {
+		return err
+	}
+	return nil
 }
