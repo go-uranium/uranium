@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"strconv"
 	"testing"
 	"time"
@@ -19,6 +20,7 @@ import (
 )
 
 func TestUshio(t *testing.T) {
+	fmt.Println(runtime.NumCPU())
 	db, err := sql.Open("mysql", os.Getenv(`DATA_SOURCE_NAME`))
 	if err != nil {
 		panic(err)
@@ -26,11 +28,30 @@ func TestUshio(t *testing.T) {
 
 	u := ushio.New(db, data.SQLSentence(), &ushio.Config{
 		SiteName: "Ushio",
+		SendMail: func(dst string, token string) error {
+			fmt.Println(dst, token)
+			return nil
+		},
 	})
 
 	engine := html.New("./views", ".html")
-	engine.AddFunc("dateFormat", func(date *time.Time) string {
-		return date.Format(time.RFC3339)
+	engine.AddFunc("dateFormat", func(date time.Time) string {
+		sub := time.Now().Sub(date)
+		hours := sub.Hours()
+		minutes := sub.Minutes()
+		switch {
+		case hours < 1:
+			switch {
+			case minutes < 1:
+				return "recently"
+			default:
+				return fmt.Sprintf("%.0f minute(s) ago", minutes)
+			}
+		case hours < 24:
+			return fmt.Sprintf("%.0f hour(s) ago", hours)
+		default:
+			return fmt.Sprintf("%.0f day(s) ago", hours/24)
+		}
 	})
 	engine.AddFunc("numFormat", func(i int) string {
 		switch {
@@ -43,11 +64,9 @@ func TestUshio(t *testing.T) {
 		}
 	})
 	engine.Reload(true)
-	engine.Debug(true)
 	app := fiber.New(fiber.Config{
 		Views: engine,
 		ErrorHandler: func(ctx *fiber.Ctx, e error) error {
-			log.Println(e)
 			switch e.(type) {
 			case *fiber.Error:
 				return ctx.Render("error", e, "error")

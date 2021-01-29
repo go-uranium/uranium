@@ -25,7 +25,7 @@ func (ushio *Ushio) NavFromCtx(c *fiber.Ctx) (*Nav, error) {
 		}
 		return nav, err
 	}
-	if !ss.IsValid() {
+	if !ss.Valid() {
 		return nav, nil
 	}
 

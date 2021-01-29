@@ -12,6 +12,7 @@ import (
 
 type Config struct {
 	SiteName string
+	SendMail func(dst string, token string) error
 }
 
 type Ushio struct {
@@ -40,6 +41,7 @@ func (ushio *Ushio) Configure(app *fiber.App) {
 	app.Get("/login", ushio.LoginHandler)
 	app.Post("/login", ushio.LoginPostHandler)
 	app.Get("/sign_up", ushio.SignUpHandler)
+	app.Post("/sign_up", ushio.SignUpPostHandler)
 	//app.Get("/compose", ushio.ComposeHandler)
 	//app.Post("/compose", ushio.ComposePostHandler)
 	app.Get("/logout", func(ctx *fiber.Ctx) error {
