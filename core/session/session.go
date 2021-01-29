@@ -17,10 +17,10 @@ type Basic struct {
 	Expire time.Time
 }
 
-func (s *Session) IsValid() bool {
+func (s *Session) Valid() bool {
 	return time.Now().Before(s.Expire)
 }
 
-func (bs *Basic) IsValid() bool {
+func (bs *Basic) Valid() bool {
 	return time.Now().Before(bs.Expire)
 }
