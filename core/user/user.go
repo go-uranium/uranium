@@ -18,6 +18,7 @@ type User struct {
 	Username  string      `json:"username"`
 	Email     string      `json:"-"`
 	Avatar    string      `json:"avatar"`
+	Bio       string      `json:"bio"`
 	CreatedAt time.Time   `json:"created_at"`
 	IsAdmin   bool        `json:"is_admin"`
 	Banned    bool        `json:"banned"`
@@ -50,7 +51,7 @@ func (u *User) Tidy() {
 func ScanUser(scanner scan.Scanner) (*User, error) {
 	u := &User{}
 	err := scanner.Scan(&u.UID, &u.Name, &u.Username, &u.Email, &u.Avatar,
-		&u.CreatedAt, &u.IsAdmin, &u.Banned, &u.Flags)
+		&u.Bio, &u.CreatedAt, &u.IsAdmin, &u.Banned, &u.Flags)
 	if err != nil {
 		return &User{}, err
 	}
@@ -73,14 +74,14 @@ func ScanAuth(scanner scan.Scanner) (*Auth, error) {
 // for actions like: insert new user info
 func (u *User) Put(putter put.Putter) (sql.Result, error) {
 	return putter.Put(u.Name, u.Username, u.Email, u.Avatar,
-		u.CreatedAt, u.IsAdmin, u.Banned, u.Flags)
+		u.Bio, u.CreatedAt, u.IsAdmin, u.Banned, u.Flags)
 }
 
 // PutWithUID puts User info with user.UID at last
 // for actions like: update user info
 func (u *User) PutWithUID(putter put.Putter) (sql.Result, error) {
 	return putter.Put(u.Name, u.Username, u.Email, u.Avatar,
-		u.CreatedAt, u.IsAdmin, u.Banned, u.Flags, u.UID)
+		u.Bio, u.CreatedAt, u.IsAdmin, u.Banned, u.Flags, u.UID)
 }
 
 // PutWithUIDFirst puts Auth info with auth.UID at first
