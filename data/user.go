@@ -1,7 +1,6 @@
 package data
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/go-ushio/ushio/common/put"
@@ -10,7 +9,7 @@ import (
 )
 
 func (data *Data) UserByUID(uid int) (*user.User, error) {
-	row := data.db.QueryRow(data.sentence.SQLUserByUID, strconv.Itoa(uid))
+	row := data.db.QueryRow(data.sentence.SQLUserByUID, uid)
 	u, err := user.ScanUser(row)
 	if err != nil {
 		return &user.User{}, err
@@ -32,7 +31,7 @@ func (data *Data) UserByEmail(email string) (*user.User, error) {
 
 func (data *Data) UserByUsername(username string) (*user.User, error) {
 	username = clean.String(username)
-	row := data.db.QueryRow(data.sentence.SQLUserByEmail, username)
+	row := data.db.QueryRow(data.sentence.SQLUserByUsername, username)
 	u, err := user.ScanUser(row)
 	if err != nil {
 		return &user.User{}, err
@@ -42,7 +41,7 @@ func (data *Data) UserByUsername(username string) (*user.User, error) {
 }
 
 func (data *Data) UserAuthByUID(uid int) (*user.Auth, error) {
-	row := data.db.QueryRow(data.sentence.SQLUserAuthByUID, strconv.Itoa(uid))
+	row := data.db.QueryRow(data.sentence.SQLUserAuthByUID, uid)
 	auth, err := user.ScanAuth(row)
 	if err != nil {
 		return &user.Auth{}, err
@@ -50,11 +49,18 @@ func (data *Data) UserAuthByUID(uid int) (*user.Auth, error) {
 	return auth, nil
 }
 
-func (data *Data) InsertUser(u *user.User) error {
+func (data *Data) InsertUser(u *user.User) (int, error) {
 	u.Tidy()
 	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertUser)
-	_, err := u.Put(putter)
-	return err
+	result, err := u.Put(putter)
+	if err != nil {
+		return 0, err
+	}
+	uid, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return int(uid), nil
 }
 
 func (data *Data) InsertUserAuth(auth *user.Auth) error {
