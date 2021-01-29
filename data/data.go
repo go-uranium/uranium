@@ -43,6 +43,12 @@ type Sentence struct {
 	SQLMessageBySender   string
 	SQLMessageHasRead    string
 	SQLDeleteMessage     string
+
+	SQLSignUpByToken       string
+	SQLSignUpByEmail       string
+	SQLInsertSignUp        string
+	SQLDeleteSignUpByEmail string
+	SQLSignUpExists        string
 }
 
 type Data struct {
@@ -81,16 +87,16 @@ FROM ushio.session WHERE uid=?;`,
 VALUES (?,?,?,?,?,?);`,
 		SQLDeleteUserSessions: `DELETE FROM ushio.session WHERE uid=?;`,
 
-		SQLUserByUID: `SELECT uid, name, username, email, avatar, created_at, 
+		SQLUserByUID: `SELECT uid, name, username, email, avatar, bio, created_at, 
 is_admin, banned, flags FROM ushio.user WHERE uid=?;`,
-		SQLUserByEmail: `SELECT uid, name, username, email, avatar, created_at, 
+		SQLUserByEmail: `SELECT uid, name, username, email, avatar, bio, created_at, 
 is_admin, banned, flags FROM ushio.user WHERE email=?;`,
-		SQLUserByUsername: `SELECT uid, name, username, email, avatar, created_at, 
+		SQLUserByUsername: `SELECT uid, name, username, email, avatar, bio, created_at, 
 is_admin, banned, flags FROM ushio.user WHERE username=?;`,
 		SQLUserAuthByUID:  `SELECT uid, password, locked, security_email FROM ushio.user_auth WHERE uid=?;`,
-		SQLInsertUser:     `INSERT INTO ushio.user(name, username, email, avatar, created_at, is_admin, banned, flags) VALUES (?,?,?,?,?,?,?,?);`,
+		SQLInsertUser:     `INSERT INTO ushio.user(name, username, email, avatar, bio, created_at, is_admin, banned, flags) VALUES (?,?,?,?,?,?,?,?,?);`,
 		SQLInsertUserAuth: `INSERT INTO ushio.user_auth(uid, password, locked, security_email) VALUES (?,?,?,?);`,
-		SQLUpdateUser:     `UPDATE ushio.user SET name=?, username=?, email=?, avatar=?, created_at=?, is_admin=?, banned=?, flags=? WHERE uid=?;`,
+		SQLUpdateUser:     `UPDATE ushio.user SET name=?, username=?, email=?, avatar=?, bio=?, created_at=?, is_admin=?, banned=?, flags=? WHERE uid=?;`,
 		SQLUpdateUserAuth: `UPDATE ushio.user_auth SET password=?, locked=?, security_email=? WHERE uid=?;`,
 		SQLDeleteUser: `DELETE ushio.user, ushio.user_auth, ushio.session FROM ushio.user 
 INNER JOIN ushio.user_auth, ushio.session 
@@ -104,5 +110,11 @@ WHERE ushio.user_auth.uid=ushio.session.uid  and ushio.user.uid=?;`,
 		SQLMessageBySender:   ``,
 		SQLMessageHasRead:    ``,
 		SQLDeleteMessage:     ``,
+
+		SQLSignUpByToken:       `SELECT token, email, created_at, expire_at FROM ushio.sign_up WHERE token=?;`,
+		SQLSignUpByEmail:       `SELECT token, email, created_at, expire_at FROM ushio.sign_up WHERE email=?;`,
+		SQLInsertSignUp:        `INSERT INTO ushio.sign_up(token, email, created_at, expire_at) VALUES (?,?,?,?);`,
+		SQLDeleteSignUpByEmail: `DELETE FROM ushio.sign_up WHERE email=?;`,
+		SQLSignUpExists:        `SELECT EXISTS(SELECT token FROM ushio.sign_up WHERE email=?);`,
 	}
 }
