@@ -1,0 +1,112 @@
+{{define "body/login"}}
+	<section class="section">
+		<div class="container">
+			<form action="/login" method="post">
+				<h1 class="title has-text-centered">Login</h1>
+                {{ if .Warn }}
+					<div class="notification is-danger is-light">
+                        {{- .Warn -}}
+					</div>
+                {{ end }}
+				<div class="field" id="username-field">
+					<label class="label">Username</label>
+					<div class="control has-icons-left">
+						<input class="input" type="text" placeholder="your username" id="username" name="username"
+							   required
+							   pattern="((?!\d)[a-zA-Z])[a-zA-Z0-9_]{0,9}">
+						<span class="icon is-small is-left">
+                     <i class="fa fa-user"></i>
+                     </span>
+					</div>
+				</div>
+
+				<div class="field" id="email-field" style="display: none">
+					<label class="label">Email</label>
+					<div class="control has-icons-left">
+						<input class="input" type="email" placeholder="your email address" id="email" name="email"
+							   pattern=".{0,255}">
+						<span class="icon is-small is-left">
+                     <i class="fa fa-envelope"></i>
+                     </span>
+					</div>
+				</div>
+
+
+				<div class="field">
+					<label class="label">Password</label>
+					<div class="control has-icons-left has-icons-right">
+						<input class="input" type="password" placeholder="your password" id="password" name="password"
+							   required="required" pattern=".{5,255}">
+						<span class="icon is-small is-left">
+                     <i class="fa fa-key"></i>
+                     </span>
+					</div>
+				</div>
+
+				<div class="field" style="display: none">
+					<div class="control"><label class="checkbox">
+							<input type="checkbox" name="use-email" id="use-email">
+						</label>
+					</div>
+				</div>
+
+				<div class="field">
+					<div class="control">
+						<label class="checkbox">
+							<input type="checkbox" name="remember" id="remember" checked>
+							Remember me (30 days)
+						</label>
+						<div style="float: right">
+							<a href="javascript:switch_e_u()" id="e_u_t">use email instead</a>
+							&nbsp;|&nbsp;
+							<a href="/forgot">forgot password?</a>
+						</div>
+					</div>
+				</div>
+
+				<script>
+                    function switch_e_u() {
+                        const username_f = document.getElementById("username-field");
+                        const email_f = document.getElementById("email-field");
+                        const u_email = document.getElementById("use-email");
+                        const e_u_t = document.getElementById("e_u_t");
+                        const u_name = document.getElementById("username");
+                        const e_mail = document.getElementById("email");
+                        if (username_f.style.display === "none") {
+                            username_f.style.display = "block";
+                            email_f.style.display = "none";
+                            u_email.checked = false;
+                            e_u_t.innerText = "use email instead";
+                            e_mail.removeAttribute("required");
+                            u_name.setAttribute("required", "true")
+                        } else {
+                            username_f.style.display = "none";
+                            email_f.style.display = "block";
+                            u_email.checked = true;
+                            e_u_t.innerText = "use username instead";
+                            u_name.removeAttribute("required");
+                            e_mail.setAttribute("required", "true")
+                        }
+                    }
+
+                    function rec_passed() {
+                        document.getElementById("login").removeAttribute("disabled")
+                    }
+
+                    function rec_retry() {
+                        document.getElementById("login").setAttribute("disabled", "true")
+                    }
+				</script>
+
+				<div class="g-recaptcha" data-error-callback="rec_retry" data-expired-callback="rec_retry"
+					 data-callback="rec_passed" data-sitekey="6LfT7AYaAAAAAMWK4tQj_WCuHN5uYXkwKDO_5vW_"></div>
+
+				<div class="field is-grouped">
+					<div class="control">
+						<button class="button is-link" disabled id="login">Login</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</section>
+{{ end }}

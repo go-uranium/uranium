@@ -1,0 +1,42 @@
+{{ define "body/sign_up_step_1" }}
+	<section class="section">
+		<div class="container">
+			<form action="/sign_up?step=1" method="post">
+				<h1 class="title has-text-centered">Sign up</h1>
+                {{ if .Warn }}
+					<div class="notification is-danger is-light">
+                        {{- .Warn -}}
+					</div>
+                {{ end }}
+				<div class="field" id="email-field">
+					<label class="label">Email</label>
+					<div class="control has-icons-left">
+						<input class="input" type="email" placeholder="your email address" id="email" name="email"
+							   pattern=".{0,255}">
+						<span class="icon is-small is-left">
+                     <i class="fa fa-envelope"></i>
+                     </span>
+					</div>
+				</div>
+				<script>
+                    function rec_passed() {
+                        document.getElementById("sign_up").removeAttribute("disabled")
+                    }
+
+                    function rec_retry() {
+                        document.getElementById("sign_up").setAttribute("disabled", "true")
+                    }
+				</script>
+
+				<div class="g-recaptcha" data-error-callback="rec_retry" data-expired-callback="rec_retry"
+					 data-callback="rec_passed" data-sitekey="6LfT7AYaAAAAAMWK4tQj_WCuHN5uYXkwKDO_5vW_"></div>
+
+				<div class="field is-grouped">
+					<div class="control">
+						<button class="button is-link" disabled id="sign_up">Continue</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</section>
+{{ end }}

@@ -2,28 +2,23 @@
 	<section class="section">
 		<div class="container">
 			<table class="topic-list">
-
 				<thead>
 				<tr>
 					<th data-sort-order="default">Topic</th>
-
 					<th data-sort-order="posters" aria-label="Posters"></th>
-
-					<th data-sort-order="posts">Replies</th>
-
-					<th data-sort-order="views">Views</th>
-
+					<th data-sort-order="posts" class="m-hide">Replies</th>
+					<th data-sort-order="views" class="m-hide">Views</th>
 					<th data-sort-order="activity">Activity</th>
 				</tr>
 				</thead>
-
 				<tbody>
                 {{range $post := .Data}}
 					<tr>
 						<td>
 							<a href="/p/{{- $post.Info.PID -}}" class="topic-title">{{- $post.Info.Title -}}</a>
 							<div></div>
-							<span title="{{- $post.Info.CreatedAt -}}">{{- $post.Info.CreatedAt | dateFormat -}}</span>
+							<span class="time"
+								  title="{{- $post.Info.CreatedAt -}}">{{- $post.Info.CreatedAt | dateFormat -}}</span>
 						</td>
 						<td>
 							<a href="/u/{{- $post.User.Username -}}">
@@ -34,14 +29,15 @@
 								</figure>
 							</a>
 						</td>
-						<td>
-                            {{- $post.Info.Replies | numFormat -}}
+						<td class="m-hide">
+							<span>{{- $post.Info.Replies | numFormat -}}</span>
+						</td>
+						<td class="m-hide">
+							<span>{{- $post.Info.Views | numFormat -}}</span>
 						</td>
 						<td>
-                            {{- $post.Info.Views | numFormat -}}
-						</td>
-						<td>
-                            {{- $post.Info.Activity | dateFormat -}}
+							<span class="time"
+								  title="{{- $post.Info.Activity -}}">{{- $post.Info.Activity | dateFormat -}}</span>
 						</td>
 					</tr>
                 {{end}}

@@ -1,0 +1,86 @@
+{{define "body/sign_up"}}
+	<section class="section">
+		<div class="container">
+			<form action="/sign_up?step=2" method="post">
+				<h1 class="title has-text-centered">Sign up</h1>
+                {{ if .Warn }}
+					<div class="notification is-danger is-light">
+                        {{- .Warn -}}
+					</div>
+                {{ end }}
+
+				<div class="field" id="name-field">
+					<label class="label">Name</label>
+					<div class="control has-icons-left">
+						<input class="input" type="text" placeholder="your name" id="name" name="name" required
+							   pattern=".{1,20}">
+						<span class="icon is-small is-left">
+                     <i class="fa fa-user"></i>
+                     </span>
+					</div>
+				</div>
+
+				<div class="field" id="username-field">
+					<label class="label">Username</label>
+					<div class="control has-icons-left">
+						<input class="input" type="text" placeholder="your username" id="username" name="username"
+							   required
+							   pattern="((?!\d)[a-z])[a-z0-9_]{0,9}">
+						<span class="icon is-small is-left">
+                     <i class="fa fa-user"></i>
+                     </span>
+					</div>
+				</div>
+
+				<div class="field" id="email-field">
+					<label class="label">Email</label>
+					<div class="control has-icons-left">
+						<input disabled class="input" type="text" id="email-display" name="email-display"
+							   value="{{- .SignUp.Email -}}">
+						<span class="icon is-small is-left">
+                     <i class="fa fa-envelope"></i>
+                     </span>
+					</div>
+				</div>
+
+
+				<div class="field">
+					<label class="label">Password</label>
+					<div class="control has-icons-left has-icons-right">
+						<input class="input" type="password" placeholder="your password" id="password" name="password"
+							   required="required" pattern=".{5,255}">
+						<span class="icon is-small is-left">
+                     <i class="fa fa-key"></i>
+                     </span>
+					</div>
+				</div>
+
+				<div class="field" style="display: none">
+					<div class="control">
+						<input class="input" type="text" value="{{- .SignUp.Token -}}" name="token" id="token">
+						<input class="input" type="text" value="{{- .SignUp.Email -}}" name="email" id="email">
+					</div>
+				</div>
+
+				<script>
+                    function rec_passed() {
+                        document.getElementById("sign_up").removeAttribute("disabled")
+                    }
+
+                    function rec_retry() {
+                        document.getElementById("sign_up").setAttribute("disabled", "true")
+                    }
+				</script>
+
+				<div class="g-recaptcha" data-error-callback="rec_retry" data-expired-callback="rec_retry"
+					 data-callback="rec_passed" data-sitekey="6LfT7AYaAAAAAMWK4tQj_WCuHN5uYXkwKDO_5vW_"></div>
+
+				<div class="field is-grouped">
+					<div class="control">
+						<button class="button is-link" disabled id="sign_up">Sign up</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</section>
+{{ end }}

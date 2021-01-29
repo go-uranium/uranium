@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    {{ if .Redirect }}
+		<meta http-equiv="refresh" content="3; URL={{- .Redirect -}}"/>
+    {{ end }}
+	<title>Success!</title>
+	<link rel="icon" href="/static/favicon.ico" type="image/x-icon"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+<section class="hero">
+	<div class="hero-body">
+		<div class="container">
+			<h1 class="title">
+				Success!
+			</h1>
+            {{ if .Redirect }}
+				<h2 class="subtitle">
+					Redirecting to <a href="{{- .Redirect -}}"></a>
+				</h2>
+            {{ end }}
+            {{ if .Message }}
+                {{- .Message -}}
+            {{ end }}
+		</div>
+	</div>
+</section>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{- template "head" .Meta -}}
+	<script src="https://www.recaptcha.net/recaptcha/api.js" async defer></script>
+</head>
+<body>
+{{ if eq .Step 2 }}
+    {{- template "body/sign_up" . -}}
+{{ else }}
+    {{- template "body/sign_up_step_1" . -}}
+{{ end }}
+</body>
+</html>
