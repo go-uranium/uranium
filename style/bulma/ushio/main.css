@@ -1,0 +1,47 @@
+.footer {
+    background-color: #fafafa;
+    padding: 3rem 1.5rem 6rem;
+}
+
+footer a {
+    color: #444444;
+}
+
+.g-recaptcha {
+    padding-bottom: 1em;
+}
+
+.markdown-body {
+    padding-left: 1rem;
+}
+
+.topic-list {
+    color: #919191;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+a.topic-title {
+    color: #222222;
+    font-size: 1.1487em;
+    display: block;
+    margin: -1em;
+    padding: 1em;
+}
+
+.topic-list td {
+    padding: 12px 5px;
+}
+
+tr {
+    border-bottom: 1px solid #e9e9e9;
+}
+
+tbody {
+    border-top: 3px solid #e9e9e9;
+}
+
+.bio, .bio a, .bio span {
+    padding: 1em;
+    color: #222;
+}
