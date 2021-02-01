@@ -1,0 +1,6 @@
+{{ define "g-recaptcha" }}
+    {{/*    {{ $sitekey := "6LfT7AYaAAAAAMWK4tQj_WCuHN5uYXkwKDO_5vW_" }}*/}}
+    {{ $sitekey := "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" }}
+	<div class="g-recaptcha" data-error-callback="rec_retry" data-expired-callback="rec_retry"
+		 data-callback="rec_passed" data-sitekey="{{- $sitekey -}}"></div>
+{{ end }}

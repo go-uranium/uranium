@@ -6,8 +6,8 @@
 				<tr>
 					<th data-sort-order="default">Topic</th>
 					<th data-sort-order="posters" aria-label="Posters"></th>
-					<th data-sort-order="posts" class="m-hide">Replies</th>
-					<th data-sort-order="views" class="m-hide">Views</th>
+					<th data-sort-order="posts" class="is-hidden-mobile">Replies</th>
+					<th data-sort-order="views" class="is-hidden-mobile">Views</th>
 					<th data-sort-order="activity">Activity</th>
 				</tr>
 				</thead>
@@ -29,10 +29,10 @@
 								</figure>
 							</a>
 						</td>
-						<td class="m-hide">
+						<td class="is-hidden-mobile">
 							<span>{{- $post.Info.Replies | numFormat -}}</span>
 						</td>
-						<td class="m-hide">
+						<td class="is-hidden-mobile">
 							<span>{{- $post.Info.Views | numFormat -}}</span>
 						</td>
 						<td>

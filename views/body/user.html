@@ -7,14 +7,17 @@
 						 src="https://www.gravatar.com/avatar/{{ .User.Avatar }}?s=256&d=identicon">
                 </figure>
             </div>
-            <div style="display: table-cell;vertical-align: middle;padding-left: 1.7em">
-                <h1 class="name">{{ .User.Name }}</h1>
-                <h2 class="username">@{{ .User.Username }}</h2>
+			<div style="display: table-cell;vertical-align: middle;padding-left: 3em">
+				<h1 class="is-size-2">{{ .User.Name }}</h1>
+				<span class="is-size-5">@{{ .User.Username }}</span>
             </div>
 
-            <section style="float: right">
+			<div class="bio" style="font-size: 1.168em">
+                {{ .User.Bio }}
+			</div>
 
-            </section>
+            {{/*TODO: social*/}}
+
         </div>
     </section>
 {{ end }}
