@@ -19,6 +19,8 @@ import (
 )
 
 func (ushio *Ushio) LoginHandler(ctx *fiber.Ctx) error {
+	ushio.Lock.RLock()
+	defer ushio.Lock.RUnlock()
 	sessionToken := ctx.Cookies("token")
 	ss, err := ushio.Cache.SessionByToken(sessionToken)
 	if err != nil && err != sql.ErrNoRows {
@@ -37,6 +39,8 @@ func (ushio *Ushio) LoginHandler(ctx *fiber.Ctx) error {
 }
 
 func (ushio *Ushio) LoginPostHandler(ctx *fiber.Ctx) error {
+	ushio.Lock.RLock()
+	defer ushio.Lock.RUnlock()
 	username := ctx.FormValue("username")
 	email := ctx.FormValue("email")
 	password := ctx.FormValue("password")
@@ -140,6 +144,8 @@ func (ushio *Ushio) LoginPostHandler(ctx *fiber.Ctx) error {
 }
 
 func (ushio *Ushio) SignUpHandler(ctx *fiber.Ctx) error {
+	ushio.Lock.RLock()
+	defer ushio.Lock.RUnlock()
 	token := ctx.Query("token")
 	email := ctx.Query("email")
 	if len(token) != 0 {
@@ -166,6 +172,8 @@ func (ushio *Ushio) SignUpHandler(ctx *fiber.Ctx) error {
 }
 
 func (ushio *Ushio) SignUpPostHandler(ctx *fiber.Ctx) error {
+	ushio.Lock.RLock()
+	defer ushio.Lock.RUnlock()
 	step := ctx.Query("step")
 	stepI, err := strconv.Atoi(step)
 	if err != nil || (stepI != 1 && stepI != 2) {
@@ -220,6 +228,20 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 
 	su, err := ushio.Data.SignUpByToken(token)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return ctx.Render("sign_up", fiber.Map{
+				"Meta": Meta{
+					Config:      *ushio.Config,
+					CurrentPage: "sign up - step 2",
+				},
+				"Warn": template.HTML(`token not found, please use the latest token or <a href="/sign_up">re-sign up</a>`),
+				"Step": 2,
+				"SignUp": sign_up.SignUp{
+					Email: em,
+					Token: token,
+				},
+			})
+		}
 		return err
 	}
 
@@ -233,7 +255,7 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 				Config:      *ushio.Config,
 				CurrentPage: "sign up - step 2",
 			},
-			"Warn": template.HTML(`already expired, please <a href="/sign_up">sign up</a> again`),
+			"Warn": template.HTML(`token expired, please <a href="/sign_up">re-sign up</a>`),
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,
@@ -252,7 +274,44 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 				Config:      *ushio.Config,
 				CurrentPage: "sign up - step 2",
 			},
-			"Warn": template.HTML(`user already exists, please use <a href="/login">login</a>`),
+			"Warn": template.HTML(`user already exists, please <a href="/login">login</a> directly`),
+			"Step": 2,
+			"SignUp": sign_up.SignUp{
+				Email: em,
+				Token: token,
+			},
+		})
+	}
+
+	if !validate.Username(username) {
+		return ctx.Render("sign_up", fiber.Map{
+			"Meta": Meta{
+				Config:      *ushio.Config,
+				CurrentPage: "sign up - step 2",
+			},
+			"Warn": template.HTML(`username not valid <br />
+<strong>Username MUST be:</strong>
+<ul><li>length: [1,10]</li>
+<li>numbers, lowercase letters, _ only</li>
+<li>the first character must be lowercase letter</li></ul>`),
+			"Step": 2,
+			"SignUp": sign_up.SignUp{
+				Email: em,
+				Token: token,
+			},
+		})
+	}
+
+	if !validate.Name(name) {
+		return ctx.Render("sign_up", fiber.Map{
+			"Meta": Meta{
+				Config:      *ushio.Config,
+				CurrentPage: "sign up - step 2",
+			},
+			"Warn": template.HTML(`name not valid <br />
+<strong>Name MUST be:</strong>
+<ul><li>length: [1,20]</li>
+<li>UTF-8 charters</li></ul>`),
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,
@@ -271,7 +330,7 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 				Config:      *ushio.Config,
 				CurrentPage: "sign up - step 2",
 			},
-			"Warn": "username already exists, please use another username",
+			"Warn": "username occupied, please use another username",
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,

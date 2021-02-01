@@ -15,6 +15,8 @@ type IndexPosts struct {
 }
 
 func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
+	// no database writing operations,
+	// lock is unnecessary
 	nav, err := ushio.NavFromCtx(c)
 	if err != nil {
 		return err
@@ -31,12 +33,12 @@ func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
 
 	for i := range sps {
 		sp := sps[i]
-		user, err := ushio.Cache.UserByUID(sp.Creator)
+		u, err := ushio.Cache.UserByUID(sp.Creator)
 		if err != nil {
 			if err != sql.ErrNoRows {
 				return err
 			}
-			user, err = ushio.Cache.UserByUID(0)
+			u, err = ushio.Cache.UserByUID(0)
 			if err != nil {
 				return err
 			}
@@ -44,7 +46,7 @@ func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
 		ps = append(ps,
 			IndexPosts{
 				sps[i],
-				user,
+				u,
 			})
 	}
 

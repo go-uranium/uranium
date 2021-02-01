@@ -1,19 +1,25 @@
 package ushio_test
 
 import (
+	"bytes"
+	"context"
 	"database/sql"
 	"fmt"
+	"html/template"
+	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
+	"os/signal"
 	"runtime"
 	"strconv"
 	"testing"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
-
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/mailgun/mailgun-go/v3"
 
 	"github.com/go-ushio/ushio"
 	"github.com/go-ushio/ushio/data"
@@ -29,7 +35,35 @@ func TestUshio(t *testing.T) {
 	u := ushio.New(db, data.SQLSentence(), &ushio.Config{
 		SiteName: "Ushio",
 		SendMail: func(dst string, token string) error {
-			fmt.Println(dst, token)
+			var yourDomain = "ushio.zincic.com"
+			var privateAPIKey = os.Getenv("MAILGUN_API_SEC")
+			mg := mailgun.NewMailgun(yourDomain, privateAPIKey)
+			sender := "no-reply@ushio.zincic.com"
+			subject := "Complete your sign-up by verifying your email"
+			file, err := ioutil.ReadFile("./views/email.html")
+			if err != nil {
+				return err
+			}
+			tpl, err := template.New("email").Parse(string(file))
+			if err != nil {
+				return err
+			}
+			buf := &bytes.Buffer{}
+			err = tpl.Execute(buf, fiber.Map{
+				"URL": fmt.Sprintf("https://ushio.zincic.com/sign_up?token=%s&email=%s", token, url.QueryEscape(dst)),
+			})
+			if err != nil {
+				return err
+			}
+			message := mg.NewMessage(sender, subject, buf.String(), dst)
+
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+			defer cancel()
+
+			_, _, err = mg.Send(ctx, message)
+			if err != nil {
+				return err
+			}
 			return nil
 		},
 	})
@@ -89,6 +123,17 @@ func TestUshio(t *testing.T) {
 		return fiber.NewError(404, "Not found!!1")
 	})
 
-	err = app.Listen(":8888")
-	t.Error(err)
+	go func() {
+		err = app.Listen(":8888")
+		t.Error(err)
+		os.Exit(1)
+	}()
+	sgn := make(chan os.Signal, 1)
+	signal.Notify(sgn, os.Interrupt, os.Kill)
+	for range sgn {
+		fmt.Println("Exiting... Please wait...")
+		u.Lock.Lock()
+		fmt.Println("Bye!")
+		os.Exit(0)
+	}
 }

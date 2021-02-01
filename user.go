@@ -10,6 +10,8 @@ import (
 )
 
 func (ushio *Ushio) UserHandler(ctx *fiber.Ctx) error {
+	// no database writing operations,
+	// lock is unnecessary
 	name := ctx.Params("name")
 	if len(name) < 1 || len(name) > 10 {
 		return fiber.NewError(400, "Invalid username or uid.")
