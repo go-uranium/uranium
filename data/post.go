@@ -1,6 +1,7 @@
 package data
 
 import (
+	"database/sql"
 	"strconv"
 
 	"github.com/go-ushio/ushio/common/put"
@@ -46,15 +47,13 @@ func (data *Data) PostByPID(pid int) (*post.Post, error) {
 	return p, nil
 }
 
-func (data *Data) InsertPostInfo(info *post.Info) error {
+func (data *Data) InsertPostInfo(info *post.Info) (sql.Result, error) {
 	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertPostInfo)
-	_, err := info.PutWithPIDFirst(putter)
-	return err
+	return info.Put(putter)
 }
 
 func (data *Data) InsertPost(p *post.Post) error {
-	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertPost)
-	result, err := p.Put(putter)
+	result, err := data.InsertPostInfo(p.Info)
 	if err != nil {
 		return err
 	}
@@ -62,14 +61,20 @@ func (data *Data) InsertPost(p *post.Post) error {
 	if err != nil {
 		return err
 	}
-	p.Info.PID = int(pid)
-	err = data.InsertPostInfo(p.Info)
+
+	p.PID = int(pid)
+
+	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertPost)
+	_, err = p.PutWithPIDFirst(putter)
+	if err != nil {
+		return err
+	}
 	return err
 }
 
 func (data *Data) UpdatePost(p *post.Post) error {
 	putter := put.PutterFromDBExec(data.db, data.sentence.SQLUpdatePost)
-	_, err := p.PutWithPID(putter)
+	_, err := p.PutWithPIDLast(putter)
 	if err != nil {
 		return err
 	}

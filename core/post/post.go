@@ -54,8 +54,18 @@ func (post *Post) Put(putter put.Putter) (sql.Result, error) {
 	return putter.Put(post.Content, post.Markdown)
 }
 
-func (post *Post) PutWithPID(putter put.Putter) (sql.Result, error) {
+func (post *Post) PutWithPIDFirst(putter put.Putter) (sql.Result, error) {
+	return putter.Put(post.PID, post.Content, post.Markdown)
+}
+
+func (post *Post) PutWithPIDLast(putter put.Putter) (sql.Result, error) {
 	return putter.Put(post.Content, post.Markdown, post.PID)
+}
+
+func (info *Info) Put(putter put.Putter) (sql.Result, error) {
+	return putter.Put(info.Title, info.Creator,
+		info.CreatedAt, info.LastMod, info.Replies, info.Views,
+		info.Activity, info.Hidden, info.Anonymous)
 }
 
 func (info *Info) PutWithPIDFirst(putter put.Putter) (sql.Result, error) {
