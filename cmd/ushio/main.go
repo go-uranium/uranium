@@ -28,7 +28,7 @@ import (
 */
 
 func main() {
-	db, err := sql.Open("mysql", os.Getenv(`DATA_SOURCE_NAME`))
+	db, err := sql.Open("postgres", os.Getenv(`DATA_SOURCE_NAME`))
 	if err != nil {
 		panic(err)
 	}
@@ -136,6 +136,10 @@ func main() {
 	for range sgn {
 		fmt.Println("Exiting... Please wait...")
 		u.Lock.Lock()
+		err := db.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
 		fmt.Println("Bye!")
 		os.Exit(0)
 	}

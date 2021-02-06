@@ -25,7 +25,7 @@ func (data *Data) PostInfoByPage(offset, size int) ([]*post.Info, error) {
 }
 
 func (data *Data) PostInfoByPID(pid int) (*post.Info, error) {
-	row := data.db.QueryRow(data.sentence.SQLPostByPID, strconv.Itoa(pid))
+	row := data.db.QueryRow(data.sentence.SQLPostInfoByPID, strconv.Itoa(pid))
 	info, err := post.ScanInfo(row)
 	if err != nil {
 		return &post.Info{}, err
@@ -85,5 +85,20 @@ func (data *Data) UpdatePost(p *post.Post) error {
 func (data *Data) UpdatePostInfo(info *post.Info) error {
 	putter := put.PutterFromDBExec(data.db, data.sentence.SQLUpdatePostInfo)
 	_, err := info.PutWithPIDLast(putter)
+	return err
+}
+
+func (data *Data) SQLPostNewReply(pid int) error {
+	_, err := data.db.Exec(data.sentence.SQLPostNewReply, pid)
+	return err
+}
+
+func (data *Data) SQLPostNewView(pid int) error {
+	_, err := data.db.Exec(data.sentence.SQLPostNewView, pid)
+	return err
+}
+
+func (data *Data) SQLPostNewActivity(pid int) error {
+	_, err := data.db.Exec(data.sentence.SQLPostNewActivity, pid)
 	return err
 }

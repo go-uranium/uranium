@@ -4,11 +4,10 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/google/uuid"
-
 	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/common/scan"
 	"github.com/go-ushio/ushio/utils/clean"
+	"github.com/go-ushio/ushio/utils/token"
 )
 
 type SignUp struct {
@@ -22,7 +21,7 @@ func New(email string, dur time.Duration) *SignUp {
 	now := time.Now()
 	return &SignUp{
 		Email:     clean.String(email),
-		Token:     uuid.New().String(),
+		Token:     token.New(),
 		CreatedAt: now,
 		ExpireAt:  now.Add(dur),
 	}

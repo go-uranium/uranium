@@ -7,5 +7,6 @@ require (
 	github.com/gofiber/fiber/v2 v2.3.2
 	github.com/gofiber/template v1.6.6
 	github.com/google/uuid v1.1.4
+	github.com/lib/pq v1.0.0
 	github.com/mailgun/mailgun-go/v3 v3.6.4
 )

@@ -8,13 +8,13 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 
 	"github.com/go-ushio/ushio/core/session"
 	"github.com/go-ushio/ushio/core/sign_up"
 	"github.com/go-ushio/ushio/core/user"
 	"github.com/go-ushio/ushio/utils/hash"
 	"github.com/go-ushio/ushio/utils/recaptcha"
+	"github.com/go-ushio/ushio/utils/token"
 	"github.com/go-ushio/ushio/utils/validate"
 )
 
@@ -102,16 +102,16 @@ func (ushio *Ushio) LoginPostHandler(ctx *fiber.Ctx) error {
 
 		t := time.Now()
 		s := &session.Session{
-			UID:    u.UID,
-			Token:  uuid.New().String(),
-			UA:     string(ctx.Request().Header.UserAgent()),
-			IP:     ctx.IP(),
-			Time:   t,
-			Expire: t.Add(36 * time.Hour),
+			UID:       u.UID,
+			Token:     token.New(),
+			UA:        string(ctx.Request().Header.UserAgent()),
+			IP:        ctx.IP(),
+			CreatedAt: t,
+			ExpireAt:  t.Add(36 * time.Hour),
 		}
 
 		if rem {
-			s.Expire = t.Add(720 * time.Hour)
+			s.ExpireAt = t.Add(720 * time.Hour)
 		}
 
 		err := ushio.Data.InsertSession(s)
@@ -126,7 +126,7 @@ func (ushio *Ushio) LoginPostHandler(ctx *fiber.Ctx) error {
 		}
 
 		if rem {
-			ck.Expires = s.Expire
+			ck.Expires = s.ExpireAt
 		}
 
 		ctx.Cookie(ck)

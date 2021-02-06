@@ -17,6 +17,10 @@ func (ushio *Ushio) ComposePostHandler(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	if !nav.LoggedIn {
+		return ctx.Redirect("/", 303)
+	}
+
 	content, err := mdparse.Parse(ctx.FormValue("compose-content"))
 	if err != nil {
 		return err
@@ -54,10 +58,14 @@ func (ushio *Ushio) ComposeHandler(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	if !nav.LoggedIn {
+		return ctx.Redirect("/", 303)
+	}
+
 	return ctx.Render("compose", fiber.Map{
 		"Meta": Meta{
 			Config:      *ushio.Config,
-			CurrentPage: "home",
+			CurrentPage: "compose",
 		},
 		"Nav": nav,
 	})

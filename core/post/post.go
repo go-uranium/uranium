@@ -9,13 +9,6 @@ import (
 	"github.com/go-ushio/ushio/common/scan"
 )
 
-type Post struct {
-	PID      int `json:"pid"`
-	Info     *Info
-	Content  template.HTML `json:"content"`
-	Markdown string        `json:"markdown"`
-}
-
 type Info struct {
 	PID       int       `json:"pid"`
 	Title     string    `json:"title"`
@@ -27,11 +20,21 @@ type Info struct {
 	Activity  time.Time `json:"activity"`
 	Hidden    bool      `json:"hidden"`
 	Anonymous bool      `json:"anonymous"`
+	// uid list
+	VoteNeg []int `json:"vote_neg"`
+	VotePos []int `json:"vote_pos"`
+}
+
+type Post struct {
+	PID      int           `json:"pid"`
+	Info     *Info         `json:"info"`
+	Content  template.HTML `json:"content"`
+	Markdown string        `json:"markdown"`
 }
 
 func ScanPost(scanner scan.Scanner) (*Post, error) {
 	post := &Post{}
-	err := scanner.Scan(&post.PID, &post.Content, &post.Markdown)
+	err := scanner.Scan(&post.PID, &post.Content)
 	if err != nil {
 		return &Post{}, err
 	}

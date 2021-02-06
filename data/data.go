@@ -3,20 +3,21 @@ package data
 import (
 	"database/sql"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 type Sentence struct {
 	SQLPostByPID     string
 	SQLPostInfoByPID string
 	// SQLPostInfoByPage ignores post with `hidden` true
-	SQLPostInfoByPage string
-	SQLInsertPost     string
-	SQLInsertPostInfo string
-	SQLUpdatePost     string
-	SQLUpdatePostInfo string
-	SQLPostNewReply   string
-	SQLPostNewView    string
+	SQLPostInfoByPage  string
+	SQLInsertPost      string
+	SQLInsertPostInfo  string
+	SQLUpdatePost      string
+	SQLUpdatePostInfo  string
+	SQLPostNewReply    string
+	SQLPostNewView     string
+	SQLPostNewActivity string
 
 	SQLSessionByToken      string
 	SQLSessionsByUID       string
@@ -69,21 +70,22 @@ func SQLSentence() Sentence {
 		SQLPostInfoByPID: `SELECT pid, title, creator, created_at, last_mod, replies, 
 views, activity, hidden, anonymous FROM ushio.post_info WHERE pid=? AND hidden=0;`,
 		SQLPostInfoByPage: `SELECT pid, title, creator, created_at, last_mod, replies, 
-views, activity, hidden, anonymous FROM ushio.post_info ORDER BY pid DESC LIMIT ?,?;`,
+views, activity, hidden, anonymous FROM ushio.post_info ORDER BY pid DESC LIMIT $2 OFFSET $1;`,
 		SQLInsertPost: `INSERT INTO ushio.post(pid, content, markdown) VALUES (?,?,?);`,
 		SQLInsertPostInfo: `INSERT INTO ushio.post_info(title, creator, created_at, 
 last_mod, replies, views, activity, hidden, anonymous) VALUES (?,?,?,?,?,?,?,?,?);`,
-		SQLUpdatePost:     ``,
-		SQLUpdatePostInfo: ``,
-		SQLPostNewReply:   ``,
-		SQLPostNewView:    ``,
+		SQLUpdatePost:      ``,
+		SQLUpdatePostInfo:  ``,
+		SQLPostNewReply:    `UPDATE ushio.post_info SET replies=replies+1 WHERE pid=?;`,
+		SQLPostNewView:     `UPDATE ushio.post_info SET views=views+1 WHERE pid=?;`,
+		SQLPostNewActivity: `UPDATE ushio.post_info SET activity=current_timestamp() WHERE pid=?;`,
 
-		SQLSessionByToken: `SELECT token, uid, UA, IP, time, expire_at 
-FROM ushio.session WHERE token=?;`,
-		SQLSessionsByUID: `SELECT token, uid, UA, IP, time, expire_at 
-FROM ushio.session WHERE uid=?;`,
-		SQLSessionBasicByToken: `SELECT token, uid, expire_at FROM ushio.session WHERE token=?;`,
-		SQLInsertSession: `INSERT INTO ushio.session(token, uid, UA, IP, time, expire_at) 
+		SQLSessionByToken: `SELECT token, uid, ua, ip, created_at, expire_at 
+FROM ushio.session WHERE token=$1;`,
+		SQLSessionsByUID: `SELECT token, uid, ua, ip, created_at, expire_at 
+FROM ushio.session WHERE uid=$1;`,
+		SQLSessionBasicByToken: `SELECT token, uid, expire_at FROM ushio.session WHERE token=$1;`,
+		SQLInsertSession: `INSERT INTO ushio.session(token, uid, ua, ip, created_at, expire_at) 
 VALUES (?,?,?,?,?,?);`,
 		SQLDeleteUserSessions: `DELETE FROM ushio.session WHERE uid=?;`,
 

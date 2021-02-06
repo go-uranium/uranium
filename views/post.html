@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{- template "head" .Meta -}}
+</head>
+
+{{- template "nav" .Nav -}}
+<body>
+<section class="section">
+	<div class="container">
+		<article class="markdown-body">
+            {{ .Post.Content }}
+		</article>
+	</div>
+</section>
+</body>
+{{- template "footer" -}}
+
+</html>
