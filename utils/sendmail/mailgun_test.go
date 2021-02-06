@@ -5,10 +5,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/mailgun/mailgun-go/v3"
 
 	"github.com/go-ushio/ushio/utils/sendmail"
+	"github.com/go-ushio/ushio/utils/token"
 )
 
 func TestMailGun_Send(t *testing.T) {
@@ -30,7 +30,7 @@ func TestMailGun_Send(t *testing.T) {
 		Text:    textEx,
 	}
 
-	err = mg.Send("i@iochen.com", uuid.New().String())
+	err = mg.Send("i@iochen.com", token.New())
 	if err != nil {
 		t.Error(err)
 		return
@@ -38,7 +38,7 @@ func TestMailGun_Send(t *testing.T) {
 
 	mg.Html = htmlEx
 
-	err = mg.Send("i@iochen.com", uuid.New().String())
+	err = mg.Send("i@iochen.com", token.New())
 	if err != nil {
 		t.Error(err)
 		return
