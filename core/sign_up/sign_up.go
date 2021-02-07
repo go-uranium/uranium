@@ -36,7 +36,7 @@ func ScanSignUp(scanner scan.Scanner) (*SignUp, error) {
 	return su, nil
 }
 
-func (su *SignUp) PutWithTokenFirst(putter put.Putter) (sql.Result, error) {
+func (su *SignUp) Put(putter put.Putter) (sql.Result, error) {
 	return putter.Put(su.Token, su.Email, su.CreatedAt, su.ExpireAt)
 }
 

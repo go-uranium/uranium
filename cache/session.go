@@ -17,9 +17,9 @@ func (cache *Cache) SessionByToken(token string) (*session.Basic, error) {
 		return &session.Basic{}, err
 	}
 	ss := &session.Basic{
-		Token:  s.Token,
-		UID:    s.UID,
-		Expire: s.ExpireAt,
+		Token:    s.Token,
+		UID:      s.UID,
+		ExpireAt: s.ExpireAt,
 	}
 	cache.refresh.RUnlock()
 	cache.refresh.Lock()

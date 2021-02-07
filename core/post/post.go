@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"time"
 
+	"github.com/lib/pq"
+
 	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/common/scan"
 )
@@ -21,8 +23,8 @@ type Info struct {
 	Hidden    bool      `json:"hidden"`
 	Anonymous bool      `json:"anonymous"`
 	// uid list
-	VoteNeg []int `json:"vote_neg"`
 	VotePos []int `json:"vote_pos"`
+	VoteNeg []int `json:"vote_neg"`
 }
 
 type Post struct {
@@ -46,7 +48,8 @@ func ScanInfo(scanner scan.Scanner) (*Info, error) {
 	err := scanner.Scan(&info.PID, &info.Title, &info.Creator,
 		&info.CreatedAt, &info.LastMod,
 		&info.Replies, &info.Views, &info.Activity,
-		&info.Hidden, &info.Anonymous)
+		&info.Hidden, &info.Anonymous,
+		pq.Array(&info.VotePos), pq.Array(&info.VoteNeg))
 	if err != nil {
 		return &Info{}, err
 	}
@@ -54,33 +57,14 @@ func ScanInfo(scanner scan.Scanner) (*Info, error) {
 }
 
 func (post *Post) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(post.Content, post.Markdown)
-}
-
-func (post *Post) PutWithPIDFirst(putter put.Putter) (sql.Result, error) {
 	return putter.Put(post.PID, post.Content, post.Markdown)
 }
 
-func (post *Post) PutWithPIDLast(putter put.Putter) (sql.Result, error) {
-	return putter.Put(post.Content, post.Markdown, post.PID)
-}
-
 func (info *Info) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(info.Title, info.Creator,
-		info.CreatedAt, info.LastMod, info.Replies, info.Views,
-		info.Activity, info.Hidden, info.Anonymous)
-}
-
-func (info *Info) PutWithPIDFirst(putter put.Putter) (sql.Result, error) {
 	return putter.Put(info.PID, info.Title, info.Creator,
 		info.CreatedAt, info.LastMod, info.Replies, info.Views,
-		info.Activity, info.Hidden, info.Anonymous)
-}
-
-func (info *Info) PutWithPIDLast(putter put.Putter) (sql.Result, error) {
-	return putter.Put(info.Title, info.Creator, info.CreatedAt,
-		info.LastMod, info.Replies, info.Views, info.Activity,
-		info.Hidden, info.Anonymous, info.PID)
+		info.Activity, info.Hidden, info.Anonymous,
+		pq.Array(info.VotePos), pq.Array(info.VoteNeg))
 }
 
 func (post *Post) Copy() *Post {
