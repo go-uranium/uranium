@@ -33,7 +33,9 @@ func main() {
 		panic(err)
 	}
 
-	u := ushio.New(db, data.SQLSentence(), &ushio.Config{
+	pv := data.New(db, data.SQLSentence())
+
+	u := ushio.New(pv, &ushio.Config{
 		SiteName: "Ushio",
 		SendMail: func(dst string, token string) error {
 			var yourDomain = "ushio.zincic.com"
@@ -41,7 +43,7 @@ func main() {
 			mg := mailgun.NewMailgun(yourDomain, privateAPIKey)
 			sender := "no-reply@ushio.zincic.com"
 			subject := "Complete your sign-up by verifying your email"
-			file, err := ioutil.ReadFile("./views/email.html")
+			file, err := ioutil.ReadFile("./views/email.txt")
 			if err != nil {
 				return err
 			}
@@ -51,7 +53,7 @@ func main() {
 			}
 			buf := &bytes.Buffer{}
 			err = tpl.Execute(buf, fiber.Map{
-				"URL": fmt.Sprintf("https://ushio.zincic.com/sign_up?token=%s&email=%s", token, url.QueryEscape(dst)),
+				"URL": template.URL(fmt.Sprintf("https://ushio.zincic.com/sign_up?token=%s&email=%s", url.QueryEscape(token), url.QueryEscape(dst))),
 			})
 			if err != nil {
 				return err

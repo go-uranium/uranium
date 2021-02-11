@@ -2,6 +2,7 @@ package ushio
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,6 +28,7 @@ func (ushio *Ushio) UserHandler(ctx *fiber.Ctx) error {
 			}
 			return err
 		}
+		return ctx.Redirect("/u/"+u.Username, 307)
 	} else {
 		u, err = ushio.Data.UserByUsername(name)
 		if err != nil {
@@ -45,7 +47,7 @@ func (ushio *Ushio) UserHandler(ctx *fiber.Ctx) error {
 	return ctx.Render("user", fiber.Map{
 		"Meta": &Meta{
 			Config:      *ushio.Config,
-			CurrentPage: "/u/" + u.Username,
+			CurrentPage: fmt.Sprintf("%s (@%s)", u.Name, u.Username),
 		},
 		"Nav":  nav,
 		"User": u,

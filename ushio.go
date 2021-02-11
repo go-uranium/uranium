@@ -1,7 +1,6 @@
 package ushio
 
 import (
-	"database/sql"
 	"sync"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,18 +17,16 @@ type Config struct {
 
 // call ushio.Lock.Lock() before exiting
 type Ushio struct {
-	Data   *data.Data
+	Data   data.Provider
 	Cache  cache.Cacher
 	Config *Config
 	Lock   *sync.RWMutex
 }
 
-func New(db *sql.DB, sentence data.Sentence, config *Config) *Ushio {
-	d := data.New(db, sentence)
-	c := cache.New(d)
+func New(provider data.Provider, config *Config) *Ushio {
 	return &Ushio{
-		Data:   d,
-		Cache:  c,
+		Data:   provider,
+		Cache:  cache.New(provider),
 		Config: config,
 		Lock:   &sync.RWMutex{},
 	}

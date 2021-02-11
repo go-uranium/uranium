@@ -21,10 +21,10 @@ type Info struct {
 	Views     int       `json:"views"`
 	Activity  time.Time `json:"activity"`
 	Hidden    bool      `json:"hidden"`
-	Anonymous bool      `json:"anonymous"`
 	// uid list
 	VotePos []int `json:"vote_pos"`
 	VoteNeg []int `json:"vote_neg"`
+	Limit   int   `json:"limit"`
 }
 
 type Post struct {
@@ -48,8 +48,8 @@ func ScanInfo(scanner scan.Scanner) (*Info, error) {
 	err := scanner.Scan(&info.PID, &info.Title, &info.Creator,
 		&info.CreatedAt, &info.LastMod,
 		&info.Replies, &info.Views, &info.Activity,
-		&info.Hidden, &info.Anonymous,
-		pq.Array(&info.VotePos), pq.Array(&info.VoteNeg))
+		&info.Hidden, pq.Array(&info.VotePos),
+		pq.Array(&info.VoteNeg), &info.Limit)
 	if err != nil {
 		return &Info{}, err
 	}
@@ -63,8 +63,8 @@ func (post *Post) Put(putter put.Putter) (sql.Result, error) {
 func (info *Info) Put(putter put.Putter) (sql.Result, error) {
 	return putter.Put(info.PID, info.Title, info.Creator,
 		info.CreatedAt, info.LastMod, info.Replies, info.Views,
-		info.Activity, info.Hidden, info.Anonymous,
-		pq.Array(info.VotePos), pq.Array(info.VoteNeg))
+		info.Activity, info.Hidden, pq.Array(info.VotePos),
+		pq.Array(info.VoteNeg), info.Limit)
 }
 
 func (post *Post) Copy() *Post {

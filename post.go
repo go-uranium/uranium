@@ -33,7 +33,7 @@ func (ushio *Ushio) PostHandler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = ushio.Data.SQLPostNewView(post.PID)
+	err = ushio.Data.PostNewView(post.PID)
 	if err != nil {
 		return err
 	}

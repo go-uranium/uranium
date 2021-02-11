@@ -1,6 +1,7 @@
 package ushio
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -38,7 +39,8 @@ func (ushio *Ushio) ComposePostHandler(ctx *fiber.Ctx) error {
 		Content:  *content,
 		Markdown: ctx.FormValue("compose-content"),
 	}
-	if err := ushio.Data.InsertPost(p); err != nil {
+	pid, err := ushio.Data.InsertPost(p)
+	if err != nil {
 		return err
 	}
 
@@ -47,7 +49,7 @@ func (ushio *Ushio) ComposePostHandler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.Redirect("/", 303)
+	return ctx.Redirect("/p/"+strconv.Itoa(pid), 303)
 }
 
 func (ushio *Ushio) ComposeHandler(ctx *fiber.Ctx) error {

@@ -2,6 +2,7 @@ package ushio
 
 import (
 	"database/sql"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -146,9 +147,9 @@ func (ushio *Ushio) LoginPostHandler(ctx *fiber.Ctx) error {
 func (ushio *Ushio) SignUpHandler(ctx *fiber.Ctx) error {
 	ushio.Lock.RLock()
 	defer ushio.Lock.RUnlock()
-	token := ctx.Query("token")
+	tk := ctx.Query("token")
 	email := ctx.Query("email")
-	if len(token) != 0 {
+	if len(tk) != 0 {
 		return ctx.Render("sign_up", fiber.Map{
 			"Meta": Meta{
 				Config:      *ushio.Config,
@@ -157,7 +158,7 @@ func (ushio *Ushio) SignUpHandler(ctx *fiber.Ctx) error {
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: email,
-				Token: token,
+				Token: tk,
 			},
 		})
 	} else {
@@ -189,7 +190,7 @@ func (ushio *Ushio) SignUpPostHandler(ctx *fiber.Ctx) error {
 }
 
 func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
-	token := ctx.FormValue("token")
+	tk := ctx.FormValue("token")
 	name := ctx.FormValue("name")
 	username := ctx.FormValue("username")
 	em := ctx.FormValue("email")
@@ -207,7 +208,7 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,
-				Token: token,
+				Token: tk,
 			},
 		})
 	}
@@ -221,12 +222,12 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,
-				Token: token,
+				Token: tk,
 			},
 		})
 	}
 
-	su, err := ushio.Data.SignUpByToken(token)
+	su, err := ushio.Data.SignUpByToken(tk)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return ctx.Render("sign_up", fiber.Map{
@@ -238,7 +239,7 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 				"Step": 2,
 				"SignUp": sign_up.SignUp{
 					Email: em,
-					Token: token,
+					Token: tk,
 				},
 			})
 		}
@@ -259,7 +260,7 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,
-				Token: token,
+				Token: tk,
 			},
 		})
 	}
@@ -278,7 +279,7 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,
-				Token: token,
+				Token: tk,
 			},
 		})
 	}
@@ -297,7 +298,7 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,
-				Token: token,
+				Token: tk,
 			},
 		})
 	}
@@ -315,7 +316,7 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,
-				Token: token,
+				Token: tk,
 			},
 		})
 	}
@@ -334,7 +335,7 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 			"Step": 2,
 			"SignUp": sign_up.SignUp{
 				Email: em,
-				Token: token,
+				Token: tk,
 			},
 		})
 	}
@@ -347,6 +348,8 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 	}
 	nu.Tidy()
 
+	fmt.Println("HERE")
+
 	uid, err := ushio.Data.InsertUser(nu)
 	if err != nil {
 		return err
@@ -356,6 +359,8 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 		UID:      uid,
 		Password: hash.SHA256([]byte(password)),
 	}
+
+	fmt.Println("HERE")
 
 	err = ushio.Data.InsertUserAuth(auth)
 	if err != nil {

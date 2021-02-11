@@ -19,7 +19,7 @@ func (data *Data) SignUpByEmail(email string) (*sign_up.SignUp, error) {
 
 func (data *Data) InsertSignUp(su *sign_up.SignUp) error {
 	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertSignUp)
-	_, err := su.PutWithTokenFirst(putter)
+	_, err := su.Put(putter)
 	return err
 }
 

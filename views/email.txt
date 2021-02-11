@@ -1,5 +1,5 @@
 Hi, there
 Please continue your registration by open the link below.
-https://ushio.zincic.com/sign_up?token={{- .Token -}}&email={{.Dst}}
+{{ .URL }}
 Best Regards,
 Richard Chen

@@ -65,20 +65,30 @@ func (data *Data) InsertUser(u *user.User) (int, error) {
 
 func (data *Data) InsertUserAuth(auth *user.Auth) error {
 	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertUserAuth)
-	_, err := auth.PutWithUIDFirst(putter)
+	_, err := auth.Put(putter)
 	return err
 }
 
 func (data *Data) UpdateUser(u *user.User) error {
 	u.Tidy()
 	putter := put.PutterFromDBExec(data.db, data.sentence.SQLUpdateUser)
-	_, err := u.PutWithUID(putter)
+	_, err := u.Put(putter)
 	return err
 }
 
 func (data *Data) UpdateUserAuth(auth *user.Auth) error {
 	putter := put.PutterFromDBExec(data.db, data.sentence.SQLUpdateUserAuth)
-	_, err := auth.PutWithUIDLast(putter)
+	_, err := auth.Put(putter)
+	return err
+}
+
+func (data *Data) AddArtifact(uid, add int) error {
+	_, err := data.db.Exec(data.sentence.SQLAddArtifact, uid, add)
+	return err
+}
+
+func (data *Data) DeleteUser(uid int) error {
+	_, err := data.db.Exec(data.sentence.SQLDeleteUser, uid)
 	return err
 }
 

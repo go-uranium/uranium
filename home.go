@@ -53,7 +53,7 @@ func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
 	return c.Render("home", fiber.Map{
 		"Meta": Meta{
 			Config:      *ushio.Config,
-			CurrentPage: "home",
+			CurrentPage: "Home",
 		},
 		"Nav":  nav,
 		"Data": ps,

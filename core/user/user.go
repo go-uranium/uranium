@@ -21,7 +21,7 @@ type User struct {
 	CreatedAt time.Time `json:"created_at"`
 	IsAdmin   bool      `json:"is_admin"`
 	Banned    bool      `json:"banned"`
-	Flags     []string  `json:"-"`
+	Artifact  int       `json:"artifact"`
 }
 
 type Auth struct {
@@ -50,7 +50,7 @@ func (u *User) Tidy() {
 func ScanUser(scanner scan.Scanner) (*User, error) {
 	u := &User{}
 	err := scanner.Scan(&u.UID, &u.Name, &u.Username, &u.Email, &u.Avatar,
-		&u.Bio, &u.CreatedAt, &u.IsAdmin, &u.Banned, &u.Flags)
+		&u.Bio, &u.CreatedAt, &u.IsAdmin, &u.Banned, &u.Artifact)
 	if err != nil {
 		return &User{}, err
 	}
@@ -71,7 +71,7 @@ func ScanAuth(scanner scan.Scanner) (*Auth, error) {
 
 func (u *User) Put(putter put.Putter) (sql.Result, error) {
 	return putter.Put(u.UID, u.Name, u.Username, u.Email, u.Avatar,
-		u.Bio, u.CreatedAt, u.IsAdmin, u.Banned, u.Flags)
+		u.Bio, u.CreatedAt, u.IsAdmin, u.Banned, u.Artifact)
 }
 
 func (auth *Auth) Put(putter put.Putter) (sql.Result, error) {

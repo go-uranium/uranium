@@ -2,20 +2,18 @@ package data
 
 import (
 	"database/sql"
-	"strings"
 
+	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/core/session"
 )
 
 func (data *Data) SessionByToken(token string) (*session.Session, error) {
-	token = strings.ToLower(token)
 	row := data.db.QueryRow(data.sentence.SQLSessionByToken, token)
-	s := &session.Session{}
-	err := row.Scan(&s.Token, &s.UID, &s.UA, &s.IP, &s.CreatedAt, &s.ExpireAt)
+	sess, err := session.ScanSession(row)
 	if err != nil {
 		return &session.Session{}, err
 	}
-	return s, nil
+	return sess, nil
 }
 
 func (data *Data) SessionsByUID(uid int) ([]*session.Session, error) {
@@ -25,12 +23,11 @@ func (data *Data) SessionsByUID(uid int) ([]*session.Session, error) {
 	}
 	var ss []*session.Session
 	for rows.Next() {
-		s := &session.Session{}
-		err := rows.Scan(&s.Token, &s.UID, &s.UA, &s.IP, &s.CreatedAt, &s.ExpireAt)
+		sess, err := session.ScanSession(rows)
 		if err != nil {
 			return nil, err
 		}
-		ss = append(ss, s)
+		ss = append(ss, sess)
 	}
 	if len(ss) == 0 {
 		return nil, sql.ErrNoRows
@@ -38,10 +35,22 @@ func (data *Data) SessionsByUID(uid int) ([]*session.Session, error) {
 	return ss, nil
 }
 
-func (data *Data) InsertSession(s *session.Session) error {
-	_, err := data.db.Exec(data.sentence.SQLInsertSession, s.Token, s.UID, s.UA, s.IP, s.CreatedAt, s.ExpireAt)
+func (data *Data) SessionBasicByToken(token string) (*session.Basic, error) {
+	row := data.db.QueryRow(data.sentence.SQLSessionBasicByToken, token)
+	bsc, err := session.ScanBasic(row)
 	if err != nil {
-		return err
+		return &session.Basic{}, err
 	}
-	return nil
+	return bsc, nil
+}
+
+func (data *Data) InsertSession(sess *session.Session) error {
+	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertSession)
+	_, err := sess.Put(putter)
+	return err
+}
+
+func (data *Data) DeleteUserSessions(uid int) error {
+	_, err := data.db.Exec(data.sentence.SQLDeleteUserSessions, uid)
+	return err
 }

@@ -6,8 +6,8 @@ import (
 	"github.com/go-ushio/ushio/utils/clean"
 )
 
-var UsernameRegex = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]{0,9}$`)
-var UsernameMax = 10
+var UsernameRegex = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]{0,19}$`)
+var UsernameMax = 20
 
 func Username(u string) bool {
 	if len(u) < 1 || len(u) > UsernameMax {

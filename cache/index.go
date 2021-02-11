@@ -11,7 +11,7 @@ func (cache *Cache) IndexPostInfo(size int) ([]*post.Info, error) {
 		if cache.postsNotEnough {
 			return cache.indexPostInfo, nil
 		}
-		infos, err := cache.data.PostInfoByPage(0, size)
+		infos, err := cache.data.PostInfoByPage(size, 0)
 		if err != nil {
 			return nil, err
 		}

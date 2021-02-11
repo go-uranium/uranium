@@ -10,7 +10,7 @@ import (
 )
 
 type Cache struct {
-	data *data.Data
+	data data.Provider
 
 	refresh        *sync.RWMutex
 	indexPostInfo  []*post.Info
@@ -20,7 +20,7 @@ type Cache struct {
 	sessionByToken map[string]*session.Basic
 }
 
-func New(data *data.Data) *Cache {
+func New(data data.Provider) *Cache {
 	return &Cache{
 		data: data,
 
