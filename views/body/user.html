@@ -1,23 +1,25 @@
 {{define "body/user"}}
     <section class="section">
         <div class="container">
-            <div style="display: table-cell">
-                <figure class="image is-128x128">
-					<img class="is-rounded"
+			<div class="pro-l">
+				<div class="pro-group">
+					<div>
+						<figure class="image">
+							<img class="is-rounded avatar"
 						 src="https://www.gravatar.com/avatar/{{ .User.Avatar }}?s=256&d=identicon">
                 </figure>
             </div>
-			<div style="display: table-cell;vertical-align: middle;padding-left: 3em">
-				<h1 class="is-size-2">{{ .User.Name }}</h1>
-				<span class="is-size-5">@{{ .User.Username }}</span>
+					<div class="name-group">
+						<h1 class="pro-name">{{ .User.Name }}</h1>
+						<span class="pro-username">@{{ .User.Username }}</span>
             </div>
 
-			<div class="bio" style="font-size: 1.168em">
+					<div class="bio">
                 {{ .User.Bio }}
 			</div>
-
+				</div>
             {{/*TODO: social*/}}
-
+			</div>
         </div>
     </section>
 {{ end }}

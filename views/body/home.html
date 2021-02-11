@@ -5,10 +5,10 @@
 				<thead>
 				<tr>
 					<th data-sort-order="default">Topic</th>
-					<th data-sort-order="posters" aria-label="Posters"></th>
-					<th data-sort-order="posts" class="is-hidden-mobile">Replies</th>
-					<th data-sort-order="views" class="is-hidden-mobile">Views</th>
-					<th data-sort-order="activity">Activity</th>
+					<th data-sort-order="posters" aria-label="Posters" style="width: 5.4em;"></th>
+					<th data-sort-order="posts" class="is-hidden-mobile" style="width: 10%;">Replies</th>
+					<th data-sort-order="views" class="is-hidden-mobile" style="width: 10%;">Views</th>
+					<th data-sort-order="activity" style="width: 8em;">Activity</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -17,8 +17,8 @@
 						<td>
 							<a href="/p/{{- $post.Info.PID -}}" class="topic-title">{{- $post.Info.Title -}}</a>
 							<div></div>
-							<span class="time"
-								  title="{{- $post.Info.CreatedAt -}}">{{- $post.Info.CreatedAt | dateFormat -}}</span>
+							<span class="category"
+								  style="color: #{{- $post.Category.Color -}}">{{- $post.Category.Name -}}</span>
 						</td>
 						<td>
 							<a href="/u/{{- $post.User.Username -}}">

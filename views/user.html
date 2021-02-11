@@ -2,6 +2,60 @@
 <html lang="en">
 <head>
     {{- template "head" .Meta -}}
+	<style>
+		.pro-l {
+			display: block;
+		}
+
+		.pro-group {
+			display: flex;
+			align-items: center !important;
+		}
+
+		.pro-name {
+			font-size: 1.928rem
+		}
+
+		.pro-username {
+			font-size: 1.25rem
+		}
+
+		@media (min-width: 768px) {
+			.avatar {
+				max-width: 256px;
+			}
+
+			.pro-l {
+				width: 25%;
+			}
+
+			.pro-group {
+				display: block;
+			}
+
+			.name-group {
+				padding-top: 1em;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.avatar {
+				max-width: 128px;
+			}
+
+			.name-group {
+				padding-left: 1em;
+			}
+
+			.pro-name {
+				font-size: 1.6rem
+			}
+
+			.pro-username {
+				font-size: 1.2rem
+			}
+		}
+	</style>
 </head>
 
 {{- template "nav" .Nav -}}
