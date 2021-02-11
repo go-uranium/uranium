@@ -1,11 +1,9 @@
 package user
 
 import (
-	"database/sql"
 	"encoding/hex"
 	"time"
 
-	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/common/scan"
 	"github.com/go-ushio/ushio/utils/clean"
 	"github.com/go-ushio/ushio/utils/hash"
@@ -67,13 +65,4 @@ func ScanAuth(scanner scan.Scanner) (*Auth, error) {
 		return &Auth{}, err
 	}
 	return auth, nil
-}
-
-func (u *User) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(u.UID, u.Name, u.Username, u.Email, u.Avatar,
-		u.Bio, u.CreatedAt, u.IsAdmin, u.Banned, u.Artifact)
-}
-
-func (auth *Auth) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(auth.UID, auth.Password, auth.Locked, auth.SecurityEmail)
 }

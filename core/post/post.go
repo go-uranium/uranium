@@ -1,13 +1,11 @@
 package post
 
 import (
-	"database/sql"
 	"html/template"
 	"time"
 
 	"github.com/lib/pq"
 
-	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/common/scan"
 )
 
@@ -22,9 +20,10 @@ type Info struct {
 	Activity  time.Time `json:"activity"`
 	Hidden    bool      `json:"hidden"`
 	// uid list
-	VotePos []int `json:"vote_pos"`
-	VoteNeg []int `json:"vote_neg"`
-	Limit   int   `json:"limit"`
+	VotePos  []int `json:"vote_pos"`
+	VoteNeg  []int `json:"vote_neg"`
+	Limit    int   `json:"limit"`
+	Category int   `json:"category"`
 }
 
 type Post struct {
@@ -36,7 +35,7 @@ type Post struct {
 
 func ScanPost(scanner scan.Scanner) (*Post, error) {
 	post := &Post{}
-	err := scanner.Scan(&post.PID, &post.Content)
+	err := scanner.Scan(&post.PID, &post.Content, &post.Markdown)
 	if err != nil {
 		return &Post{}, err
 	}
@@ -54,17 +53,6 @@ func ScanInfo(scanner scan.Scanner) (*Info, error) {
 		return &Info{}, err
 	}
 	return info, nil
-}
-
-func (post *Post) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(post.PID, post.Content, post.Markdown)
-}
-
-func (info *Info) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(info.PID, info.Title, info.Creator,
-		info.CreatedAt, info.LastMod, info.Replies, info.Views,
-		info.Activity, info.Hidden, pq.Array(info.VotePos),
-		pq.Array(info.VoteNeg), info.Limit)
 }
 
 func (post *Post) Copy() *Post {

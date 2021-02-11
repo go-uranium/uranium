@@ -1,13 +1,11 @@
 package comment
 
 import (
-	"database/sql"
 	"html/template"
 	"time"
 
 	"github.com/lib/pq"
 
-	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/common/scan"
 )
 
@@ -34,10 +32,4 @@ func ScanComment(scanner scan.Scanner) (*Comment, error) {
 		return &Comment{}, err
 	}
 	return cmt, nil
-}
-
-func (cmt *Comment) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(cmt.CID, cmt.PID, cmt.Content,
-		cmt.Markdown, cmt.Creator, cmt.CreatedAt,
-		cmt.LastMod, pq.Array(cmt.VotePos), pq.Array(cmt.VoteNeg))
 }

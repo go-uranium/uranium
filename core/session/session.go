@@ -1,10 +1,8 @@
 package session
 
 import (
-	"database/sql"
 	"time"
 
-	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/common/scan"
 )
 
@@ -40,15 +38,6 @@ func ScanBasic(scanner scan.Scanner) (*Basic, error) {
 		return &Basic{}, err
 	}
 	return bsc, nil
-}
-
-func (sess *Session) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(sess.Token, sess.UID, sess.UA,
-		sess.IP, sess.CreatedAt, sess.ExpireAt)
-}
-
-func (bsc *Basic) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(bsc.Token, bsc.UID, bsc.ExpireAt)
 }
 
 func (sess *Session) Valid() bool {

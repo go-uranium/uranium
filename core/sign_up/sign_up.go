@@ -1,10 +1,8 @@
 package sign_up
 
 import (
-	"database/sql"
 	"time"
 
-	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/common/scan"
 	"github.com/go-ushio/ushio/utils/clean"
 	"github.com/go-ushio/ushio/utils/token"
@@ -34,10 +32,6 @@ func ScanSignUp(scanner scan.Scanner) (*SignUp, error) {
 		return &SignUp{}, err
 	}
 	return su, nil
-}
-
-func (su *SignUp) Put(putter put.Putter) (sql.Result, error) {
-	return putter.Put(su.Token, su.Email, su.CreatedAt, su.ExpireAt)
 }
 
 func (su *SignUp) Valid() bool {
