@@ -18,7 +18,7 @@ func (ushio *Ushio) NavFromCtx(c *fiber.Ctx) (*Nav, error) {
 	nav := &Nav{
 		LoggedIn: false,
 	}
-	ss, err := ushio.Cache.SessionByToken(sessionToken)
+	ss, err := ushio.Cache.Session(sessionToken)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nav, nil
@@ -29,7 +29,7 @@ func (ushio *Ushio) NavFromCtx(c *fiber.Ctx) (*Nav, error) {
 		return nav, nil
 	}
 
-	u, err := ushio.Cache.UserByUID(ss.UID)
+	u, err := ushio.Cache.User(ss.UID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return &Nav{}, nil

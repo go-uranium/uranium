@@ -38,7 +38,7 @@ func (ushio *Ushio) PostHandler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = ushio.Cache.IndexPostInfoDrop()
+	err = ushio.Cache.IndexPostInfoRefresh()
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func (ushio *Ushio) PostHandler(ctx *fiber.Ctx) error {
 	return ctx.Render("post", fiber.Map{
 		"Meta": &Meta{
 			Config:      *ushio.Config,
-			CurrentPage: "/p/" + strconv.Itoa(post.PID),
+			CurrentPage: post.Info.Title,
 		},
 		"Nav":  nav,
 		"Post": post,

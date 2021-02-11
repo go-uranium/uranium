@@ -5,13 +5,15 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/go-ushio/ushio/core/category"
 	"github.com/go-ushio/ushio/core/post"
 	"github.com/go-ushio/ushio/core/user"
 )
 
 type IndexPosts struct {
-	Info *post.Info
-	User *user.User
+	Info     *post.Info
+	User     *user.User
+	Category *category.Category
 }
 
 func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
@@ -22,31 +24,26 @@ func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	sps, err := ushio.Cache.IndexPostInfo(25)
-	if err != nil {
-		if err != sql.ErrNoRows {
-			return err
-		}
-	}
+	indexInfos := ushio.Cache.IndexPostInfo()
+	var indexPosts []IndexPosts
 
-	var ps []IndexPosts
-
-	for i := range sps {
-		sp := sps[i]
-		u, err := ushio.Cache.UserByUID(sp.Creator)
-		if err != nil {
+	for i := range indexInfos {
+		sp := indexInfos[i]
+		u, err := ushio.Cache.User(sp.Creator)
+		if err != nil || u == nil {
 			if err != sql.ErrNoRows {
 				return err
 			}
-			u, err = ushio.Cache.UserByUID(0)
+			u, err = ushio.Cache.User(0)
 			if err != nil {
 				return err
 			}
 		}
-		ps = append(ps,
+		indexPosts = append(indexPosts,
 			IndexPosts{
-				sps[i],
-				u,
+				Info:     indexInfos[i],
+				User:     u,
+				Category: ushio.Cache.Category(sp.Category),
 			})
 	}
 
@@ -56,6 +53,6 @@ func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
 			CurrentPage: "Home",
 		},
 		"Nav":  nav,
-		"Data": ps,
+		"Data": indexPosts,
 	})
 }

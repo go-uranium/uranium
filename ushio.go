@@ -23,13 +23,18 @@ type Ushio struct {
 	Lock   *sync.RWMutex
 }
 
-func New(provider data.Provider, config *Config) *Ushio {
+func New(provider data.Provider, config *Config) (*Ushio, error) {
+	cc := cache.New(provider, 25)
+	err := cc.Init()
+	if err != nil {
+		return &Ushio{}, err
+	}
 	return &Ushio{
 		Data:   provider,
-		Cache:  cache.New(provider),
+		Cache:  cc,
 		Config: config,
 		Lock:   &sync.RWMutex{},
-	}
+	}, nil
 }
 
 func (ushio *Ushio) Configure(app *fiber.App) {

@@ -44,7 +44,7 @@ func (ushio *Ushio) ComposePostHandler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	err = ushio.Cache.IndexPostInfoDrop()
+	err = ushio.Cache.IndexPostInfoRefresh()
 	if err != nil {
 		return err
 	}

@@ -2,7 +2,6 @@ package ushio
 
 import (
 	"database/sql"
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -23,7 +22,7 @@ func (ushio *Ushio) LoginHandler(ctx *fiber.Ctx) error {
 	ushio.Lock.RLock()
 	defer ushio.Lock.RUnlock()
 	sessionToken := ctx.Cookies("token")
-	ss, err := ushio.Cache.SessionByToken(sessionToken)
+	ss, err := ushio.Cache.Session(sessionToken)
 	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
@@ -348,8 +347,6 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 	}
 	nu.Tidy()
 
-	fmt.Println("HERE")
-
 	uid, err := ushio.Data.InsertUser(nu)
 	if err != nil {
 		return err
@@ -359,8 +356,6 @@ func (ushio *Ushio) signUpS2PostHandler(ctx *fiber.Ctx) error {
 		UID:      uid,
 		Password: hash.SHA256([]byte(password)),
 	}
-
-	fmt.Println("HERE")
 
 	err = ushio.Data.InsertUserAuth(auth)
 	if err != nil {
