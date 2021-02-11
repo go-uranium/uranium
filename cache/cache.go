@@ -3,48 +3,71 @@ package cache
 import (
 	"sync"
 
+	"github.com/go-ushio/ushio/core/category"
 	"github.com/go-ushio/ushio/core/post"
-	"github.com/go-ushio/ushio/core/session"
-	"github.com/go-ushio/ushio/core/user"
 	"github.com/go-ushio/ushio/data"
 )
 
 type Cache struct {
 	data data.Provider
 
-	refresh        *sync.RWMutex
-	indexPostInfo  []*post.Info
-	postsNotEnough bool
-	userByUID      map[int]*user.User
-	userByUsername map[string]*user.User
-	sessionByToken map[string]*session.Basic
+	indexSize     int
+	indexRefresh  *sync.RWMutex
+	indexPostInfo []*post.Info
+
+	user    *sync.Map
+	session *sync.Map
+
+	cateRefresh     *sync.RWMutex
+	categories      []*category.Category
+	categoryByTID   map[int]*category.Category
+	categoryByTName map[string]*category.Category
 }
 
-func New(data data.Provider) *Cache {
+func New(data data.Provider, indexSize int) *Cache {
 	return &Cache{
 		data: data,
 
-		refresh:        &sync.RWMutex{},
-		indexPostInfo:  []*post.Info{},
-		postsNotEnough: false,
-		userByUID:      map[int]*user.User{},
-		userByUsername: map[string]*user.User{},
-		sessionByToken: map[string]*session.Basic{},
+		indexSize:     indexSize,
+		indexRefresh:  &sync.RWMutex{},
+		indexPostInfo: []*post.Info{},
+
+		user:    &sync.Map{},
+		session: &sync.Map{},
+
+		cateRefresh:     &sync.RWMutex{},
+		categories:      []*category.Category{},
+		categoryByTID:   map[int]*category.Category{},
+		categoryByTName: map[string]*category.Category{},
 	}
 }
 
+func (cache *Cache) Init() error {
+	err := cache.CategoryRefresh()
+	if err != nil {
+		return err
+	}
+	err = cache.IndexPostInfoRefresh()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (cache *Cache) DropAll() error {
-	cache.refresh.Lock()
-	defer cache.refresh.Unlock()
-	err := cache.UserDrop()
+	err := cache.UserDropAll()
 	if err != nil {
 		return err
 	}
-	err = cache.IndexPostInfoDrop()
+	err = cache.IndexPostInfoRefresh()
 	if err != nil {
 		return err
 	}
-	err = cache.SessionDrop()
+	err = cache.SessionDropAll()
+	if err != nil {
+		return err
+	}
+	err = cache.CategoryRefresh()
 	if err != nil {
 		return err
 	}

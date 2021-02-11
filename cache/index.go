@@ -4,38 +4,19 @@ import (
 	"github.com/go-ushio/ushio/core/post"
 )
 
-func (cache *Cache) IndexPostInfo(size int) ([]*post.Info, error) {
-	cache.refresh.RLock()
-	defer cache.refresh.RUnlock()
-	if len(cache.indexPostInfo) < size {
-		if cache.postsNotEnough {
-			return cache.indexPostInfo, nil
-		}
-		infos, err := cache.data.PostInfoByPage(size, 0)
-		if err != nil {
-			return nil, err
-		}
-		cache.refresh.RUnlock()
-		cache.refresh.Lock()
-		cache.indexPostInfo = infos
-		if len(infos) < size {
-			cache.postsNotEnough = true
-		} else {
-			cache.postsNotEnough = false
-		}
-		cache.refresh.Unlock()
-		// cause defer at first
-		cache.refresh.RLock()
-		return infos, nil
-	} else {
-		return cache.indexPostInfo[0:size], nil
-	}
+func (cache *Cache) IndexPostInfo() []*post.Info {
+	cache.indexRefresh.RLock()
+	defer cache.indexRefresh.RUnlock()
+	return cache.indexPostInfo
 }
 
-func (cache *Cache) IndexPostInfoDrop() error {
-	cache.refresh.Lock()
-	defer cache.refresh.Unlock()
-	cache.indexPostInfo = []*post.Info{}
-	cache.postsNotEnough = false
+func (cache *Cache) IndexPostInfoRefresh() error {
+	cache.indexRefresh.Lock()
+	defer cache.indexRefresh.Unlock()
+	infos, err := cache.data.PostInfoIndex(cache.indexSize)
+	if err != nil {
+		return err
+	}
+	cache.indexPostInfo = infos
 	return nil
 }

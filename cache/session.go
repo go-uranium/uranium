@@ -1,38 +1,29 @@
 package cache
 
 import (
+	"sync"
+
 	"github.com/go-ushio/ushio/core/session"
 )
 
-func (cache *Cache) SessionByToken(token string) (*session.Basic, error) {
-	cache.refresh.RLock()
-	defer cache.refresh.RUnlock()
-	v, ok := cache.sessionByToken[token]
-	if ok {
-		return v, nil
+func (cache *Cache) Session(token string) (*session.Basic, error) {
+	value, ok := cache.session.Load(token)
+	bsc, isBS := value.(*session.Basic)
+	if !isBS {
+		ok = false
 	}
-
-	s, err := cache.data.SessionByToken(token)
-	if err != nil {
-		return &session.Basic{}, err
+	if !ok {
+		bsc, err := cache.data.SessionBasicByToken(token)
+		if err != nil {
+			return &session.Basic{}, err
+		}
+		cache.session.Store(token, bsc)
+		return bsc, nil
 	}
-	ss := &session.Basic{
-		Token:    s.Token,
-		UID:      s.UID,
-		ExpireAt: s.ExpireAt,
-	}
-	cache.refresh.RUnlock()
-	cache.refresh.Lock()
-	cache.sessionByToken[s.Token] = ss
-	cache.refresh.Unlock()
-	// cause defer at first
-	cache.refresh.RLock()
-	return ss, nil
+	return bsc, nil
 }
 
-func (cache *Cache) SessionDrop() error {
-	cache.refresh.Lock()
-	defer cache.refresh.Unlock()
-	cache.sessionByToken = map[string]*session.Basic{}
+func (cache *Cache) SessionDropAll() error {
+	cache.session = &sync.Map{}
 	return nil
 }

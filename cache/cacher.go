@@ -1,21 +1,28 @@
 package cache
 
 import (
+	"github.com/go-ushio/ushio/core/category"
 	"github.com/go-ushio/ushio/core/post"
 	"github.com/go-ushio/ushio/core/session"
 	"github.com/go-ushio/ushio/core/user"
 )
 
 type Cacher interface {
-	UserByUID(uid int) (*user.User, error)
-	UserByUsername(username string) (*user.User, error)
-	UserDrop() error
+	Init() error
 
-	IndexPostInfo(size int) ([]*post.Info, error)
-	IndexPostInfoDrop() error
+	User(interface{}) (*user.User, error)
+	UserDrop(interface{}) error
+	UserDropAll() error
 
-	SessionByToken(token string) (*session.Basic, error)
-	SessionDrop() error
+	IndexPostInfo() []*post.Info
+	IndexPostInfoRefresh() error
+
+	Session(token string) (*session.Basic, error)
+	SessionDropAll() error
+
+	Categories() ([]*category.Category, error)
+	Category(interface{}) *category.Category
+	CategoryRefresh() error
 
 	DropAll() error
 }

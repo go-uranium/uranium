@@ -1,56 +1,47 @@
 package cache
 
 import (
+	"errors"
+	"sync"
+
 	"github.com/go-ushio/ushio/core/user"
 )
 
-func (cache *Cache) UserByUID(uid int) (*user.User, error) {
-	cache.refresh.RLock()
-	defer cache.refresh.RUnlock()
-	v, ok := cache.userByUID[uid]
-	if ok {
-		return v, nil
+func (cache *Cache) User(key interface{}) (*user.User, error) {
+	value, ok := cache.user.Load(key)
+	u, isUser := value.(*user.User)
+	if !isUser {
+		ok = false
 	}
-
-	u, err := cache.data.UserByUID(uid)
-	if err != nil {
-		return &user.User{}, err
+	if !ok {
+		u := &user.User{}
+		var err error
+		switch key.(type) {
+		case string:
+			u, err = cache.data.UserByUsername(key.(string))
+			if err != nil {
+				return &user.User{}, err
+			}
+		case int:
+			u, err = cache.data.UserByUID(key.(int))
+			if err != nil {
+				return &user.User{}, err
+			}
+		default:
+			return nil, errors.New("invalid cache key for user")
+		}
+		cache.user.Store(key, u)
+		return u, nil
 	}
-	cache.refresh.RUnlock()
-	cache.refresh.Lock()
-	cache.userByUID[u.UID] = u
-	cache.refresh.Unlock()
-	// cause defer at first
-	cache.refresh.RLock()
 	return u, nil
 }
 
-func (cache *Cache) UserByUsername(username string) (*user.User, error) {
-	cache.refresh.RLock()
-	defer cache.refresh.RUnlock()
-	v, ok := cache.userByUsername[username]
-	if ok {
-		return v, nil
-	}
-
-	u, err := cache.data.UserByUsername(username)
-	if err != nil {
-		return &user.User{}, err
-	}
-
-	cache.refresh.RUnlock()
-	cache.refresh.Lock()
-	cache.userByUsername[u.Username] = u
-	cache.refresh.Unlock()
-	// cause defer at first
-	cache.refresh.RLock()
-	return u, nil
+func (cache *Cache) UserDrop(key interface{}) error {
+	cache.user.Delete(key)
+	return nil
 }
 
-func (cache *Cache) UserDrop() error {
-	cache.refresh.Lock()
-	defer cache.refresh.Unlock()
-	cache.userByUID = map[int]*user.User{}
-	cache.userByUsername = map[string]*user.User{}
+func (cache *Cache) UserDropAll() error {
+	cache.user = &sync.Map{}
 	return nil
 }
