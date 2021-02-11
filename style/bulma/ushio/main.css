@@ -45,3 +45,9 @@ tbody {
     padding: 1em;
     color: #222;
 }
+
+@media (max-width: 768px) {
+    .section {
+        padding: 1.6em 0.875em;
+    }
+}
