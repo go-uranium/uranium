@@ -3,7 +3,6 @@ package data
 import (
 	"database/sql"
 
-	"github.com/go-ushio/ushio/common/put"
 	"github.com/go-ushio/ushio/core/session"
 )
 
@@ -11,6 +10,9 @@ func (data *Data) SessionByToken(token string) (*session.Session, error) {
 	row := data.db.QueryRow(data.sentence.SQLSessionByToken, token)
 	sess, err := session.ScanSession(row)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return &session.Session{}, err
 	}
 	return sess, nil
@@ -39,14 +41,17 @@ func (data *Data) SessionBasicByToken(token string) (*session.Basic, error) {
 	row := data.db.QueryRow(data.sentence.SQLSessionBasicByToken, token)
 	bsc, err := session.ScanBasic(row)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return &session.Basic{}, err
 	}
 	return bsc, nil
 }
 
 func (data *Data) InsertSession(sess *session.Session) error {
-	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertSession)
-	_, err := sess.Put(putter)
+	_, err := data.db.Exec(data.sentence.SQLInsertSession, sess.Token, sess.UID, sess.UA,
+		sess.IP, sess.CreatedAt, sess.ExpireAt)
 	return err
 }
 

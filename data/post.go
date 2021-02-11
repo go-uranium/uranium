@@ -1,10 +1,12 @@
 package data
 
 import (
+	"database/sql"
 	"strconv"
 	"time"
 
-	"github.com/go-ushio/ushio/common/put"
+	"github.com/lib/pq"
+
 	"github.com/go-ushio/ushio/core/post"
 )
 
@@ -12,6 +14,9 @@ func (data *Data) PostByPID(pid int) (*post.Post, error) {
 	row := data.db.QueryRow(data.sentence.SQLPostByPID, pid)
 	p, err := post.ScanPost(row)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return &post.Post{}, err
 	}
 	info, err := data.PostInfoByPID(pid)
@@ -26,6 +31,9 @@ func (data *Data) PostInfoByPID(pid int) (*post.Info, error) {
 	row := data.db.QueryRow(data.sentence.SQLPostInfoByPID, strconv.Itoa(pid))
 	info, err := post.ScanInfo(row)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return &post.Info{}, err
 	}
 	return info, nil
@@ -64,29 +72,26 @@ func (data *Data) PostInfoIndex(size int) ([]*post.Info, error) {
 }
 
 func (data *Data) InsertPost(p *post.Post) (int, error) {
-	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertPost)
-	result, err := p.Put(putter)
+	pid := 0
+	err := data.db.QueryRow(data.sentence.SQLInsertPost, p.Content, p.Markdown).
+		Scan(&pid)
 	if err != nil {
 		return 0, err
 	}
-	pid, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-	p.Info.PID = int(pid)
-
-	return int(pid), data.InsertPostInfo(p.Info)
+	p.Info.PID = pid
+	return pid, data.InsertPostInfo(p.Info)
 }
 
 func (data *Data) InsertPostInfo(info *post.Info) error {
-	putter := put.PutterFromDBExec(data.db, data.sentence.SQLInsertPostInfo)
-	_, err := info.Put(putter)
+	_, err := data.db.Exec(data.sentence.SQLInsertPostInfo, info.PID, info.Title, info.Creator,
+		info.CreatedAt, info.LastMod, info.Replies, info.Views,
+		info.Activity, info.Hidden, pq.Array(info.VotePos),
+		pq.Array(info.VoteNeg), info.Limit)
 	return err
 }
 
 func (data *Data) UpdatePost(p *post.Post) error {
-	putter := put.PutterFromDBExec(data.db, data.sentence.SQLUpdatePost)
-	_, err := p.Put(putter)
+	_, err := data.db.Exec(data.sentence.SQLUpdatePost, p.PID, p.Content, p.Markdown)
 	if err != nil {
 		return err
 	}

@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/lib/pq"
 
+	"github.com/go-ushio/ushio/core/category"
 	"github.com/go-ushio/ushio/core/post"
 	"github.com/go-ushio/ushio/core/session"
 	"github.com/go-ushio/ushio/core/sign_up"
@@ -59,6 +60,8 @@ type Sentence struct {
 	SQLInsertSignUp        string
 	SQLDeleteSignUpByEmail string
 	SQLSignUpExists        string
+
+	SQLGetCategories string
 }
 
 type Data struct {
@@ -107,6 +110,8 @@ type Provider interface {
 	InsertSignUp(su *sign_up.SignUp) error
 	DeleteSignUpByEmail(email string) error
 	SignUpExists(email string) (bool, error)
+
+	GetCategories() ([]*category.Category, error)
 }
 
 func New(db *sql.DB, sentence Sentence) *Data {
@@ -127,10 +132,10 @@ ORDER BY pid DESC LIMIT $1 OFFSET $2;`,
 		SQLPostInfoIndex: `SELECT pid, title, creator, created_at, last_mod, replies, 
 views, activity, hidden, vote_pos, vote_neg, "limit" FROM ushio.post_info 
 WHERE hidden = false ORDER BY last_mod DESC LIMIT $1 OFFSET 0;`,
-		SQLInsertPost: `INSERT INTO ushio.post(content, markdown) VALUES ($2, $3);`,
-		SQLInsertPostInfo: `INSERT INTO ushio.post_info(title, creator, created_at, 
+		SQLInsertPost: `INSERT INTO ushio.post(content, markdown) VALUES ($1, $2) RETURNING pid;`,
+		SQLInsertPostInfo: `INSERT INTO ushio.post_info(pid, title, creator, created_at, 
 last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit")
-VALUES ($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`,
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);`,
 		SQLUpdatePost:      `UPDATE ushio.post SET content = $2, markdown = $3 WHERE pid = $1;`,
 		SQLUpdatePostTitle: `UPDATE ushio.post_info SET title = $2 WHERE pid = $1;`,
 		SQLUpdatePostLimit: `UPDATE ushio.post_info SET "limit" = $2 WHERE pid = $1;`,
@@ -157,7 +162,7 @@ is_admin, banned, artifact FROM ushio."user" WHERE email = $1;`,
 		SQLUserByUsername: `SELECT uid, name, username, email, avatar, bio, created_at, 
 is_admin, banned, artifact FROM ushio."user" WHERE username = $1;`,
 		SQLUserAuthByUID:  `SELECT uid, password, locked, security_email FROM ushio.user_auth WHERE uid = $1;`,
-		SQLInsertUser:     `INSERT INTO ushio.user(uid, name, username, email, avatar, bio, created_at, is_admin, banned, artifact) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`,
+		SQLInsertUser:     `INSERT INTO ushio.user(name, username, email, avatar, bio, created_at, is_admin, banned, artifact) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING uid;`,
 		SQLInsertUserAuth: `INSERT INTO ushio.user_auth(uid, password, locked, security_email) VALUES ($1, $2, $3, $4);`,
 		SQLUpdateUser:     `UPDATE ushio."user" SET name = $2, username = $3, email = $4, avatar = $5, bio = $6, created_at = $7, is_admin = $8, banned = $9, artifact = $10 WHERE uid = $1;`,
 		SQLUpdateUserAuth: `UPDATE ushio.user_auth SET password = $2, locked = $3, security_email = $4 WHERE uid = $1;`,
@@ -182,5 +187,7 @@ UPDATE ushio.comment SET creator = 0 WHERE creator = $1;`,
 		SQLInsertSignUp:        `INSERT INTO ushio.sign_up(token, email, created_at, expire_at) VALUES ($1, $2, $3, $4);`,
 		SQLDeleteSignUpByEmail: `DELETE FROM ushio.sign_up WHERE email = $1;`,
 		SQLSignUpExists:        `SELECT EXISTS(SELECT token FROM ushio.sign_up WHERE email = $1);`,
+
+		SQLGetCategories: `SELECT tid, tname, name, color FROM ushio.category;`,
 	}
 }
