@@ -35,7 +35,7 @@ func main() {
 
 	pv := data.New(db, data.SQLSentence())
 
-	u := ushio.New(pv, &ushio.Config{
+	u, err := ushio.New(pv, &ushio.Config{
 		SiteName: "Ushio",
 		SendMail: func(dst string, token string) error {
 			var yourDomain = "ushio.zincic.com"
@@ -70,6 +70,11 @@ func main() {
 			return nil
 		},
 	})
+
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
 
 	engine := html.New("./views", ".html")
 	engine.AddFunc("dateFormat", func(date time.Time) string {
