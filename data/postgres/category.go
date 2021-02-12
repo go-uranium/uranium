@@ -1,4 +1,4 @@
-package data
+package postgres
 
 import "github.com/go-ushio/ushio/core/category"
 
