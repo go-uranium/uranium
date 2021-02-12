@@ -20,6 +20,31 @@
 			font-size: 1.25rem
 		}
 
+		.pro-ctn {
+			display: block;
+		}
+
+		.pro-t {
+			display: flex;
+			border-bottom: 1px solid #e1e4e8
+		}
+
+		.pro-t-pd {
+			width: 25%;
+		}
+
+		.tabs ul {
+			border-bottom: none;
+		}
+
+		.tabs a {
+			border-bottom: 3px solid transparent;
+		}
+
+		.tabs a:hover {
+			border-bottom: #e1e4e8 solid 3px;
+		}
+
 		@media (min-width: 768px) {
 			.avatar {
 				max-width: 256px;
@@ -29,12 +54,21 @@
 				width: 25%;
 			}
 
+			.pro-r {
+				width: 75%;
+				padding-left: 3%;
+			}
+
 			.pro-group {
 				display: block;
 			}
 
 			.name-group {
 				padding-top: 1em;
+			}
+
+			.pro-c {
+				margin-top: -2em;
 			}
 		}
 
@@ -53,6 +87,10 @@
 
 			.pro-username {
 				font-size: 1.2rem
+			}
+
+			.pro-ctn {
+				flex-flow: column;
 			}
 		}
 	</style>
