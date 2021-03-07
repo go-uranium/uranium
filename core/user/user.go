@@ -4,27 +4,24 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/lib/pq"
-
 	"github.com/go-ushio/ushio/common/scan"
 	"github.com/go-ushio/ushio/utils/clean"
 	"github.com/go-ushio/ushio/utils/hash"
 )
 
 type User struct {
-	UID       int       `json:"uid"`
+	UID       int64     `json:"uid"`
 	Name      string    `json:"name"`
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
 	Avatar    string    `json:"avatar"`
 	Bio       string    `json:"bio"`
 	CreatedAt time.Time `json:"created_at"`
-	Artifact  int       `json:"artifact"`
-	Following []int     `json:"following"`
+	Artifact  int64     `json:"artifact"`
 }
 
 type Auth struct {
-	UID           int
+	UID           int64
 	Password      []byte
 	Locked        bool
 	SecurityEmail string
@@ -49,7 +46,7 @@ func (u *User) Tidy() {
 func ScanUser(scanner scan.Scanner) (*User, error) {
 	u := &User{}
 	err := scanner.Scan(&u.UID, &u.Name, &u.Username, &u.Email, &u.Avatar,
-		&u.Bio, &u.CreatedAt, &u.Artifact, pq.Array(&u.Following))
+		&u.Bio, &u.CreatedAt, &u.Artifact)
 	if err != nil {
 		return &User{}, err
 	}

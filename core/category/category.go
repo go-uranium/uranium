@@ -7,11 +7,11 @@ import (
 )
 
 type Category struct {
-	TID   int
+	TID   int64
 	TName string
 	Name  string
 	Color string
-	Admin []int
+	Admin []int64
 }
 
 func ScanCategory(scanner scan.Scanner) (*Category, error) {

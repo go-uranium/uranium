@@ -12,15 +12,15 @@ import (
 type Comment struct {
 	// CID is an UUID
 	CID       string        `json:"cid"`
-	PID       int           `json:"pid"`
+	PID       int64         `json:"pid"`
 	Content   template.HTML `json:"content"`
 	Markdown  string        `json:"markdown"`
-	Creator   int           `json:"creator"`
+	Creator   int64         `json:"creator"`
 	CreatedAt time.Time     `json:"created_at"`
 	LastMod   time.Time     `json:"last_mod"`
 	// uid list
-	VotePos []int `json:"vote_pos"`
-	VoteNeg []int `json:"vote_neg"`
+	VotePos []int64 `json:"vote_pos"`
+	VoteNeg []int64 `json:"vote_neg"`
 }
 
 func ScanComment(scanner scan.Scanner) (*Comment, error) {

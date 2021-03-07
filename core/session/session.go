@@ -8,7 +8,7 @@ import (
 
 type Session struct {
 	Token     string
-	UID       int
+	UID       int64
 	UA        string
 	IP        string
 	CreatedAt time.Time
@@ -17,7 +17,7 @@ type Session struct {
 
 type Basic struct {
 	Token    string
-	UID      int
+	UID      int64
 	ExpireAt time.Time
 }
 

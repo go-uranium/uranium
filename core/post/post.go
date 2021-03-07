@@ -10,24 +10,24 @@ import (
 )
 
 type Info struct {
-	PID       int       `json:"pid"`
+	PID       int64     `json:"pid"`
 	Title     string    `json:"title"`
-	Creator   int       `json:"creator"`
+	Creator   int64     `json:"creator"`
 	CreatedAt time.Time `json:"created_at"`
 	LastMod   time.Time `json:"last_mod"`
-	Replies   int       `json:"replies"`
-	Views     int       `json:"views"`
+	Replies   int64     `json:"replies"`
+	Views     int64     `json:"views"`
 	Activity  time.Time `json:"activity"`
 	Hidden    bool      `json:"hidden"`
 	// uid list
-	VotePos  []int `json:"vote_pos"`
-	VoteNeg  []int `json:"vote_neg"`
-	Limit    int   `json:"limit"`
-	Category int   `json:"category"`
+	VotePos  []int64 `json:"vote_pos"`
+	VoteNeg  []int64 `json:"vote_neg"`
+	Limit    int64   `json:"limit"`
+	Category int64   `json:"category"`
 }
 
 type Post struct {
-	PID      int           `json:"pid"`
+	PID      int64         `json:"pid"`
 	Info     *Info         `json:"info"`
 	Content  template.HTML `json:"content"`
 	Markdown string        `json:"markdown"`
@@ -48,7 +48,7 @@ func ScanInfo(scanner scan.Scanner) (*Info, error) {
 		&info.CreatedAt, &info.LastMod,
 		&info.Replies, &info.Views, &info.Activity,
 		&info.Hidden, pq.Array(&info.VotePos),
-		pq.Array(&info.VoteNeg), &info.Limit)
+		pq.Array(&info.VoteNeg), &info.Limit, &info.Category)
 	if err != nil {
 		return &Info{}, err
 	}
