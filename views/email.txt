@@ -1,5 +1,14 @@
+{{ $token := .Token }}
+{{ $dst := .Dst }}
+{{ $subject := .Subject }}
+{{ $from := .From }}
+{{ $url := printf "https://ushio.zincic.com/sign_up?token=%s&email=%s" $token $dst }}
+To: "{{- $dst -}}" <{{- $dst -}}>
+From: "no-reply" <{{- $from -}}>
+Subject: {{ $subject }}
+
 Hi, there
 Please continue your registration by open the link below.
-{{ .URL }}
+{{ $url }}
 Best Regards,
 Richard Chen

@@ -6,46 +6,48 @@
 				<div class="tabs" style="border-bottom: none;width: 75%;padding-left: 3%;">
 					<ul>
 						<li class="is-active"><a>Posts</a></li>
-						<li><a>Replies</a></li>
-						<li><a>Following</a></li>
-						<li><a>Followers</a></li>
+						<li><a>Comments</a></li>
+						<li><a>Likes</a></li>
+						<li><a>Badges</a></li>
 					</ul>
 				</div>
 			</div>
-			<div class="pro-c">
-				<div class="pro-l">
-					<div class="pro-group">
-						<div>
-							<figure class="image">
-								<img class="is-rounded avatar"
-									 src="https://www.gravatar.com/avatar/{{ .User.Avatar }}?s=256&d=identicon">
-							</figure>
+			<div class="pro-cr">
+				<div class="pro-c">
+					<div class="pro-l">
+						<div class="pro-group">
+							<div>
+								<figure class="image">
+									<img class="is-rounded avatar"
+										 src="https://www.gravatar.com/avatar/{{ .User.Avatar }}?s=256&d=identicon">
+								</figure>
+							</div>
+							<div class="name-group">
+								<h1 class="pro-name">{{ .User.Name }}</h1>
+								<span class="pro-username">@{{ .User.Username }}</span>
+							</div>
 						</div>
-						<div class="name-group">
-							<h1 class="pro-name">{{ .User.Name }}</h1>
-							<span class="pro-username">@{{ .User.Username }}</span>
+						<div class="block" style="padding:1em 0">
+                            {{ .User.Bio }}
 						</div>
-
+                        {{/*TODO: social*/}}
 					</div>
-					<div class="block" style="padding:1em 0">
-                        {{ .User.Bio }}
-					</div>
-                    {{/*TODO: social*/}}
-				</div>
-				<div class="pro-m is-hidden-tablet">
-					<div class="tabs">
-						<ul>
-							<li class="is-active"><a>Posts</a></li>
-							<li><a>Replies</a></li>
-							<li><a>Following</a></li>
-							<li><a>Followers</a></li>
-						</ul>
+					<div class="pro-m is-hidden-tablet">
+						<div class="tabs">
+							<ul>
+								<li class="is-active"><a>Posts</a></li>
+								<li><a>Replies</a></li>
+								<li><a>Following</a></li>
+								<li><a>Followers</a></li>
+							</ul>
+						</div>
 					</div>
 				</div>
 				<div class="pro-r">
-
+                    {{ range $post := .Posts }}
+                        {{ $post.Title }}
+                    {{ end }}
 				</div>
 			</div>
-		</div>
 	</section>
 {{ end }}
