@@ -1,51 +1,57 @@
 package postgres
 
 import (
-	"database/sql"
-
 	"github.com/go-ushio/ushio/core/sign_up"
 	"github.com/go-ushio/ushio/utils/clean"
 )
 
-func (data *Data) SignUpByToken(token string) (*sign_up.SignUp, error) {
-	row := data.db.QueryRow(data.sentence.SQLSignUpByToken, token)
+var (
+	SQLSignUpByToken       = `SELECT token, email, created_at, expire_at FROM ushio.sign_up WHERE token = $1;`
+	SQLSignUpByEmail       = `SELECT token, email, created_at, expire_at FROM ushio.sign_up WHERE email = $1;`
+	SQLInsertSignUp        = `INSERT INTO ushio.sign_up(token, email, created_at, expire_at) VALUES ($1, $2, $3, $4);`
+	SQLDeleteSignUpByEmail = `DELETE FROM ushio.sign_up WHERE email = $1;`
+	SQLSignUpExists        = `SELECT EXISTS(SELECT token FROM ushio.sign_up WHERE email = $1);`
+)
+
+func (pg *Postgres) SignUpByToken(token string) (*sign_up.SignUp, error) {
+	row := pg.db.QueryRow(SQLSignUpByToken, token)
 	signUp, err := sign_up.ScanSignUp(row)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
+		//if err == sql.ErrNoRows {
+		//	return nil, nil
+		//}
 		return &sign_up.SignUp{}, err
 	}
 	return signUp, nil
 }
 
-func (data *Data) SignUpByEmail(email string) (*sign_up.SignUp, error) {
+func (pg *Postgres) SignUpByEmail(email string) (*sign_up.SignUp, error) {
 	clean.String(email)
-	row := data.db.QueryRow(data.sentence.SQLSignUpByEmail, email)
+	row := pg.db.QueryRow(SQLSignUpByEmail, email)
 	signUp, err := sign_up.ScanSignUp(row)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
+		//if err == sql.ErrNoRows {
+		//	return nil, nil
+		//}
 		return &sign_up.SignUp{}, err
 	}
 	return signUp, nil
 }
 
-func (data *Data) InsertSignUp(su *sign_up.SignUp) error {
-	_, err := data.db.Exec(data.sentence.SQLInsertSignUp, su.Token, su.Email, su.CreatedAt, su.ExpireAt)
+func (pg *Postgres) InsertSignUp(su *sign_up.SignUp) error {
+	_, err := pg.db.Exec(SQLInsertSignUp, su.Token, su.Email, su.CreatedAt, su.ExpireAt)
 	return err
 }
 
-func (data *Data) DeleteSignUpByEmail(email string) error {
+func (pg *Postgres) DeleteSignUpByEmail(email string) error {
 	clean.String(email)
-	_, err := data.db.Exec(data.sentence.SQLDeleteSignUpByEmail, email)
+	_, err := pg.db.Exec(SQLDeleteSignUpByEmail, email)
 	return err
 }
 
-func (data *Data) SignUpExists(email string) (bool, error) {
+func (pg *Postgres) SignUpExists(email string) (bool, error) {
 	clean.String(email)
-	row := data.db.QueryRow(data.sentence.SQLSignUpExists, email)
+	row := pg.db.QueryRow(SQLSignUpExists, email)
 	e := true
 	err := row.Scan(&e)
 	if err != nil {

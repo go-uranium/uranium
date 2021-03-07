@@ -9,42 +9,46 @@ import (
 )
 
 type Provider interface {
-	PostByPID(pid int) (*post.Post, error)
-	PostInfoByPID(pid int) (*post.Info, error)
-	PostInfoByPage(size, offset int) ([]*post.Info, error)
-	PostInfoIndex(size int) ([]*post.Info, error)
-	InsertPost(p *post.Post) (int, error)
+	PostByPID(pid int64) (*post.Post, error)
+	PostInfoByPID(pid int64) (*post.Info, error)
+	PostInfoByPage(size, offset int64) ([]*post.Info, error)
+	PostInfoIndex(size int64) ([]*post.Info, error)
+	InsertPost(p *post.Post) (int64, error)
 	InsertPostInfo(info *post.Info) error
 	UpdatePost(p *post.Post) error
-	UpdatePostTitle(pid int, title string) error
-	UpdatePostLimit(pid, limit int) error
-	PostNewReply(pid int) error
-	PostNewView(pid int) error
-	PostNewMod(pid int) error
-	PostNewActivity(pid int) error
-	PostNewPosVote(pid, uid int) error
-	PostNewNegVote(pid, uid int) error
+	UpdatePostTitle(pid int64, title string) error
+	UpdatePostLimit(pid, limit int64) error
+	PostNewReply(pid int64) error
+	PostNewView(pid int64) error
+	PostNewMod(pid int64) error
+	PostNewActivity(pid int64) error
+	PostNewPosVote(pid, uid int64) error
+	PostNewNegVote(pid, uid int64) error
+	PostedBy(uid int64) ([]*post.Info, error)
 
 	SessionByToken(token string) (*session.Session, error)
-	SessionsByUID(uid int) ([]*session.Session, error)
+	SessionsByUID(uid int64) ([]*session.Session, error)
 	SessionBasicByToken(token string) (*session.Basic, error)
 	InsertSession(sess *session.Session) error
-	DeleteUserSessions(uid int) error
+	DeleteUserSessions(uid int64) error
 
-	UserByUID(uid int) (*user.User, error)
+	UserByUID(uid int64) (*user.User, error)
 	UserByEmail(email string) (*user.User, error)
 	UserByUsername(username string) (*user.User, error)
-	UserAuthByUID(uid int) (*user.Auth, error)
-	InsertUser(u *user.User) (int, error)
+	UserAuthByUID(uid int64) (*user.Auth, error)
+	InsertUser(u *user.User) (int64, error)
 	InsertUserAuth(auth *user.Auth) error
 	UpdateUser(u *user.User) error
 	UpdateUserAuth(auth *user.Auth) error
-	AddArtifact(uid, add int) error
-	DeleteUser(uid int) error
+	AddArtifact(uid, add int64) error
+	DeleteUser(uid int64) error
 	UsernameExists(username string) (bool, error)
 	EmailExists(email string) (bool, error)
-	UserFollow(op, target int) error
-	UserUnFollow(op, target int) error
+	//UserFollow(op, target int64) error
+	//UserUnFollow(op, target int64) error
+	//AlreadyFollow(op, target int64) (bool, error)
+	//Followings(uid int64)  ([]*user.User, error)
+	//Followers(uid int64)  ([]*user.User, error)
 
 	SignUpByToken(token string) (*sign_up.SignUp, error)
 	SignUpByEmail(email string) (*sign_up.SignUp, error)
@@ -53,4 +57,6 @@ type Provider interface {
 	SignUpExists(email string) (bool, error)
 
 	GetCategories() ([]*category.Category, error)
+
+	Close() error
 }

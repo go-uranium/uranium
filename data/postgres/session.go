@@ -6,20 +6,28 @@ import (
 	"github.com/go-ushio/ushio/core/session"
 )
 
-func (data *Data) SessionByToken(token string) (*session.Session, error) {
-	row := data.db.QueryRow(data.sentence.SQLSessionByToken, token)
+var (
+	SQLSessionByToken      = `SELECT token, uid, ua, ip, created_at, expire_at FROM ushio.session WHERE token = $1;`
+	SQLSessionsByUID       = `SELECT token, uid, ua, ip, created_at, expire_at FROM ushio.session WHERE uid = $1;`
+	SQLSessionBasicByToken = `SELECT token, uid, expire_at FROM ushio.session WHERE token = $1;`
+	SQLInsertSession       = `INSERT INTO ushio.session(token, uid, ua, ip, created_at, expire_at) VALUES ($1, $2, $3, $4, $5, $6);`
+	SQLDeleteUserSessions  = `DELETE FROM ushio.session WHERE uid = $1;`
+)
+
+func (pg *Postgres) SessionByToken(token string) (*session.Session, error) {
+	row := pg.db.QueryRow(SQLSessionByToken, token)
 	sess, err := session.ScanSession(row)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
+		//if err == sql.ErrNoRows {
+		//	return nil, nil
+		//}
 		return &session.Session{}, err
 	}
 	return sess, nil
 }
 
-func (data *Data) SessionsByUID(uid int) ([]*session.Session, error) {
-	rows, err := data.db.Query(data.sentence.SQLSessionsByUID, uid)
+func (pg *Postgres) SessionsByUID(uid int64) ([]*session.Session, error) {
+	rows, err := pg.db.Query(SQLSessionsByUID, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -37,25 +45,25 @@ func (data *Data) SessionsByUID(uid int) ([]*session.Session, error) {
 	return ss, nil
 }
 
-func (data *Data) SessionBasicByToken(token string) (*session.Basic, error) {
-	row := data.db.QueryRow(data.sentence.SQLSessionBasicByToken, token)
+func (pg *Postgres) SessionBasicByToken(token string) (*session.Basic, error) {
+	row := pg.db.QueryRow(SQLSessionBasicByToken, token)
 	bsc, err := session.ScanBasic(row)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
+		//if err == sql.ErrNoRows {
+		//	return nil, nil
+		//}
 		return &session.Basic{}, err
 	}
 	return bsc, nil
 }
 
-func (data *Data) InsertSession(sess *session.Session) error {
-	_, err := data.db.Exec(data.sentence.SQLInsertSession, sess.Token, sess.UID, sess.UA,
+func (pg *Postgres) InsertSession(sess *session.Session) error {
+	_, err := pg.db.Exec(SQLInsertSession, sess.Token, sess.UID, sess.UA,
 		sess.IP, sess.CreatedAt, sess.ExpireAt)
 	return err
 }
 
-func (data *Data) DeleteUserSessions(uid int) error {
-	_, err := data.db.Exec(data.sentence.SQLDeleteUserSessions, uid)
+func (pg *Postgres) DeleteUserSessions(uid int64) error {
+	_, err := pg.db.Exec(SQLDeleteUserSessions, uid)
 	return err
 }

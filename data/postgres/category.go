@@ -2,8 +2,12 @@ package postgres
 
 import "github.com/go-ushio/ushio/core/category"
 
-func (data *Data) GetCategories() ([]*category.Category, error) {
-	rows, err := data.db.Query(data.sentence.SQLGetCategories)
+var (
+	SQLGetCategories = `SELECT tid, tname, name, color, admin FROM ushio.category;`
+)
+
+func (pg *Postgres) GetCategories() ([]*category.Category, error) {
+	rows, err := pg.db.Query(SQLGetCategories)
 	if err != nil {
 		return nil, err
 	}
