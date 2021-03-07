@@ -5,6 +5,10 @@ import (
 	"io"
 )
 
+type Sender interface {
+	Send(dst, token string) error
+}
+
 type Executor interface {
 	Execute(wr io.Writer, data interface{}) error
 }

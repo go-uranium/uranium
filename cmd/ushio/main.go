@@ -1,25 +1,20 @@
 package main
 
 import (
-	"bytes"
-	"context"
-	"database/sql"
 	"fmt"
-	"html/template"
-	"io/ioutil"
 	"log"
-	"net/url"
 	"os"
 	"os/signal"
 	"strconv"
+	"text/template"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
-	"github.com/mailgun/mailgun-go/v3"
 
 	"github.com/go-ushio/ushio"
-	"github.com/go-ushio/ushio/data"
+	"github.com/go-ushio/ushio/data/postgres"
+	"github.com/go-ushio/ushio/utils/sendmail"
 )
 
 /*
@@ -28,46 +23,26 @@ import (
 */
 
 func main() {
-	db, err := sql.Open("postgres", os.Getenv(`DATA_SOURCE_NAME`))
+	pg, err := postgres.New(os.Getenv(`DATA_SOURCE_NAME`))
 	if err != nil {
 		panic(err)
 	}
 
-	pv := data.New(db, data.SQLSentence())
+	textRender, err := template.New("email.txt").ParseFiles("views/email.txt")
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
 
-	u, err := ushio.New(pv, &ushio.Config{
+	u, err := ushio.New(pg, &ushio.Config{
 		SiteName: "Ushio",
-		SendMail: func(dst string, token string) error {
-			var yourDomain = "ushio.zincic.com"
-			var privateAPIKey = os.Getenv("MAILGUN_API_SEC")
-			mg := mailgun.NewMailgun(yourDomain, privateAPIKey)
-			sender := "no-reply@ushio.zincic.com"
-			subject := "Complete your sign-up by verifying your email"
-			file, err := ioutil.ReadFile("./views/email.txt")
-			if err != nil {
-				return err
-			}
-			tpl, err := template.New("email").Parse(string(file))
-			if err != nil {
-				return err
-			}
-			buf := &bytes.Buffer{}
-			err = tpl.Execute(buf, fiber.Map{
-				"URL": template.URL(fmt.Sprintf("https://ushio.zincic.com/sign_up?token=%s&email=%s", url.QueryEscape(token), url.QueryEscape(dst))),
-			})
-			if err != nil {
-				return err
-			}
-			message := mg.NewMessage(sender, subject, buf.String(), dst)
-
-			ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-			defer cancel()
-
-			_, _, err = mg.Send(ctx, message)
-			if err != nil {
-				return err
-			}
-			return nil
+		Sender: &sendmail.SMTPClient{
+			From:     "no-reply@ushio.zincic.com",
+			Password: os.Getenv("SMTP_PASSWORD"),
+			Host:     "smtp.mailgun.org",
+			Port:     "587",
+			Subject:  "Verify your email address.",
+			Text:     textRender,
 		},
 	})
 
@@ -95,10 +70,10 @@ func main() {
 			return fmt.Sprintf("%.0f day(s) ago", hours/24)
 		}
 	})
-	engine.AddFunc("numFormat", func(i int) string {
+	engine.AddFunc("numFormat", func(i int64) string {
 		switch {
 		case i < 1000:
-			return strconv.Itoa(i)
+			return strconv.Itoa(int(i))
 		case i < 1000000:
 			return fmt.Sprintf("%.2fk", float64(i)/1000)
 		default:
@@ -143,7 +118,7 @@ func main() {
 	for range sgn {
 		fmt.Println("Exiting... Please wait...")
 		u.Lock.Lock()
-		err := db.Close()
+		err := pg.Close()
 		if err != nil {
 			log.Fatal(err)
 		}
