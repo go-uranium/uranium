@@ -445,7 +445,7 @@ func (ushio *Ushio) signUpS1PostHandler(ctx *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	err = ushio.Config.SendMail(email, su.Token)
+	err = ushio.Config.Sender.Send(email, su.Token)
 	if err != nil {
 		return err
 	}

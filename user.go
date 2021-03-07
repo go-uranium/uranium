@@ -21,7 +21,7 @@ func (ushio *Ushio) UserHandler(ctx *fiber.Ctx) error {
 	u := &user.User{}
 	uid, err := strconv.Atoi(name)
 	if err == nil {
-		u, err = ushio.Data.UserByUID(uid)
+		u, err = ushio.Data.UserByUID(int64(uid))
 		if err != nil {
 			if err == sql.ErrNoRows {
 				return fiber.NewError(404, "User not found.")
@@ -44,12 +44,22 @@ func (ushio *Ushio) UserHandler(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	posts, err := ushio.Data.PostedBy(u.UID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// do something
+		} else {
+			return err
+		}
+	}
+
 	return ctx.Render("user", fiber.Map{
 		"Meta": &Meta{
 			Config:      *ushio.Config,
 			CurrentPage: fmt.Sprintf("%s (@%s)", u.Name, u.Username),
 		},
-		"Nav":  nav,
-		"User": u,
+		"Nav":   nav,
+		"User":  u,
+		"Posts": posts,
 	})
 }

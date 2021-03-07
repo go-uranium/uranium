@@ -8,11 +8,12 @@ import (
 	"github.com/go-ushio/ushio/cache"
 	"github.com/go-ushio/ushio/data"
 	"github.com/go-ushio/ushio/utils/mdparse"
+	"github.com/go-ushio/ushio/utils/sendmail"
 )
 
 type Config struct {
 	SiteName string
-	SendMail func(dst string, token string) error
+	Sender   sendmail.Sender
 }
 
 // call ushio.Lock.Lock() before exiting

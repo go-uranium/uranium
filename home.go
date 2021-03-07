@@ -52,7 +52,8 @@ func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
 			Config:      *ushio.Config,
 			CurrentPage: "Home",
 		},
-		"Nav":  nav,
-		"Data": indexPosts,
+		"Categories": ushio.Cache.Categories(),
+		"Nav":        nav,
+		"Data":       indexPosts,
 	})
 }

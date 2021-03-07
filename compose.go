@@ -49,7 +49,7 @@ func (ushio *Ushio) ComposePostHandler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.Redirect("/p/"+strconv.Itoa(pid), 303)
+	return ctx.Redirect("/p/"+strconv.Itoa(int(pid)), 303)
 }
 
 func (ushio *Ushio) ComposeHandler(ctx *fiber.Ctx) error {

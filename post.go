@@ -25,7 +25,7 @@ func (ushio *Ushio) PostHandler(ctx *fiber.Ctx) error {
 		return fiber.NewError(400, "Invalid post id.")
 	}
 
-	post, err := ushio.Data.PostByPID(pid)
+	post, err := ushio.Data.PostByPID(int64(pid))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return fiber.NewError(404, "Post not found.")
