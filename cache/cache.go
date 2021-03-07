@@ -11,7 +11,7 @@ import (
 type Cache struct {
 	data data.Provider
 
-	indexSize     int
+	indexSize     int64
 	indexRefresh  *sync.RWMutex
 	indexPostInfo []*post.Info
 
@@ -20,11 +20,11 @@ type Cache struct {
 
 	cateRefresh     *sync.RWMutex
 	categories      []*category.Category
-	categoryByTID   map[int]*category.Category
+	categoryByTID   map[int64]*category.Category
 	categoryByTName map[string]*category.Category
 }
 
-func New(data data.Provider, indexSize int) *Cache {
+func New(data data.Provider, indexSize int64) *Cache {
 	return &Cache{
 		data: data,
 
@@ -37,7 +37,7 @@ func New(data data.Provider, indexSize int) *Cache {
 
 		cateRefresh:     &sync.RWMutex{},
 		categories:      []*category.Category{},
-		categoryByTID:   map[int]*category.Category{},
+		categoryByTID:   map[int64]*category.Category{},
 		categoryByTName: map[string]*category.Category{},
 	}
 }

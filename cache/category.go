@@ -4,18 +4,18 @@ import (
 	"github.com/go-ushio/ushio/core/category"
 )
 
-func (cache *Cache) Categories() ([]*category.Category, error) {
+func (cache *Cache) Categories() []*category.Category {
 	cache.cateRefresh.RLock()
 	defer cache.cateRefresh.RUnlock()
-	return cache.categories, nil
+	return cache.categories
 }
 
 func (cache *Cache) Category(key interface{}) *category.Category {
 	cache.cateRefresh.RLock()
 	defer cache.cateRefresh.RUnlock()
 	switch key.(type) {
-	case int:
-		return cache.categoryByTID[key.(int)]
+	case int64:
+		return cache.categoryByTID[key.(int64)]
 	case string:
 		return cache.categoryByTName[key.(string)]
 	default:
@@ -31,7 +31,7 @@ func (cache *Cache) CategoryRefresh() error {
 		return err
 	}
 	cache.categories = categories
-	cache.categoryByTID = map[int]*category.Category{}
+	cache.categoryByTID = map[int64]*category.Category{}
 	cache.categoryByTName = map[string]*category.Category{}
 	for i := range categories {
 		cache.categoryByTID[categories[i].TID] = categories[i]

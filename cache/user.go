@@ -22,8 +22,8 @@ func (cache *Cache) User(key interface{}) (*user.User, error) {
 			if err != nil {
 				return &user.User{}, err
 			}
-		case int:
-			u, err = cache.data.UserByUID(key.(int))
+		case int64:
+			u, err = cache.data.UserByUID(key.(int64))
 			if err != nil {
 				return &user.User{}, err
 			}

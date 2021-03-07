@@ -20,7 +20,7 @@ type Cacher interface {
 	Session(token string) (*session.Basic, error)
 	SessionDropAll() error
 
-	Categories() ([]*category.Category, error)
+	Categories() []*category.Category
 	Category(interface{}) *category.Category
 	CategoryRefresh() error
 
