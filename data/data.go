@@ -2,6 +2,7 @@ package data
 
 import (
 	"github.com/go-ushio/ushio/core/category"
+	"github.com/go-ushio/ushio/core/comment"
 	"github.com/go-ushio/ushio/core/post"
 	"github.com/go-ushio/ushio/core/session"
 	"github.com/go-ushio/ushio/core/sign_up"
@@ -25,6 +26,14 @@ type Provider interface {
 	PostNewPosVote(pid, uid int64) error
 	PostNewNegVote(pid, uid int64) error
 	PostedBy(uid int64) ([]*post.Info, error)
+
+	CommentsByPost(pid int64) ([]*comment.Comment, error)
+	CommentByCid(cid int64) (*comment.Comment, error)
+	InsertComment(cmt *comment.Comment) (int64, error)
+	UpdateComment(cmt *comment.Comment) error
+	CommentNewMod(cid int64) error
+	CommentNewPosVote(cid, uid int64) error
+	CommentNewNegVote(cid, uid int64) error
 
 	SessionByToken(token string) (*session.Session, error)
 	SessionsByUID(uid int64) ([]*session.Session, error)
