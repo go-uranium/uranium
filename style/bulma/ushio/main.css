@@ -28,6 +28,49 @@ footer a {
     padding-left: 1rem;
 }
 
+.post-section {
+    display: flex;
+    padding: 1em 0;
+}
+
+.poster {
+    width: 20%;
+}
+
+.poster-avatar {
+    display: flex;
+    justify-content: center;
+    padding-bottom: .4em;
+}
+
+.poster-avatar figure {
+    height: 100px;
+    width: 100px;
+}
+
+.poster-name {
+    padding: 0 .5em;
+    font-size: 1.23em;
+    font-weight: 600;
+}
+
+.poster-username {
+    padding: 0 .5em .5em;
+}
+
+.poster-username a {
+    color: #7A7A7A;
+}
+
+.post-content {
+    width: 80%;
+    padding: 1.5rem;
+    background-color: #fff;
+    border: 2px solid #f0f5f7;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
 .topic-list {
     color: #919191;
     width: 100%;
@@ -118,4 +161,8 @@ tbody {
 .dropdown-content a {
     color: #4a4a4a;
     text-decoration: none;
+}
+
+.post {
+    padding-top: 0.45em;
 }

@@ -8,9 +8,31 @@
 <body>
 <section class="section">
 	<div class="container">
-		<article class="markdown-body">
-            {{ .Post.Content }}
-		</article>
+		<nav class="breadcrumb" aria-label="breadcrumbs">
+			<ul>
+				<li><a href="/home">Home</a></li>
+				<li><a href="/c/{{- .Category.TName -}}">{{- .Category.Name -}}</a></li>
+				<li class="is-active"><a href="/p/{{- .Post.PID -}}">{{- .Post.Info.Title -}}</a></li>
+			</ul>
+		</nav>
+	</div>
+	<div class="container post">
+		<div class="post-title">
+			<h1>{{- .Post.Info.Title -}}</h1>
+		</div>
+		<div class="post-section">
+			<div class="poster">
+                {{ template "poster" .Creator }}
+			</div>
+			<div class="post-content">
+				<article class="markdown-body">
+                    {{ .Post.Content }}
+				</article>
+				<div class="post-meta">
+					<span>{{ .Post.Content }}</span>
+				</div>
+			</div>
+		</div>
 	</div>
 </section>
 </body>

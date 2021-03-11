@@ -1,0 +1,15 @@
+{{ define "poster" }}
+	<div class="poster-avatar">
+		<figure class="image">
+			<a href="/u/{{- .Username -}}">
+				<img class="is-rounded" src="https://www.gravatar.com/avatar/{{- .Avatar -}}?s=128&d=identicon">
+			</a>
+		</figure>
+	</div>
+	<div class="poster-name">
+		<span>{{- .Name -}}</span>
+	</div>
+	<div class="poster-username">
+		<a href="/u/{{- .Username -}}">@{{- .Username -}}</a>
+	</div>
+{{ end }}

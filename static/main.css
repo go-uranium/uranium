@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*! bulma.io v0.9.1 | MIT License | github.com/jgthms/bulma */
 /* Bulma Utilities */
 @keyframes spinAround {
@@ -11,7 +12,7 @@
 .tabs, .pagination-previous,
 .pagination-next,
 .pagination-link,
-.pagination-ellipsis, .button, .delete {
+.pagination-ellipsis, .breadcrumb, .button, .delete {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -36,7 +37,7 @@
   width: 0.625em;
 }
 
-.tabs:not(:last-child), .pagination:not(:last-child), .highlight:not(:last-child), .block:not(:last-child), .title:not(:last-child),
+.tabs:not(:last-child), .pagination:not(:last-child), .breadcrumb:not(:last-child), .highlight:not(:last-child), .block:not(:last-child), .title:not(:last-child),
 .subtitle:not(:last-child), .table-container:not(:last-child), .table:not(:last-child), .progress:not(:last-child), .notification:not(:last-child), .content:not(:last-child), .box:not(:last-child) {
   margin-bottom: 1.5rem;
 }
@@ -3286,6 +3287,97 @@ a.tag:hover {
 }
 
 /* Bulma Components */
+.breadcrumb {
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.breadcrumb a {
+    align-items: center;
+    color: #3273dc;
+    display: flex;
+    justify-content: center;
+    padding: 0 0.75em;
+}
+
+.breadcrumb a:hover {
+    color: #363636;
+}
+
+.breadcrumb li {
+    align-items: center;
+    display: flex;
+}
+
+.breadcrumb li:first-child a {
+    padding-left: 0;
+}
+
+.breadcrumb li.is-active a {
+    color: #363636;
+    cursor: default;
+    pointer-events: none;
+}
+
+.breadcrumb li + li::before {
+    color: #b5b5b5;
+    content: "/";
+}
+
+.breadcrumb ul,
+.breadcrumb ol {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.breadcrumb .icon:first-child {
+    margin-right: 0.5em;
+}
+
+.breadcrumb .icon:last-child {
+    margin-left: 0.5em;
+}
+
+.breadcrumb.is-centered ol,
+.breadcrumb.is-centered ul {
+    justify-content: center;
+}
+
+.breadcrumb.is-right ol,
+.breadcrumb.is-right ul {
+    justify-content: flex-end;
+}
+
+.breadcrumb.is-small {
+    font-size: 0.75rem;
+}
+
+.breadcrumb.is-medium {
+    font-size: 1.25rem;
+}
+
+.breadcrumb.is-large {
+    font-size: 1.5rem;
+}
+
+.breadcrumb.has-arrow-separator li + li::before {
+    content: "→";
+}
+
+.breadcrumb.has-bullet-separator li + li::before {
+    content: "•";
+}
+
+.breadcrumb.has-dot-separator li + li::before {
+    content: "·";
+}
+
+.breadcrumb.has-succeeds-separator li + li::before {
+    content: "≻";
+}
+
 .dropdown {
   display: inline-flex;
   position: relative;
@@ -7490,6 +7582,49 @@ footer a {
   padding-left: 1rem;
 }
 
+.post-section {
+    display: flex;
+    padding: 1em 0;
+}
+
+.poster {
+    width: 20%;
+}
+
+.poster-avatar {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 0.4em;
+}
+
+.poster-avatar figure {
+    height: 100px;
+    width: 100px;
+}
+
+.poster-name {
+    padding: 0 0.5em;
+    font-size: 1.23em;
+    font-weight: 600;
+}
+
+.poster-username {
+    padding: 0 0.5em 0.5em;
+}
+
+.poster-username a {
+    color: #7A7A7A;
+}
+
+.post-content {
+    width: 80%;
+    padding: 1.5rem;
+    background-color: #fff;
+    border: 2px solid #f0f5f7;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
 .topic-list {
   color: #919191;
   width: 100%;
@@ -7579,6 +7714,10 @@ tbody {
 .dropdown-content a {
   color: #4a4a4a;
   text-decoration: none;
+}
+
+.post {
+    padding-top: 0.45em;
 }
 
 /*# sourceMappingURL=main.css.map */
