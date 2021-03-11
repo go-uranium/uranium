@@ -80,6 +80,7 @@ func main() {
 			return "1M+"
 		}
 	})
+	// set to false to get better performance
 	engine.Reload(true)
 	app := fiber.New(fiber.Config{
 		Views: engine,
