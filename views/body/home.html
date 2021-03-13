@@ -42,33 +42,33 @@
                 {{range $post := .Data}}
 					<tr>
 						<td>
-							<a href="/p/{{- $post.Info.PID -}}" class="topic-title">{{- $post.Info.Title -}}</a>
+							<a href="/p/{{- $post.PID -}}" class="topic-title">{{- $post.Title -}}</a>
 							<div class="t-mt">
 								<span class="category-bd"
 									  style="background-color: #{{- $post.Category.Color -}};"></span>
 								<span class="category">{{- $post.Category.Name -}}</span>
 								<span class="is-hidden-tablet"
-									  class="time">&nbsp;•&nbsp;&nbsp;{{- $post.Info.Activity | dateFormat -}}</span>
+									  class="time">&nbsp;•&nbsp;&nbsp;{{- $post.Activity | dateFormat -}}</span>
 							</div>
 						</td>
 						<td>
-							<a href="/u/{{- $post.User.Username -}}">
+							<a href="/u/{{- $post.Creator.Username -}}">
 								<figure class="image is-64x64">
 									<img class="is-rounded"
-										 src="https://www.gravatar.com/avatar/{{ $post.User.Avatar }}?s=128&d=identicon"
-										 alt="{{- $post.User.Username -}}">
+										 src="https://www.gravatar.com/avatar/{{ $post.Creator.Avatar }}?s=128&d=identicon"
+										 alt="{{- $post.Creator.Username -}}">
 								</figure>
 							</a>
 						</td>
 						<td>
-							<span class="num r">{{- $post.Info.Replies | numFormat -}}</span>
+							<span class="num r">{{- $post.Replies | numFormat -}}</span>
 						</td>
 						<td class="is-hidden-mobile">
-							<span class="num">{{- $post.Info.Views | numFormat -}}</span>
+							<span class="num">{{- $post.Views | numFormat -}}</span>
 						</td>
 						<td>
 							<span class="is-hidden-mobile" class="time"
-								  title="{{- $post.Info.Activity -}}">{{- $post.Info.Activity | dateFormat -}}</span>
+								  title="{{- $post.Activity -}}">{{- $post.Activity | dateFormat -}}</span>
 						</td>
 					</tr>
                 {{end}}

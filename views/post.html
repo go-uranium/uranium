@@ -7,22 +7,30 @@
 {{- template "nav" .Nav -}}
 <body>
 <section class="section">
-	<div class="container">
-		<nav class="breadcrumb" aria-label="breadcrumbs">
-			<ul>
-				<li><a href="/home">Home</a></li>
-				<li><a href="/c/{{- .Category.TName -}}">{{- .Category.Name -}}</a></li>
-				<li class="is-active"><a href="/p/{{- .Post.PID -}}">{{- .Post.Info.Title -}}</a></li>
-			</ul>
-		</nav>
-	</div>
 	<div class="container post">
-		<div class="post-title">
-			<h1>{{- .Post.Info.Title -}}</h1>
-		</div>
 		<div class="post-section">
-			<div class="poster">
-                {{ template "poster" .Creator }}
+            {{/*			<div class="poster">*/}}
+            {{/*                {{ template "poster" .Post.Info.Creator }}*/}}
+            {{/*			</div>*/}}
+			<div class="post-header">
+				<div class="post-avatar">
+					<figure class="image">
+						<img class="avatar"
+							 src="https://www.gravatar.com/avatar/{{ .Post.Info.Creator.Avatar }}?s=128&d=identicon">
+					</figure>
+				</div>
+				<div class="container">
+					<nav class="breadcrumb" aria-label="breadcrumbs">
+						<ul>
+							<li><a href="/home">Home</a></li>
+							<li><a href="/c/{{- .Post.Info.Category.TName -}}">{{- .Post.Info.Category.Name -}}</a></li>
+							<li class="is-active"><a href="/p/{{- .Post.PID -}}">{{- .Post.Info.Title -}}</a></li>
+						</ul>
+					</nav>
+				</div>
+				<div class="post-title">
+					<h1>{{- .Post.Info.Title -}}</h1>
+				</div>
 			</div>
 			<div class="post-content">
 				<article class="markdown-body">
@@ -33,7 +41,21 @@
 				</div>
 			</div>
 		</div>
-	</div>
+        {{/*		<div class="comment-section">*/}}
+        {{/*			{{ range $comment := .Comments }}*/}}
+        {{/*				<div class="poster">*/}}
+        {{/*                    {{ template "poster" $comment }}*/}}
+        {{/*				</div>*/}}
+        {{/*				<div class="post-content">*/}}
+        {{/*					<article class="markdown-body">*/}}
+        {{/*                        {{ .Post.Content }}*/}}
+        {{/*					</article>*/}}
+        {{/*					<div class="post-meta">*/}}
+        {{/*						<span>{{ .Post.Content }}</span>*/}}
+        {{/*					</div>*/}}
+        {{/*				</div>*/}}
+        {{/*			{{ end }}*/}}
+        {{/*		</div>*/}}
 </section>
 </body>
 {{- template "footer" -}}

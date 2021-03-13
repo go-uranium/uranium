@@ -3291,7 +3291,6 @@ a.tag:hover {
     font-size: 1rem;
     white-space: nowrap;
 }
-
 .breadcrumb a {
     align-items: center;
     color: #3273dc;
@@ -3299,31 +3298,25 @@ a.tag:hover {
     justify-content: center;
     padding: 0 0.75em;
 }
-
 .breadcrumb a:hover {
     color: #363636;
 }
-
 .breadcrumb li {
     align-items: center;
     display: flex;
 }
-
 .breadcrumb li:first-child a {
     padding-left: 0;
 }
-
 .breadcrumb li.is-active a {
     color: #363636;
     cursor: default;
     pointer-events: none;
 }
-
 .breadcrumb li + li::before {
     color: #b5b5b5;
     content: "/";
 }
-
 .breadcrumb ul,
 .breadcrumb ol {
     align-items: flex-start;
@@ -3331,49 +3324,38 @@ a.tag:hover {
     flex-wrap: wrap;
     justify-content: flex-start;
 }
-
 .breadcrumb .icon:first-child {
     margin-right: 0.5em;
 }
-
 .breadcrumb .icon:last-child {
     margin-left: 0.5em;
 }
-
 .breadcrumb.is-centered ol,
 .breadcrumb.is-centered ul {
     justify-content: center;
 }
-
 .breadcrumb.is-right ol,
 .breadcrumb.is-right ul {
     justify-content: flex-end;
 }
-
 .breadcrumb.is-small {
     font-size: 0.75rem;
 }
-
 .breadcrumb.is-medium {
     font-size: 1.25rem;
 }
-
 .breadcrumb.is-large {
     font-size: 1.5rem;
 }
-
 .breadcrumb.has-arrow-separator li + li::before {
     content: "→";
 }
-
 .breadcrumb.has-bullet-separator li + li::before {
     content: "•";
 }
-
 .breadcrumb.has-dot-separator li + li::before {
     content: "·";
 }
-
 .breadcrumb.has-succeeds-separator li + li::before {
     content: "≻";
 }
@@ -7582,11 +7564,6 @@ footer a {
   padding-left: 1rem;
 }
 
-.post-section {
-    display: flex;
-    padding: 1em 0;
-}
-
 .poster {
     width: 20%;
 }
@@ -7616,13 +7593,40 @@ footer a {
     color: #7A7A7A;
 }
 
-.post-content {
-    width: 80%;
-    padding: 1.5rem;
+.post-section {
+    width: 100%;
+    padding: 0.8rem;
     background-color: #fff;
     border: 2px solid #f0f5f7;
     box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.05);
     border-radius: 4px;
+    margin-bottom: 1em;
+}
+
+.post-title h1 {
+    font-size: 1.6em;
+    font-weight: 500;
+    line-height: 150%;
+    margin-top: 0.2rem;
+    max-width: calc(100% - 80px - 3%);
+    word-break: break-word;
+}
+
+.post-header {
+    padding: 10px;
+    font-size: 15px;
+    line-height: 120%;
+    text-align: left;
+    border-bottom: 1px solid #f0f5f7;
+    overflow: auto;
+    min-height: 60px;
+}
+
+.post-avatar img {
+    height: 80px;
+    width: 80px;
+    border-radius: 5px;
+    float: right;
 }
 
 .topic-list {
@@ -7706,6 +7710,23 @@ tbody {
   .t-mt span {
     font-size: 0.8em;
   }
+
+    .post-title h1 {
+        font-size: 1.375em;
+    }
+
+    .breadcrumb {
+        font-size: 0.9rem;
+    }
+
+    .post-avatar img {
+        height: 60px;
+        width: 60px;
+    }
+
+    .post-title h1 {
+        max-width: calc(100% - 60px - 3%);
+    }
 }
 .cate-item {
   padding-top: 0.5em;
