@@ -20,6 +20,13 @@ type User struct {
 	Artifact  int64     `json:"artifact"`
 }
 
+type Simple struct {
+	UID      int64  `json:"uid"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Avatar   string `json:"avatar"`
+}
+
 type Auth struct {
 	UID           int64
 	Password      []byte

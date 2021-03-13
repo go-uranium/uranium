@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/go-ushio/ushio/core/post"
+	"github.com/go-ushio/ushio/core/user"
 	"github.com/go-ushio/ushio/utils/mdparse"
 )
 
@@ -31,7 +32,7 @@ func (ushio *Ushio) ComposePostHandler(ctx *fiber.Ctx) error {
 	p := &post.Post{
 		Info: &post.Info{
 			Title:     ctx.FormValue("title"),
-			Creator:   nav.User.UID,
+			Creator:   user.Simple{UID: nav.User.UID},
 			CreatedAt: now,
 			LastMod:   now,
 			Activity:  now,

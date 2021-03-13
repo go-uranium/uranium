@@ -10,9 +10,9 @@ import (
 
 var (
 	SQLPostByPID       = `SELECT pid, content, markdown FROM ushio.post WHERE pid = $1;`
-	SQLPostInfoByPID   = `SELECT pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category FROM ushio.post_info WHERE pid = $1;`
-	SQLPostInfoByPage  = `SELECT pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category FROM ushio.post_info ORDER BY pid DESC LIMIT $1 OFFSET $2;`
-	SQLPostInfoIndex   = `SELECT pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category FROM ushio.post_info WHERE hidden = false ORDER BY last_mod DESC LIMIT $1 OFFSET 0;`
+	SQLPostInfoByPID   = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE pid = $1;`
+	SQLPostInfoByPage  = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category ORDER BY pid DESC LIMIT $1 OFFSET $2;`
+	SQLPostInfoIndex   = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE hidden = false ORDER BY last_mod DESC LIMIT $1 OFFSET 0;`
 	SQLInsertPost      = `INSERT INTO ushio.post(content, markdown) VALUES ($1, $2) RETURNING pid;`
 	SQLInsertPostInfo  = `INSERT INTO ushio.post_info(pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`
 	SQLUpdatePost      = `UPDATE ushio.post SET content = $2, markdown = $3 WHERE pid = $1;`
@@ -24,7 +24,7 @@ var (
 	SQLPostNewActivity = `UPDATE ushio.post_info SET activity = $2 WHERE pid = $1;`
 	SQLPostNewPosVote  = `UPDATE ushio.post_info SET vote_pos = array_append(vote_pos, $2) WHERE pid = $1;`
 	SQLPostNewNegVote  = `UPDATE ushio.post_info SET vote_neg = array_append(vote_neg, $2) WHERE pid = $1;`
-	SQLPostedBy        = `SELECT pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category FROM ushio.post_info WHERE creator = $1;`
+	SQLPostedBy        = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE creator = $1;`
 	//SQLPostedByAfter        = `SELECT pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category FROM ushio.post_info WHERE creator = $1;`
 )
 

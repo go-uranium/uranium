@@ -1,8 +1,6 @@
 package ushio
 
 import (
-	"database/sql"
-
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/go-ushio/ushio/core/category"
@@ -24,28 +22,7 @@ func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	indexInfos := ushio.Cache.IndexPostInfo()
-	var indexPosts []IndexPosts
-
-	for i := range indexInfos {
-		sp := indexInfos[i]
-		u, err := ushio.Cache.User(sp.Creator)
-		if err != nil || u == nil {
-			if err != sql.ErrNoRows {
-				return err
-			}
-			u, err = ushio.Cache.User(0)
-			if err != nil {
-				return err
-			}
-		}
-		indexPosts = append(indexPosts,
-			IndexPosts{
-				Info:     indexInfos[i],
-				User:     u,
-				Category: ushio.Cache.Category(sp.Category),
-			})
-	}
+	indexPosts := ushio.Cache.IndexPostInfo()
 
 	return c.Render("home", fiber.Map{
 		"Meta": Meta{

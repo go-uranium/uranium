@@ -43,13 +43,6 @@ func (ushio *Ushio) PostHandler(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	category := ushio.Cache.Category(post.Info.Category)
-
-	creator, err := ushio.Cache.User(post.Info.Creator)
-	if err != nil {
-		return err
-	}
-
 	comments, err := ushio.Data.CommentsByPost(post.PID)
 	if err != nil && err != sql.ErrNoRows {
 		return err
@@ -62,8 +55,6 @@ func (ushio *Ushio) PostHandler(ctx *fiber.Ctx) error {
 		},
 		"Nav":      nav,
 		"Post":     post,
-		"Category": category,
-		"Creator":  creator,
 		"Comments": comments,
 	})
 }
