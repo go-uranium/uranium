@@ -10,7 +10,7 @@ import (
 	"github.com/go-ushio/ushio/core/user"
 )
 
-func (ushio *Ushio) UserHandler(ctx *fiber.Ctx) error {
+func (ushio *Ushio) HandleUser(ctx *fiber.Ctx) error {
 	// no database writing operations,
 	// lock is unnecessary
 	name := ctx.Params("name")

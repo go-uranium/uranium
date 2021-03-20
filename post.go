@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (ushio *Ushio) PostHandler(ctx *fiber.Ctx) error {
+func (ushio *Ushio) HandlePost(ctx *fiber.Ctx) error {
 	ushio.Lock.RLock()
 	defer ushio.Lock.RUnlock()
 	nav, err := ushio.NavFromCtx(ctx)

@@ -18,7 +18,7 @@ import (
 	"github.com/go-ushio/ushio/utils/validate"
 )
 
-func (ushio *Ushio) LoginHandler(ctx *fiber.Ctx) error {
+func (ushio *Ushio) HandleLogin(ctx *fiber.Ctx) error {
 	ushio.Lock.RLock()
 	defer ushio.Lock.RUnlock()
 	sessionToken := ctx.Cookies("token")
@@ -38,7 +38,7 @@ func (ushio *Ushio) LoginHandler(ctx *fiber.Ctx) error {
 	})
 }
 
-func (ushio *Ushio) LoginPostHandler(ctx *fiber.Ctx) error {
+func (ushio *Ushio) HandlePOSTLogin(ctx *fiber.Ctx) error {
 	ushio.Lock.RLock()
 	defer ushio.Lock.RUnlock()
 	username := ctx.FormValue("username")
@@ -143,7 +143,7 @@ func (ushio *Ushio) LoginPostHandler(ctx *fiber.Ctx) error {
 	}
 }
 
-func (ushio *Ushio) SignUpHandler(ctx *fiber.Ctx) error {
+func (ushio *Ushio) HandleSignUp(ctx *fiber.Ctx) error {
 	ushio.Lock.RLock()
 	defer ushio.Lock.RUnlock()
 	tk := ctx.Query("token")
@@ -171,7 +171,7 @@ func (ushio *Ushio) SignUpHandler(ctx *fiber.Ctx) error {
 	}
 }
 
-func (ushio *Ushio) SignUpPostHandler(ctx *fiber.Ctx) error {
+func (ushio *Ushio) HandlePOSTSignUp(ctx *fiber.Ctx) error {
 	ushio.Lock.RLock()
 	defer ushio.Lock.RUnlock()
 	step := ctx.Query("step")

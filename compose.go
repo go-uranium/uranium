@@ -11,7 +11,7 @@ import (
 	"github.com/go-ushio/ushio/utils/mdparse"
 )
 
-func (ushio *Ushio) ComposePostHandler(ctx *fiber.Ctx) error {
+func (ushio *Ushio) HandlePOSTCompose(ctx *fiber.Ctx) error {
 	ushio.Lock.RLock()
 	defer ushio.Lock.RUnlock()
 	nav, err := ushio.NavFromCtx(ctx)
@@ -53,7 +53,7 @@ func (ushio *Ushio) ComposePostHandler(ctx *fiber.Ctx) error {
 	return ctx.Redirect("/p/"+strconv.Itoa(int(pid)), 303)
 }
 
-func (ushio *Ushio) ComposeHandler(ctx *fiber.Ctx) error {
+func (ushio *Ushio) HandleCompose(ctx *fiber.Ctx) error {
 	// no database writing operations,
 	// lock is unnecessary
 	nav, err := ushio.NavFromCtx(ctx)

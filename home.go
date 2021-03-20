@@ -14,7 +14,7 @@ type IndexPosts struct {
 	Category *category.Category
 }
 
-func (ushio *Ushio) HomeHandler(c *fiber.Ctx) error {
+func (ushio *Ushio) HandleHome(c *fiber.Ctx) error {
 	// no database writing operations,
 	// lock is unnecessary
 	nav, err := ushio.NavFromCtx(c)
