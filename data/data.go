@@ -25,6 +25,8 @@ type Provider interface {
 	PostNewActivity(pid int64) error
 	PostNewPosVote(pid, uid int64) error
 	PostNewNegVote(pid, uid int64) error
+	PostRemovePosVote(pid, uid int64) error
+	PostRemoveNegVote(pid, uid int64) error
 	PostedBy(uid int64) ([]*post.Info, error)
 
 	CommentsByPost(pid int64) ([]*comment.Comment, error)
