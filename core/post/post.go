@@ -35,6 +35,36 @@ type Post struct {
 	Markdown string        `json:"markdown"`
 }
 
+func (info *Info) VotePosContains(uid int64) bool {
+	for _, u := range info.VotePos {
+		if u == uid {
+			return true
+		}
+	}
+	return false
+}
+
+func (info *Info) VoteNegContains(uid int64) bool {
+	for _, u := range info.VoteNeg {
+		if u == uid {
+			return true
+		}
+	}
+	return false
+}
+
+func (info *Info) VotePosCount() int {
+	return len(info.VotePos)
+}
+
+func (info *Info) VoteNegCount() int {
+	return len(info.VoteNeg)
+}
+
+func (info *Info) VoteCount() int {
+	return len(info.VotePos) - len(info.VoteNeg)
+}
+
 func ScanPost(scanner scan.Scanner) (*Post, error) {
 	post := &Post{}
 	err := scanner.Scan(&post.PID, &post.Content, &post.Markdown)
