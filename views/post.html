@@ -1,3 +1,7 @@
+{{ $modified := false }}
+{{ if ne .Post.Info.CreatedAt .Post.Info.LastMod }}
+    {{ $modified = true }}
+{{ end }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,8 +54,12 @@
 						</div>
 					</div>&nbsp;&nbsp;&nbsp;
 					<a class="name" href="/u/{{- .Post.Info.Creator.Username -}}">
-                        {{- .Post.Info.Creator.Name -}}</a>&nbsp;&nbsp;•&nbsp;&nbsp;
-					<span>{{- .Post.Info.CreatedAt | dateFormat -}}</span>
+                        {{- .Post.Info.Creator.Name -}}</a>
+					<span class="is-hidden-mobile">&nbsp;&nbsp;•&nbsp;&nbsp;{{- .Post.Info.CreatedAt.Format "2006-01-02 15:04:05 -0700" -}}</span> {{ if $modified }}
+						&nbsp;(Modified)
+                    {{ end }}
+					&nbsp;&nbsp;•&nbsp;&nbsp;
+					<span>{{ .Post.Info.Views }} views</span>
 				</div>
 			</div>
 			<div class="post-content">
@@ -59,17 +67,33 @@
                     {{ .Post.Content }}
 				</article>
 			</div>
+			<div class="meta-bottom is-hidden-tablet">
+				Created at:&nbsp;<span>{{- .Post.Info.CreatedAt.Format "2006-01-02 15:04:05 -0700" -}}</span>
+                {{ if $modified }}
+					&nbsp;(Modified)
+                {{ end }}
+			</div>
 		</div>
 		<div class="comment-section">
             {{ range $comment := .Comments }}
-				<div class="poster">
-                    {{ template "poster" $comment.Creator }}
-				</div>
-				<div class="post-content">
-					<article class="markdown-body">
-                        {{ $comment.Content }}
-					</article>
-					<div class="post-meta">
+				<div class="comment">
+					<div class="comment-avatar">
+						<a href="/u/{{- $comment.Creator.Username -}}">
+							<figure class="image">
+								<img class="avatar"
+									 src="https://www.gravatar.com/avatar/{{ $comment.Creator.Avatar }}?s=128&d=identicon">
+							</figure>
+						</a>
+					</div>
+					<div class="comment-info-content">
+						<div class="comment-info">
+							<a class="name" href="/u/{{- $comment.Creator.Username -}}">
+                                {{- $comment.Creator.Name -}}</a>&nbsp;
+							<span>{{- $comment.CreatedAt.Format "2006-01-02 15:04:05 -0700" -}}</span>
+						</div>
+						<div class="comment-content">
+                            {{- $comment.Content -}}
+						</div>
 					</div>
 				</div>
             {{ end }}

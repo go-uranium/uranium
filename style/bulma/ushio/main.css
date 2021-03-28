@@ -67,6 +67,15 @@ footer a {
     margin-bottom: 1em;
 }
 
+.comment-section {
+    width: 100%;
+    background-color: #fff;
+    border: 2px solid #f0f5f7;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    margin-bottom: 1em;
+}
+
 .post-title h1 {
     font-size: 1.6em;
     font-weight: 500;
@@ -97,6 +106,38 @@ footer a {
     float: right;
 }
 
+.comment {
+    display: flex;
+    padding: .5em .8em;
+    border-top: #e2e2e2 solid 1px;
+}
+
+.comment-avatar {
+    width: calc(60px + 1%);
+}
+
+.comment-avatar img {
+    height: 60px;
+    width: 60px;
+    border-radius: 5px;
+}
+
+.comment-info-content {
+    display: block;
+}
+
+.comment-info {
+    height: 1.5em;
+    font-size: .9em;
+}
+
+.comment-info span {
+    color: #ccc;
+}
+
+.comment-content {
+    padding-top: 2px;
+}
 .topic-list {
     color: #919191;
     width: 100%;
@@ -109,6 +150,10 @@ a.topic-title {
     display: block;
     margin: -1em;
     padding: 1em;
+}
+
+a.dark {
+
 }
 
 .topic-list td {
@@ -167,11 +212,23 @@ tbody {
 
 .name {
     color: #4a4a4a;
+    font-weight: 500;
+}
+
+.name:hover {
+    color: #385f8a;
+}
+
+.meta-bottom {
+    background: linear-gradient(to bottom, #0000000f 0, #0a0a0a2e 100%);
+    font-size: 0.5em;
+    text-align: right;
+    padding-right: 0.5em;
 }
 
 @media (max-width: 768px) {
     .section {
-        padding: 1.6em 0.875em;
+        padding: 1em 0.2em;
     }
 
     .topic-list td {
@@ -228,6 +285,19 @@ tbody {
 
     .post-section {
         padding: 0;
+    }
+
+    .comment-avatar img {
+        height: 50px;
+        width: 50px;
+    }
+
+    .comment-avatar {
+        width: calc(50px + 1%);
+    }
+
+    .comment {
+        padding: .5em .2em;
     }
 }
 
