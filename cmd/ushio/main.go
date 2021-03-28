@@ -94,6 +94,7 @@ func main() {
 					fiber.Map{"Code": 500, "Message": "An unexpected error occurred!"})
 			}
 		},
+		//Prefork:true,
 	})
 	app.Static("/static/", "static/")
 
