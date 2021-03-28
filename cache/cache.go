@@ -54,6 +54,10 @@ func (cache *Cache) Init() error {
 	return nil
 }
 
+func (cache *Cache) IndexSize() int64 {
+	return cache.indexSize
+}
+
 func (cache *Cache) DropAll() error {
 	err := cache.UserDropAll()
 	if err != nil {

@@ -45,6 +45,7 @@ func (ushio *Ushio) Configure(app *fiber.App) {
 	app.Get("/home", ushio.HandleHome)
 	app.Get("/u/:name", ushio.HandleUser)
 	app.Get("/p/:post", ushio.HandlePost)
+	app.Get("/c/:tname", ushio.HandleCategory)
 	app.Get("/login", ushio.HandleLogin)
 	app.Post("/login", ushio.HandlePOSTLogin)
 	app.Get("/sign_up", ushio.HandleSignUp)

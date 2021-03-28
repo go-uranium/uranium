@@ -17,6 +17,8 @@ type Cacher interface {
 	IndexPostInfo() []*post.Info
 	IndexPostInfoRefresh() error
 
+	IndexSize() int64
+
 	Session(token string) (*session.Basic, error)
 	SessionDropAll() error
 
