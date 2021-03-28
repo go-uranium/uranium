@@ -13,6 +13,7 @@ var (
 	SQLPostInfoByPID     = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE pid = $1;`
 	SQLPostInfoByPage    = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category ORDER BY pid DESC LIMIT $1 OFFSET $2;`
 	SQLPostInfoIndex     = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE hidden = false ORDER BY last_mod DESC LIMIT $1 OFFSET 0;`
+	SQLPostInfoCategory  = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE post_info.category = $2 AND hidden = false ORDER BY last_mod DESC LIMIT $1 OFFSET 0;`
 	SQLInsertPost        = `INSERT INTO ushio.post(content, markdown) VALUES ($1, $2) RETURNING pid;`
 	SQLInsertPostInfo    = `INSERT INTO ushio.post_info(pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`
 	SQLUpdatePost        = `UPDATE ushio.post SET content = $2, markdown = $3 WHERE pid = $1;`
@@ -77,6 +78,22 @@ func (pg *Postgres) PostInfoByPage(size, offset int64) ([]*post.Info, error) {
 
 func (pg *Postgres) PostInfoIndex(size int64) ([]*post.Info, error) {
 	row, err := pg.db.Query(SQLPostInfoIndex, size)
+	if err != nil {
+		return nil, err
+	}
+	var postInfoList []*post.Info
+	for row.Next() {
+		postInfo, err := post.ScanInfo(row)
+		if err != nil {
+			return nil, err
+		}
+		postInfoList = append(postInfoList, postInfo)
+	}
+	return postInfoList, nil
+}
+
+func (pg *Postgres) PostInfoCategory(size, category int64) ([]*post.Info, error) {
+	row, err := pg.db.Query(SQLPostInfoCategory, size, category)
 	if err != nil {
 		return nil, err
 	}
