@@ -12,9 +12,9 @@ import (
 type Provider interface {
 	PostByPID(pid int64) (*post.Post, error)
 	PostInfoByPID(pid int64) (*post.Info, error)
-	PostInfoByPage(size, offset int64) ([]*post.Info, error)
-	PostInfoIndex(size int64) ([]*post.Info, error)
-	PostInfoCategory(size, category int64) ([]*post.Info, error)
+	PostsInfoByActivity(hidden bool, size, offset int64) ([]*post.Info, error)
+	PostsInfoByCategory(hidden bool, size, offset, category int64) ([]*post.Info, error)
+	PostsInfoByPID(hidden bool, size, offset int64) ([]*post.Info, error)
 	InsertPost(p *post.Post) (int64, error)
 	InsertPostInfo(info *post.Info) error
 	UpdatePost(p *post.Post) error

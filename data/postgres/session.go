@@ -7,11 +7,11 @@ import (
 )
 
 var (
-	SQLSessionByToken      = `SELECT token, uid, ua, ip, created_at, expire_at FROM ushio.session WHERE token = $1;`
-	SQLSessionsByUID       = `SELECT token, uid, ua, ip, created_at, expire_at FROM ushio.session WHERE uid = $1;`
-	SQLSessionBasicByToken = `SELECT token, uid, expire_at FROM ushio.session WHERE token = $1;`
-	SQLInsertSession       = `INSERT INTO ushio.session(token, uid, ua, ip, created_at, expire_at) VALUES ($1, $2, $3, $4, $5, $6);`
-	SQLDeleteUserSessions  = `DELETE FROM ushio.session WHERE uid = $1;`
+	SQLSessionByToken      = `SELECT token, uid, ua, ip, created_at, expire_at FROM session WHERE token = $1;`
+	SQLSessionsByUID       = `SELECT token, uid, ua, ip, created_at, expire_at FROM session WHERE uid = $1;`
+	SQLSessionBasicByToken = `SELECT token, uid, expire_at FROM session WHERE token = $1;`
+	SQLInsertSession       = `INSERT INTO session(token, uid, ua, ip, created_at, expire_at) VALUES ($1, $2, $3, $4, $5, $6);`
+	SQLDeleteUserSessions  = `DELETE FROM session WHERE uid = $1;`
 )
 
 func (pg *Postgres) SessionByToken(token string) (*session.Session, error) {

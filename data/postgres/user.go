@@ -8,24 +8,29 @@ import (
 )
 
 var (
-	SQLUserByUID      = `SELECT uid, name, username, email, avatar, bio, created_at, artifact FROM ushio."user" WHERE uid = $1;`
-	SQLUserByEmail    = `SELECT uid, name, username, email, avatar, bio, created_at, artifact FROM ushio."user" WHERE email = $1;`
-	SQLUserByUsername = `SELECT uid, name, username, email, avatar, bio, created_at, artifact FROM ushio."user" WHERE username = $1;`
-	SQLUserAuthByUID  = `SELECT uid, password, locked, security_email FROM ushio.user_auth WHERE uid = $1;`
-	SQLInsertUser     = `INSERT INTO ushio.user(name, username, email, avatar, bio, created_at, artifact) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING uid;`
-	SQLInsertUserAuth = `INSERT INTO ushio.user_auth(uid, password, locked, security_email) VALUES ($1, $2, $3, $4);`
-	SQLUpdateUser     = `UPDATE ushio."user" SET name = $2, username = $3, email = $4, avatar = $5, bio = $6, created_at = $7, artifact = $8 WHERE uid = $1;`
-	SQLUpdateUserAuth = `UPDATE ushio.user_auth SET password = $2, locked = $3, security_email = $4 WHERE uid = $1;`
-	SQLAddArtifact    = `UPDATE ushio."user" SET artifact = artifact + $2 WHERE uid = $1;`
-	SQLDeleteUser     = `DELETE FROM ushio.user_auth WHERE uid = $1;DELETE FROM ushio.session WHERE uid = $1;DELETE FROM ushio."user" WHERE uid = $1;UPDATE ushio.post_info SET creator = 0 WHERE creator = $1;UPDATE ushio.comment SET creator = 0 WHERE creator = $1;`
-	SQLUsernameExists = `SELECT EXISTS(SELECT uid FROM ushio."user" WHERE username = $1);`
-	SQLEmailExists    = `SELECT EXISTS(SELECT uid FROM ushio."user" WHERE email = $1);`
+	SQLUserByUID      = `SELECT uid, name, username, email, avatar, bio, created_at, artifact FROM users WHERE uid = $1;`
+	SQLUserByEmail    = `SELECT uid, name, username, email, avatar, bio, created_at, artifact FROM users WHERE email = $1;`
+	SQLUserByUsername = `SELECT uid, name, username, email, avatar, bio, created_at, artifact FROM users WHERE username = $1;`
+	SQLUserAuthByUID  = `SELECT uid, password, locked, security_email FROM user_auth WHERE uid = $1;`
 
-	//SQLUserFollow      = `UPDATE ushio."user" SET following = array_append(following, $2) WHERE uid = $1;`
-	//SQLUserUnFollow    = `UPDATE ushio."user" SET following = array_remove(following, $2) WHERE uid = $1;`
-	//SQLAlreadyFollow   = `SELECT $2 = ANY ((SELECT following FROM ushio."user" WHERE uid = $1)::int[]);`
-	//SQLFollowings      = `SELECT uid, name, username, email, avatar, bio, created_at, artifact, following FROM ushio.user WHERE uid = ANY ((SELECT following FROM ushio."user" WHERE uid = 2)::int[]);`
-	//SQLFollowers       = `SELECT uid, name, username, email, avatar, bio, created_at, artifact, following FROM ushio."user" WHERE $1 = ANY(following);`
+	SQLInsertUser     = `INSERT INTO users(name, username, email, avatar, bio, created_at, artifact) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING uid;`
+	SQLInsertUserAuth = `INSERT INTO user_auth(uid, password, locked, security_email) VALUES ($1, $2, $3, $4);`
+
+	SQLUpdateUser     = `UPDATE users SET name = $2, username = $3, email = $4, avatar = $5, bio = $6, created_at = $7, artifact = $8 WHERE uid = $1;`
+	SQLUpdateUserAuth = `UPDATE user_auth SET password = $2, locked = $3, security_email = $4 WHERE uid = $1;`
+
+	SQLAddArtifact = `UPDATE users SET artifact = artifact + $2 WHERE uid = $1;`
+
+	SQLDeleteUser = `DELETE FROM user_auth WHERE uid = $1;DELETE FROM session WHERE uid = $1; DELETE FROM users WHERE uid = $1; UPDATE post_info SET creator = 0 WHERE creator = $1; UPDATE comments SET creator = 0 WHERE creator = $1;`
+
+	SQLUsernameExists = `SELECT EXISTS(SELECT uid FROM users WHERE username = $1);`
+	SQLEmailExists    = `SELECT EXISTS(SELECT uid FROM users WHERE email = $1);`
+
+	//SQLUserFollow      = `UPDATE "user" SET following = array_append(following, $2) WHERE uid = $1;`
+	//SQLUserUnFollow    = `UPDATE "user" SET following = array_remove(following, $2) WHERE uid = $1;`
+	//SQLAlreadyFollow   = `SELECT $2 = ANY ((SELECT following FROM "user" WHERE uid = $1)::int[]);`
+	//SQLFollowings      = `SELECT uid, name, username, email, avatar, bio, created_at, artifact, following FROM user WHERE uid = ANY ((SELECT following FROM "user" WHERE uid = 2)::int[]);`
+	//SQLFollowers       = `SELECT uid, name, username, email, avatar, bio, created_at, artifact, following FROM "user" WHERE $1 = ANY(following);`
 )
 
 func (pg *Postgres) UserByUID(uid int64) (*user.User, error) {

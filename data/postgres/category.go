@@ -3,7 +3,7 @@ package postgres
 import "github.com/go-ushio/ushio/core/category"
 
 var (
-	SQLGetCategories = `SELECT tid, tname, name, color, admin FROM ushio.category;`
+	SQLGetCategories = `SELECT tid, tname, name, color, admin FROM categories;`
 )
 
 func (pg *Postgres) GetCategories() ([]*category.Category, error) {

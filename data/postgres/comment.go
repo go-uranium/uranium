@@ -9,13 +9,13 @@ import (
 )
 
 var (
-	SQLCommentsByPost    = `SELECT cid, pid, content, markdown, "user".uid,"user".name,"user".username,"user".avatar, comment.created_at, last_mod, vote_pos, vote_neg FROM ushio.comment INNER JOIN "user" ON uid = creator WHERE pid = $1;`
-	SQLCommentByCid      = `SELECT cid, pid, content, markdown, "user".uid,"user".name,"user".username,"user".avatar, comment.created_at, last_mod, vote_pos, vote_neg FROM ushio.comment INNER JOIN "user" ON uid = creator WHERE cid = $1;`
-	SQLInsertComment     = `INSERT INTO ushio.comment(pid, content, markdown, creator, created_at, last_mod, vote_pos, vote_neg) VALUES (pid = $1, content = $2, markdown = $3, creator= $4, created_at = $5, last_mod = $6, vote_pos = $7, vote_neg = $8) RETURNING cid;`
-	SQLUpdateComment     = `UPDATE ushio.comment SET pid = $2, content = $3, markdown = $4, creator= $5, created_at = $6, last_mod = $7, vote_pos = $8, vote_neg = $9 WHERE cid = $1;`
-	SQLCommentNewMod     = `UPDATE ushio.comment SET last_mod = $2 WHERE cid = $1;`
-	SQLCommentNewPosVote = `UPDATE ushio.comment SET vote_pos = array_append(vote_pos, $2) WHERE cid = $1;`
-	SQLCommentNewNegVote = `UPDATE ushio.comment SET vote_neg = array_append(vote_neg, $2) WHERE cid = $1;`
+	SQLCommentsByPost    = `SELECT cid, pid, content, markdown, users.uid,users.name,users.username,users.avatar, comments.created_at, last_mod, vote_pos, vote_neg FROM comments INNER JOIN users ON uid = creator WHERE pid = $1;`
+	SQLCommentByCid      = `SELECT cid, pid, content, markdown, users.uid,users.name,users.username,users.avatar, comments.created_at, last_mod, vote_pos, vote_neg FROM comments INNER JOIN users ON uid = creator WHERE cid = $1;`
+	SQLInsertComment     = `INSERT INTO comments(pid, content, markdown, creator, created_at, last_mod, vote_pos, vote_neg) VALUES (pid = $1, content = $2, markdown = $3, creator= $4, created_at = $5, last_mod = $6, vote_pos = $7, vote_neg = $8) RETURNING cid;`
+	SQLUpdateComment     = `UPDATE comments SET pid = $2, content = $3, markdown = $4, creator= $5, created_at = $6, last_mod = $7, vote_pos = $8, vote_neg = $9 WHERE cid = $1;`
+	SQLCommentNewMod     = `UPDATE comments SET last_mod = $2 WHERE cid = $1;`
+	SQLCommentNewPosVote = `UPDATE comments SET vote_pos = array_append(vote_pos, $2) WHERE cid = $1;`
+	SQLCommentNewNegVote = `UPDATE comments SET vote_neg = array_append(vote_neg, $2) WHERE cid = $1;`
 )
 
 func (pg *Postgres) CommentsByPost(pid int64) ([]*comment.Comment, error) {

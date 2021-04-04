@@ -6,11 +6,11 @@ import (
 )
 
 var (
-	SQLSignUpByToken       = `SELECT token, email, created_at, expire_at FROM ushio.sign_up WHERE token = $1;`
-	SQLSignUpByEmail       = `SELECT token, email, created_at, expire_at FROM ushio.sign_up WHERE email = $1;`
-	SQLInsertSignUp        = `INSERT INTO ushio.sign_up(token, email, created_at, expire_at) VALUES ($1, $2, $3, $4);`
-	SQLDeleteSignUpByEmail = `DELETE FROM ushio.sign_up WHERE email = $1;`
-	SQLSignUpExists        = `SELECT EXISTS(SELECT token FROM ushio.sign_up WHERE email = $1);`
+	SQLSignUpByToken       = `SELECT token, email, created_at, expire_at FROM sign_up WHERE token = $1;`
+	SQLSignUpByEmail       = `SELECT token, email, created_at, expire_at FROM sign_up WHERE email = $1;`
+	SQLInsertSignUp        = `INSERT INTO sign_up(token, email, created_at, expire_at) VALUES ($1, $2, $3, $4);`
+	SQLDeleteSignUpByEmail = `DELETE FROM sign_up WHERE email = $1;`
+	SQLSignUpExists        = `SELECT EXISTS(SELECT token FROM sign_up WHERE email = $1);`
 )
 
 func (pg *Postgres) SignUpByToken(token string) (*sign_up.SignUp, error) {

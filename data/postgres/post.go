@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/lib/pq"
@@ -9,26 +10,38 @@ import (
 )
 
 var (
-	SQLPostByPID         = `SELECT pid, content, markdown FROM ushio.post WHERE pid = $1;`
-	SQLPostInfoByPID     = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE pid = $1;`
-	SQLPostInfoByPage    = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category ORDER BY pid DESC LIMIT $1 OFFSET $2;`
-	SQLPostInfoIndex     = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE hidden = false ORDER BY last_mod DESC LIMIT $1 OFFSET 0;`
-	SQLPostInfoCategory  = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE post_info.category = $2 AND hidden = false ORDER BY last_mod DESC LIMIT $1 OFFSET 0;`
-	SQLInsertPost        = `INSERT INTO ushio.post(content, markdown) VALUES ($1, $2) RETURNING pid;`
-	SQLInsertPostInfo    = `INSERT INTO ushio.post_info(pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`
-	SQLUpdatePost        = `UPDATE ushio.post SET content = $2, markdown = $3 WHERE pid = $1;`
-	SQLUpdatePostTitle   = `UPDATE ushio.post_info SET title = $2 WHERE pid = $1;`
-	SQLUpdatePostLimit   = `UPDATE ushio.post_info SET "limit" = $2 WHERE pid = $1;`
-	SQLPostNewReply      = `UPDATE ushio.post_info SET replies = replies + 1 WHERE pid = $1;`
-	SQLPostNewView       = `UPDATE ushio.post_info SET views = views + 1 WHERE pid = $1;`
-	SQLPostNewMod        = `UPDATE ushio.post_info SET last_mod = $2, activity = $2 WHERE pid = $1;`
-	SQLPostNewActivity   = `UPDATE ushio.post_info SET activity = $2 WHERE pid = $1;`
-	SQLPostNewPosVote    = `UPDATE ushio.post_info SET vote_pos = array_append(vote_pos, $2) WHERE pid = $1;`
-	SQLPostNewNegVote    = `UPDATE ushio.post_info SET vote_neg = array_append(vote_neg, $2) WHERE pid = $1;`
-	SQLPostRemovePosVote = `UPDATE ushio.post_info SET vote_pos = array_remove(vote_pos, $2) WHERE pid = $1;`
-	SQLPostRemoveNegVote = `UPDATE ushio.post_info SET vote_neg = array_remove(vote_neg, $2) WHERE pid = $1;`
-	SQLPostedBy          = `SELECT post_info.pid, post_info.title, "user".uid,"user".name,"user".username,"user".avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", ushio.category.tid, ushio.category.tname, ushio.category.name, ushio.category.color, ushio.category.admin FROM ushio.post_info INNER JOIN "user" ON uid = creator INNER JOIN "category" ON tid = post_info.category WHERE creator = $1;`
-	//SQLPostedByAfter        = `SELECT pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category FROM ushio.post_info WHERE creator = $1;`
+	SQLPostByPID     = `SELECT pid, content, markdown FROM posts WHERE pid = $1;`
+	SQLPostInfoByPID = `SELECT post_info.pid, post_info.title, users.uid, users.name, users.username, users.avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", categories.tid, categories.tname, categories.name, categories.color, categories.admin FROM post_info INNER JOIN users ON uid = creator INNER JOIN categories ON tid = post_info.category WHERE pid = $1;`
+
+	SQLPostsInfoByActivityWithHidden = `SELECT post_info.pid, post_info.title, users.uid,users.name,users.username,users.avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", categories.tid, categories.tname, categories.name, categories.color, categories.admin FROM post_info INNER JOIN users ON uid = creator INNER JOIN categories ON tid = post_info.category ORDER BY activity DESC LIMIT $1 OFFSET $2;`
+	SQLPostsInfoByActivity           = `SELECT post_info.pid, post_info.title, users.uid,users.name,users.username,users.avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", categories.tid, categories.tname, categories.name, categories.color, categories.admin FROM post_info INNER JOIN users ON uid = creator INNER JOIN categories ON tid = post_info.category WHERE hidden = false ORDER BY activity DESC LIMIT $1 OFFSET $2;`
+
+	SQLPostsInfoByCategoryWithHidden = `SELECT post_info.pid, post_info.title, users.uid,users.name,users.username,users.avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", categories.tid, categories.tname, categories.name, categories.color, categories.admin FROM post_info INNER JOIN users ON uid = creator INNER JOIN categories ON tid = post_info.category WHERE post_info.category = $3 ORDER BY activity DESC LIMIT $1 OFFSET $2;`
+	SQLPostsInfoByCategory           = `SELECT post_info.pid, post_info.title, users.uid,users.name,users.username,users.avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", categories.tid, categories.tname, categories.name, categories.color, categories.admin FROM post_info INNER JOIN users ON uid = creator INNER JOIN categories ON tid = post_info.category WHERE post_info.category = $3 AND hidden = false ORDER BY activity DESC LIMIT $1 OFFSET $2;`
+
+	SQLPostsInfoByPIDWithHidden = `SELECT post_info.pid, post_info.title, users.uid,users.name,users.username,users.avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", categories.tid, categories.tname, categories.name, categories.color, categories.admin FROM post_info INNER JOIN users ON uid = creator INNER JOIN categories ON tid = post_info.category ORDER BY pid DESC LIMIT $1 OFFSET $2;`
+	SQLPostsInfoByPID           = `SELECT post_info.pid, post_info.title, users.uid,users.name,users.username,users.avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", categories.tid, categories.tname, categories.name, categories.color, categories.admin FROM post_info INNER JOIN users ON uid = creator INNER JOIN categories ON tid = post_info.category ORDER BY pid DESC LIMIT $1 OFFSET $2;`
+
+	SQLInsertPost     = `INSERT INTO posts(content, markdown) VALUES ($1, $2) RETURNING pid;`
+	SQLInsertPostInfo = `INSERT INTO post_info(pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`
+
+	SQLUpdatePost      = `UPDATE posts SET content = $2, markdown = $3 WHERE pid = $1;`
+	SQLUpdatePostTitle = `UPDATE post_info SET title = $2 WHERE pid = $1;`
+	SQLUpdatePostLimit = `UPDATE post_info SET "limit" = $2 WHERE pid = $1;`
+
+	SQLPostNewReply    = `UPDATE post_info SET replies = replies + 1 WHERE pid = $1;`
+	SQLPostNewView     = `UPDATE post_info SET views = views + 1 WHERE pid = $1;`
+	SQLPostNewMod      = `UPDATE post_info SET last_mod = $2, activity = $2 WHERE pid = $1;`
+	SQLPostNewActivity = `UPDATE post_info SET activity = $2 WHERE pid = $1;`
+	SQLPostNewPosVote  = `UPDATE post_info SET vote_pos = array_append(vote_pos, $2) WHERE pid = $1;`
+	SQLPostNewNegVote  = `UPDATE post_info SET vote_neg = array_append(vote_neg, $2) WHERE pid = $1;`
+
+	SQLPostRemovePosVote = `UPDATE post_info SET vote_pos = array_remove(vote_pos, $2) WHERE pid = $1;`
+	SQLPostRemoveNegVote = `UPDATE post_info SET vote_neg = array_remove(vote_neg, $2) WHERE pid = $1;`
+
+	SQLPostedBy = `SELECT post_info.pid, post_info.title, users.uid,users.name,users.username,users.avatar, post_info.created_at, post_info.last_mod, post_info.replies, post_info.views, post_info.activity, post_info.hidden, post_info.vote_pos, post_info.vote_neg, post_info."limit", categories.tid, categories.tname, categories.name, categories.color, categories.admin FROM post_info INNER JOIN users ON uid = creator INNER JOIN categories ON tid = post_info.category WHERE creator = $1 ORDER BY activity DESC;`
+
+	//SQLPostedByAfter        = `SELECT pid, title, creator, created_at, last_mod, replies, views, activity, hidden, vote_pos, vote_neg, "limit", category FROM post_info WHERE creator = $1;`
 )
 
 func (pg *Postgres) PostByPID(pid int64) (*post.Post, error) {
@@ -60,11 +73,19 @@ func (pg *Postgres) PostInfoByPID(pid int64) (*post.Info, error) {
 	return info, nil
 }
 
-func (pg *Postgres) PostInfoByPage(size, offset int64) ([]*post.Info, error) {
-	row, err := pg.db.Query(SQLPostInfoByPage, size, offset)
+func (pg *Postgres) PostsInfoByActivity(hidden bool, size, offset int64) ([]*post.Info, error) {
+	var row *sql.Rows
+	var err error
+
+	if hidden {
+		row, err = pg.db.Query(SQLPostsInfoByActivityWithHidden, size, offset)
+	} else {
+		row, err = pg.db.Query(SQLPostsInfoByActivity, size, offset)
+	}
 	if err != nil {
 		return nil, err
 	}
+
 	var postInfoList []*post.Info
 	for row.Next() {
 		postInfo, err := post.ScanInfo(row)
@@ -76,11 +97,19 @@ func (pg *Postgres) PostInfoByPage(size, offset int64) ([]*post.Info, error) {
 	return postInfoList, nil
 }
 
-func (pg *Postgres) PostInfoIndex(size int64) ([]*post.Info, error) {
-	row, err := pg.db.Query(SQLPostInfoIndex, size)
+func (pg *Postgres) PostsInfoByCategory(hidden bool, size, offset, category int64) ([]*post.Info, error) {
+	var row *sql.Rows
+	var err error
+
+	if hidden {
+		row, err = pg.db.Query(SQLPostsInfoByCategoryWithHidden, size, offset, category)
+	} else {
+		row, err = pg.db.Query(SQLPostsInfoByCategory, size, offset, category)
+	}
 	if err != nil {
 		return nil, err
 	}
+
 	var postInfoList []*post.Info
 	for row.Next() {
 		postInfo, err := post.ScanInfo(row)
@@ -92,11 +121,19 @@ func (pg *Postgres) PostInfoIndex(size int64) ([]*post.Info, error) {
 	return postInfoList, nil
 }
 
-func (pg *Postgres) PostInfoCategory(size, category int64) ([]*post.Info, error) {
-	row, err := pg.db.Query(SQLPostInfoCategory, size, category)
+func (pg *Postgres) PostsInfoByPID(hidden bool, size, offset int64) ([]*post.Info, error) {
+	var row *sql.Rows
+	var err error
+
+	if hidden {
+		row, err = pg.db.Query(SQLPostsInfoByPIDWithHidden, size, offset)
+	} else {
+		row, err = pg.db.Query(SQLPostsInfoByPID, size, offset)
+	}
 	if err != nil {
 		return nil, err
 	}
+
 	var postInfoList []*post.Info
 	for row.Next() {
 		postInfo, err := post.ScanInfo(row)
