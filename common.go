@@ -40,3 +40,11 @@ func (ushio *Ushio) NavFromCtx(c *fiber.Ctx) (*Nav, error) {
 	nav.LoggedIn = true
 	return nav, nil
 }
+
+func (ushio *Ushio) AddArtifact(uid, add int64, reason string) error {
+	err := ushio.Data.AddArtifact(uid, add)
+	if err != nil {
+		return err
+	}
+	return nil
+}
