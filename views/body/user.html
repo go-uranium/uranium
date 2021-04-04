@@ -44,9 +44,11 @@
 					</div>
 				</div>
 				<div class="pro-r">
-                    {{ range $post := .Posts }}
-                        {{ $post.Title }}
-                    {{ end }}
+					<div class="container">
+						<table class="topic-list">
+                            {{ template "topic-list" .Posts }}
+						</table>
+					</div>
 				</div>
 			</div>
 	</section>
