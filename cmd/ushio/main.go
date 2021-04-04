@@ -96,7 +96,7 @@ func main() {
 		},
 		//Prefork:true,
 	})
-	app.Static("/static/", "static/")
+	app.Static("/", "static/")
 
 	app.Get("/test/", func(ctx *fiber.Ctx) error {
 		u.Lock.RLock()
