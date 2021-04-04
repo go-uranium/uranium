@@ -13,7 +13,8 @@ type Cache struct {
 
 	indexSize     int64
 	indexRefresh  *sync.RWMutex
-	indexPostInfo []*post.Info
+	indexPostInfo [][]*post.Info
+	indexMaxSize  int64
 
 	user    *sync.Map
 	session *sync.Map
@@ -30,7 +31,8 @@ func New(data data.Provider, indexSize int64) *Cache {
 
 		indexSize:     indexSize,
 		indexRefresh:  &sync.RWMutex{},
-		indexPostInfo: []*post.Info{},
+		indexPostInfo: [][]*post.Info{},
+		indexMaxSize:  100,
 
 		user:    &sync.Map{},
 		session: &sync.Map{},
