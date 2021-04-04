@@ -181,8 +181,8 @@ tr {
     border-bottom: 1px solid #e9e9e9;
 }
 
-tbody {
-    border-top: 3px solid #e9e9e9;
+thead {
+    border-bottom: 3px solid #e9e9e9;
 }
 
 .top-p {
