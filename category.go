@@ -1,6 +1,8 @@
 package ushio
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -18,7 +20,15 @@ func (ushio *Ushio) HandleCategory(ctx *fiber.Ctx) error {
 		return fiber.NewError(404, "Category not found.")
 	}
 
-	infos, err := ushio.Data.PostInfoCategory(ushio.Cache.IndexSize(), category.TID)
+	p := ctx.Query("p", "1")
+	page, err := strconv.Atoi(p)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	iSize := ushio.Cache.IndexSize()
+	infos, err := ushio.Data.PostsInfoByCategory(false,
+		iSize, int64(page-1)*iSize, category.TID)
 	if err != nil {
 		return err
 	}

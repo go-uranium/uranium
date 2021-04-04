@@ -1,6 +1,8 @@
 package ushio
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -12,7 +14,13 @@ func (ushio *Ushio) HandleHome(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	indexPosts := ushio.Cache.IndexPostInfo()
+	p := ctx.Query("p", "1")
+	page, err := strconv.Atoi(p)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	indexPosts := ushio.Cache.IndexPostInfo(int64(page))
 
 	return ctx.Render("home", fiber.Map{
 		"Meta": Meta{
