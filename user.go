@@ -1,4 +1,4 @@
-package ushio
+package uranium
 
 import (
 	"database/sql"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/go-ushio/ushio/core/user"
+	"github.com/go-ushio/ushio/model/user"
 )
 
 func (ushio *Ushio) HandleUser(ctx *fiber.Ctx) error {
@@ -44,7 +44,14 @@ func (ushio *Ushio) HandleUser(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	posts, err := ushio.Data.PostedBy(u.UID)
+	p := ctx.Query("p", "1")
+	page, err := strconv.Atoi(p)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	ps := ushio.Config.PageSize
+	posts, err := ushio.Data.PostsInfoByUID(ps, int64(page-1)*ps, u.UID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// do something
@@ -61,5 +68,68 @@ func (ushio *Ushio) HandleUser(ctx *fiber.Ctx) error {
 		"Nav":   nav,
 		"User":  u,
 		"Posts": posts,
+		"Active":1,
+	})
+}
+
+func (ushio *Ushio) HandleUserComments(ctx *fiber.Ctx) error {
+	// no database writing operations,
+	// lock is unnecessary
+	name := ctx.Params("name")
+	if len(name) < 1 || len(name) > 20 {
+		return fiber.NewError(400, "Invalid username or uid.")
+	}
+
+	u := &user.User{}
+	uid, err := strconv.Atoi(name)
+	if err == nil {
+		u, err = ushio.Data.UserByUID(int64(uid))
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return fiber.NewError(404, "User not found.")
+			}
+			return err
+		}
+		return ctx.Redirect("/u/"+u.Username+"/comments", 307)
+	} else {
+		u, err = ushio.Data.UserByUsername(name)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return fiber.NewError(404, "User not found.")
+			}
+			return err
+		}
+	}
+
+	nav, err := ushio.NavFromCtx(ctx)
+	if err != nil {
+		return err
+	}
+
+	p := ctx.Query("p", "1")
+	page, err := strconv.Atoi(p)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	ps := ushio.Config.PageSize
+	posts, err := ushio.Data.PostsInfoByCommentCreator(ps, int64(page-1)*ps, u.UID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// do something
+		} else {
+			return err
+		}
+	}
+
+	return ctx.Render("user", fiber.Map{
+		"Meta": &Meta{
+			Config:      *ushio.Config,
+			CurrentPage: fmt.Sprintf("%s (@%s)", u.Name, u.Username),
+		},
+		"Nav":   nav,
+		"User":  u,
+		"Posts": posts,
+		"Active":2,
 	})
 }

@@ -1,4 +1,4 @@
-package ushio
+package uranium
 
 import (
 	"strconv"
@@ -20,7 +20,10 @@ func (ushio *Ushio) HandleHome(ctx *fiber.Ctx) error {
 		page = 1
 	}
 
-	indexPosts := ushio.Cache.IndexPostInfo(int64(page))
+	indexPosts,err := ushio.Cache.IndexPostInfo(int64(page))
+	if err != nil {
+		return err
+	}
 
 	return ctx.Render("home", fiber.Map{
 		"Meta": Meta{

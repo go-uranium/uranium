@@ -1,4 +1,4 @@
-package ushio
+package uranium
 
 import "github.com/gofiber/fiber/v2"
 

@@ -1,22 +1,24 @@
-package ushio
+package uranium
 
 import (
 	"sync"
 
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/go-ushio/ushio/utils/sendmail"
+
 	"github.com/go-ushio/ushio/cache"
 	"github.com/go-ushio/ushio/data"
 	"github.com/go-ushio/ushio/utils/mdparse"
-	"github.com/go-ushio/ushio/utils/sendmail"
 )
 
 type Config struct {
 	SiteName string
 	Sender   sendmail.Sender
+	PageSize int64
 }
 
-// call ushio.Lock.Lock() before exiting
+// call uranium.Lock.Lock() before exiting
 type Ushio struct {
 	Data   data.Provider
 	Cache  cache.Cacher
@@ -25,7 +27,10 @@ type Ushio struct {
 }
 
 func New(provider data.Provider, config *Config) (*Ushio, error) {
-	cc := cache.New(provider, 25)
+	if config.PageSize < 1 {
+		config.PageSize = 35
+	}
+	cc := cache.New(provider, config.PageSize)
 	err := cc.Init()
 	if err != nil {
 		return &Ushio{}, err
@@ -44,6 +49,10 @@ func (ushio *Ushio) Configure(app *fiber.App) {
 	})
 	app.Get("/home", ushio.HandleHome)
 	app.Get("/u/:name", ushio.HandleUser)
+	app.Get("/u/:name/posts", func(ctx *fiber.Ctx) error {
+		return ctx.Redirect("/u/"+ctx.Params("name"),302)
+	})
+	app.Get("/u/:name/comments", ushio.HandleUserComments)
 	app.Get("/p/:post", ushio.HandlePost)
 	app.Get("/c/:tname", ushio.HandleCategory)
 	app.Get("/login", ushio.HandleLogin)

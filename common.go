@@ -1,11 +1,11 @@
-package ushio
+package uranium
 
 import (
 	"database/sql"
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/go-ushio/ushio/core/user"
+	"github.com/go-ushio/ushio/model/user"
 )
 
 type Nav struct {

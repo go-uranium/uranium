@@ -1,4 +1,4 @@
-package ushio
+package uranium
 
 import (
 	"database/sql"
@@ -9,9 +9,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/go-ushio/ushio/core/session"
-	"github.com/go-ushio/ushio/core/sign_up"
-	"github.com/go-ushio/ushio/core/user"
+	"github.com/go-ushio/ushio/model/session"
+	"github.com/go-ushio/ushio/model/sign_up"
+	"github.com/go-ushio/ushio/model/user"
 	"github.com/go-ushio/ushio/utils/hash"
 	"github.com/go-ushio/ushio/utils/recaptcha"
 	"github.com/go-ushio/ushio/utils/token"

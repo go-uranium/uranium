@@ -1,4 +1,4 @@
-package ushio
+package uranium
 
 import (
 	"database/sql"

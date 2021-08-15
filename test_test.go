@@ -1,4 +1,4 @@
-package ushio_test
+package uranium_test
 
 import (
 	"fmt"

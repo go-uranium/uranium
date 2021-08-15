@@ -1,4 +1,4 @@
-package ushio
+package uranium
 
 type Meta struct {
 	Config      Config

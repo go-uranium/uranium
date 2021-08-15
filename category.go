@@ -1,4 +1,4 @@
-package ushio
+package uranium
 
 import (
 	"strconv"
@@ -26,9 +26,9 @@ func (ushio *Ushio) HandleCategory(ctx *fiber.Ctx) error {
 		page = 1
 	}
 
-	iSize := ushio.Cache.IndexSize()
+	ps := ushio.Config.PageSize
 	infos, err := ushio.Data.PostsInfoByCategory(false,
-		iSize, int64(page-1)*iSize, category.TID)
+		ps, int64(page-1)*ps, category.TID)
 	if err != nil {
 		return err
 	}
