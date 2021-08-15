@@ -1,15 +1,15 @@
-package cache
+package memory
 
 import (
 	"sync"
 
-	"github.com/go-uranium/uranium/data"
 	"github.com/go-uranium/uranium/model/category"
 	"github.com/go-uranium/uranium/model/post"
+	"github.com/go-uranium/uranium/storage"
 )
 
 type Cache struct {
-	data data.Provider
+	data storage.Provider
 
 	indexSize     int64
 	indexRefresh  *sync.RWMutex
@@ -25,7 +25,7 @@ type Cache struct {
 	categoryByTName map[string]*category.Category
 }
 
-func New(data data.Provider, indexSize int64) *Cache {
+func New(data storage.Provider, indexSize int64) *Cache {
 	return &Cache{
 		data: data,
 

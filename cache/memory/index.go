@@ -1,4 +1,4 @@
-package cache
+package memory
 
 import (
 	"github.com/go-uranium/uranium/model/post"
@@ -29,7 +29,7 @@ func (cache *Cache) IndexPostInfo(page int64) ([]*post.Info, error) {
 func (cache *Cache) IndexPostInfoRefresh() error {
 	cache.indexRefresh.Lock()
 	defer cache.indexRefresh.Unlock()
-	//infos, err := cache.data.PostsInfoByActivity(false, cache.indexSize, 0)
+	//infos, err := cache.storage.PostsInfoByActivity(false, cache.indexSize, 0)
 	//if err != nil {
 	//	return err
 	//}

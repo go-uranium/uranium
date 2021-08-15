@@ -1,4 +1,4 @@
-package cache
+package memory
 
 import (
 	"github.com/go-uranium/uranium/model/category"
