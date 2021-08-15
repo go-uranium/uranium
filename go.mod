@@ -7,5 +7,5 @@ require (
 	github.com/gofiber/fiber/v2 v2.17.0
 	github.com/gofiber/template v1.6.7
 	github.com/google/uuid v1.2.0
-	github.com/lib/pq v1.10.0
+	github.com/lib/pq v1.10.2
 )
