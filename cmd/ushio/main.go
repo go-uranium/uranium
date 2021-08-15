@@ -12,9 +12,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
 
+	"github.com/go-ushio/ushio/utils/sendmail"
+
 	"github.com/go-ushio/ushio"
 	"github.com/go-ushio/ushio/data/postgres"
-	"github.com/go-ushio/ushio/utils/sendmail"
 )
 
 /*
