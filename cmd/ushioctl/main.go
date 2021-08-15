@@ -13,7 +13,7 @@ func main() {
 		return
 	}
 
-	//dsn := os.Getenv(`postgres://ushio:9rShFGyzD4oHxA4qmEzmgfmag79yxJq2@127.0.0.1/postgres?sslmode=disable`)
+	//dsn := os.Getenv(`postgres://uranium:9rShFGyzD4oHxA4qmEzmgfmag79yxJq2@127.0.0.1/postgres?sslmode=disable`)
 
 	switch os.Args[1] {
 	case "dump":
