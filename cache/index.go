@@ -4,24 +4,26 @@ import (
 	"github.com/go-ushio/ushio/model/post"
 )
 
-func (cache *Cache) IndexPostInfo(page int64) []*post.Info {
+func (cache *Cache) IndexPostInfo(page int64) ([]*post.Info,error) {
 	cache.indexRefresh.RLock()
 	defer cache.indexRefresh.RUnlock()
 	if page < 1 {
-		return nil
+		return nil,nil
 	}
 
 	if page > cache.indexMaxSize {
-		infos, _ := cache.data.PostsInfoByActivity(false,
+		return cache.data.PostsInfoByActivity(false,
 			cache.indexSize, (page-1)*cache.indexSize)
-		return infos
 	}
 
 	if cache.indexPostInfo[page-1] == nil {
-		_ = cache.indexPostInfoRefresh(page)
+		err := cache.indexPostInfoRefresh(page)
+		if err != nil {
+			return nil,err
+		}
 	}
 
-	return cache.indexPostInfo[page-1]
+	return cache.indexPostInfo[page-1],nil
 }
 
 func (cache *Cache) IndexPostInfoRefresh() error {

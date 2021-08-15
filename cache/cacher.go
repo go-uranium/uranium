@@ -14,7 +14,7 @@ type Cacher interface {
 	UserDrop(interface{}) error
 	UserDropAll() error
 
-	IndexPostInfo(page int64) []*post.Info
+	IndexPostInfo(page int64) ([]*post.Info,error)
 	IndexPostInfoRefresh() error
 
 	IndexSize() int64
