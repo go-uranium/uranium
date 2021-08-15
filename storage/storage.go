@@ -1,4 +1,4 @@
-package data
+package storage
 
 import (
 	"github.com/go-uranium/uranium/model/category"
