@@ -3,9 +3,9 @@ package cache
 import (
 	"sync"
 
-	"github.com/go-ushio/ushio/core/category"
-	"github.com/go-ushio/ushio/core/post"
 	"github.com/go-ushio/ushio/data"
+	"github.com/go-ushio/ushio/model/category"
+	"github.com/go-ushio/ushio/model/post"
 )
 
 type Cache struct {

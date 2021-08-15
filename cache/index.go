@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/go-ushio/ushio/core/post"
+	"github.com/go-ushio/ushio/model/post"
 )
 
 func (cache *Cache) IndexPostInfo(page int64) []*post.Info {

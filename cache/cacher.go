@@ -1,10 +1,10 @@
 package cache
 
 import (
-	"github.com/go-ushio/ushio/core/category"
-	"github.com/go-ushio/ushio/core/post"
-	"github.com/go-ushio/ushio/core/session"
-	"github.com/go-ushio/ushio/core/user"
+	"github.com/go-ushio/ushio/model/category"
+	"github.com/go-ushio/ushio/model/post"
+	"github.com/go-ushio/ushio/model/session"
+	"github.com/go-ushio/ushio/model/user"
 )
 
 type Cacher interface {
