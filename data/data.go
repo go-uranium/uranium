@@ -1,12 +1,12 @@
 package data
 
 import (
-	"github.com/go-ushio/ushio/core/category"
-	"github.com/go-ushio/ushio/core/comment"
-	"github.com/go-ushio/ushio/core/post"
-	"github.com/go-ushio/ushio/core/session"
-	"github.com/go-ushio/ushio/core/sign_up"
-	"github.com/go-ushio/ushio/core/user"
+	"github.com/go-ushio/ushio/model/category"
+	"github.com/go-ushio/ushio/model/comment"
+	"github.com/go-ushio/ushio/model/post"
+	"github.com/go-ushio/ushio/model/session"
+	"github.com/go-ushio/ushio/model/sign_up"
+	"github.com/go-ushio/ushio/model/user"
 )
 
 type Provider interface {
@@ -15,6 +15,8 @@ type Provider interface {
 	PostsInfoByActivity(hidden bool, size, offset int64) ([]*post.Info, error)
 	PostsInfoByCategory(hidden bool, size, offset, category int64) ([]*post.Info, error)
 	PostsInfoByPID(hidden bool, size, offset int64) ([]*post.Info, error)
+	PostsInfoByCommentCreator(size, offset, uid int64) ([]*post.Info, error)
+	PostsInfoByUID(size, offset, uid int64) ([]*post.Info, error)
 	InsertPost(p *post.Post) (int64, error)
 	InsertPostInfo(info *post.Info) error
 	UpdatePost(p *post.Post) error
@@ -28,10 +30,10 @@ type Provider interface {
 	PostNewNegVote(pid, uid int64) error
 	PostRemovePosVote(pid, uid int64) error
 	PostRemoveNegVote(pid, uid int64) error
-	PostedBy(uid int64) ([]*post.Info, error)
 
 	CommentsByPost(pid int64) ([]*comment.Comment, error)
-	CommentByCid(cid int64) (*comment.Comment, error)
+	CommentByCID(cid int64) (*comment.Comment, error)
+	CommentByUID(uid int64) ([]*comment.Comment, error)
 	InsertComment(cmt *comment.Comment) (int64, error)
 	UpdateComment(cmt *comment.Comment) error
 	CommentNewMod(cid int64) error

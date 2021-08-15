@@ -3,7 +3,7 @@ package postgres
 import (
 	"strings"
 
-	"github.com/go-ushio/ushio/core/user"
+	"github.com/go-ushio/ushio/model/user"
 	"github.com/go-ushio/ushio/utils/clean"
 )
 

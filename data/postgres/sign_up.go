@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"github.com/go-ushio/ushio/core/sign_up"
+	"github.com/go-ushio/ushio/model/sign_up"
 	"github.com/go-ushio/ushio/utils/clean"
 )
 
