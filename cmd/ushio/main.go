@@ -15,7 +15,7 @@ import (
 	"github.com/go-uranium/uranium/utils/sendmail"
 
 	"github.com/go-uranium/uranium"
-	"github.com/go-uranium/uranium/data/postgres"
+	"github.com/go-uranium/uranium/storage/postgres"
 )
 
 /*
@@ -29,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	textRender, err := template.New("email.txt.tmpl").ParseFiles("views/email.txt.tmpl")
+	textRender, err := template.New("email.txt.views").ParseFiles("views/email.txt.views")
 	if err != nil {
 		log.Fatalln(err)
 		return
@@ -52,7 +52,7 @@ func main() {
 		return
 	}
 
-	engine := html.New("./views", ".tmpl")
+	engine := html.New("./views", ".views")
 	engine.AddFunc("dateFormat", func(date time.Time) string {
 		sub := time.Now().Sub(date)
 		hours := sub.Hours()
