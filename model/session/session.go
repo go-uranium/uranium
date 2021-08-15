@@ -7,10 +7,12 @@ import (
 )
 
 type Session struct {
-	Token     string
-	UID       int64
-	UA        string
-	IP        string
+	Token string
+	UID   int64
+	UA    string
+	IP    string
+	// if is sudo mode
+	Sudo      bool
 	CreatedAt time.Time
 	ExpireAt  time.Time
 }
@@ -18,6 +20,7 @@ type Session struct {
 type Basic struct {
 	Token    string
 	UID      int64
+	Sudo     bool
 	ExpireAt time.Time
 }
 
