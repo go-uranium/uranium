@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/go-ushio/ushio/model/category"
+	"github.com/go-uranium/uranium/model/category"
 )
 
 func (cache *Cache) Categories() []*category.Category {

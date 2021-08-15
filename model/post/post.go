@@ -4,9 +4,9 @@ import (
 	"html/template"
 	"time"
 
-	"github.com/go-ushio/ushio/model/category"
-	"github.com/go-ushio/ushio/model/markdown"
-	"github.com/go-ushio/ushio/model/user"
+	"github.com/go-uranium/uranium/model/category"
+	"github.com/go-uranium/uranium/model/markdown"
+	"github.com/go-uranium/uranium/model/user"
 )
 
 type Info struct {

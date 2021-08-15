@@ -1,8 +1,8 @@
 package postgres
 
 import (
-	"github.com/go-ushio/ushio/model/sign_up"
-	"github.com/go-ushio/ushio/utils/clean"
+	"github.com/go-uranium/uranium/model/sign_up"
+	"github.com/go-uranium/uranium/utils/clean"
 )
 
 var (

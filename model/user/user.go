@@ -3,18 +3,18 @@ package user
 import (
 	"time"
 
-	"github.com/go-ushio/ushio/utils/clean"
-	"github.com/go-ushio/ushio/utils/hash"
+	"github.com/go-uranium/uranium/utils/clean"
+	"github.com/go-uranium/uranium/utils/hash"
 )
 
 type User struct {
-	UID       int64     `json:"uid"`
+	UID int64 `json:"uid"`
 	// "name" here stands for "display name"
-	Name      string    `json:"name"`
-	Username  string    `json:"username"`
-	Avatar    string    `json:"avatar"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Avatar   string `json:"avatar"`
 	// "electrons" is something like "karma" in reddit
-	Electrons int64     `json:"electrons"`
+	Electrons int64 `json:"electrons"`
 	// when set to 0, means the root mod
 	Mod       uint8     `json:"mod"`
 	CreatedAt time.Time `json:"created_at"`

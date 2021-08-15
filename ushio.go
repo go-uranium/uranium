@@ -5,11 +5,11 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/go-ushio/ushio/utils/sendmail"
+	"github.com/go-uranium/uranium/utils/sendmail"
 
-	"github.com/go-ushio/ushio/cache"
-	"github.com/go-ushio/ushio/data"
-	"github.com/go-ushio/ushio/utils/mdparse"
+	"github.com/go-uranium/uranium/cache"
+	"github.com/go-uranium/uranium/data"
+	"github.com/go-uranium/uranium/utils/mdparse"
 )
 
 type Config struct {
@@ -50,7 +50,7 @@ func (ushio *Ushio) Configure(app *fiber.App) {
 	app.Get("/home", ushio.HandleHome)
 	app.Get("/u/:name", ushio.HandleUser)
 	app.Get("/u/:name/posts", func(ctx *fiber.Ctx) error {
-		return ctx.Redirect("/u/"+ctx.Params("name"),302)
+		return ctx.Redirect("/u/"+ctx.Params("name"), 302)
 	})
 	app.Get("/u/:name/comments", ushio.HandleUserComments)
 	app.Get("/p/:post", ushio.HandlePost)

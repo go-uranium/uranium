@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/go-ushio/ushio/model/user"
+	"github.com/go-uranium/uranium/model/user"
 )
 
 type Nav struct {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/lib/pq"
 
-	"github.com/go-ushio/ushio/model/comment"
+	"github.com/go-uranium/uranium/model/comment"
 )
 
 var (

@@ -1,6 +1,6 @@
 package postgres
 
-import "github.com/go-ushio/ushio/model/category"
+import "github.com/go-uranium/uranium/model/category"
 
 var (
 	SQLGetCategories = `SELECT tid, tname, name, color, admin FROM categories;`

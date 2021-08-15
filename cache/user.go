@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/go-ushio/ushio/model/user"
+	"github.com/go-uranium/uranium/model/user"
 )
 
 func (cache *Cache) User(key interface{}) (*user.User, error) {

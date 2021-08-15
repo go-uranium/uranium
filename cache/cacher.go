@@ -1,10 +1,10 @@
 package cache
 
 import (
-	"github.com/go-ushio/ushio/model/category"
-	"github.com/go-ushio/ushio/model/post"
-	"github.com/go-ushio/ushio/model/session"
-	"github.com/go-ushio/ushio/model/user"
+	"github.com/go-uranium/uranium/model/category"
+	"github.com/go-uranium/uranium/model/post"
+	"github.com/go-uranium/uranium/model/session"
+	"github.com/go-uranium/uranium/model/user"
 )
 
 type Cacher interface {
@@ -14,7 +14,7 @@ type Cacher interface {
 	UserDrop(interface{}) error
 	UserDropAll() error
 
-	IndexPostInfo(page int64) ([]*post.Info,error)
+	IndexPostInfo(page int64) ([]*post.Info, error)
 	IndexPostInfoRefresh() error
 
 	Session(token string) (*session.Basic, error)

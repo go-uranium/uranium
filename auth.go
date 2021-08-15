@@ -9,13 +9,13 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/go-ushio/ushio/model/session"
-	"github.com/go-ushio/ushio/model/sign_up"
-	"github.com/go-ushio/ushio/model/user"
-	"github.com/go-ushio/ushio/utils/hash"
-	"github.com/go-ushio/ushio/utils/recaptcha"
-	"github.com/go-ushio/ushio/utils/token"
-	"github.com/go-ushio/ushio/utils/validate"
+	"github.com/go-uranium/uranium/model/session"
+	"github.com/go-uranium/uranium/model/sign_up"
+	"github.com/go-uranium/uranium/model/user"
+	"github.com/go-uranium/uranium/utils/hash"
+	"github.com/go-uranium/uranium/utils/recaptcha"
+	"github.com/go-uranium/uranium/utils/token"
+	"github.com/go-uranium/uranium/utils/validate"
 )
 
 func (ushio *Ushio) HandleLogin(ctx *fiber.Ctx) error {

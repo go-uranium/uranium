@@ -3,8 +3,8 @@ package postgres
 import (
 	"strings"
 
-	"github.com/go-ushio/ushio/model/user"
-	"github.com/go-ushio/ushio/utils/clean"
+	"github.com/go-uranium/uranium/model/user"
+	"github.com/go-uranium/uranium/utils/clean"
 )
 
 var (

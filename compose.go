@@ -6,9 +6,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/go-ushio/ushio/model/post"
-	"github.com/go-ushio/ushio/model/user"
-	"github.com/go-ushio/ushio/utils/mdparse"
+	"github.com/go-uranium/uranium/model/post"
+	"github.com/go-uranium/uranium/model/user"
+	"github.com/go-uranium/uranium/utils/mdparse"
 )
 
 func (ushio *Ushio) HandlePOSTCompose(ctx *fiber.Ctx) error {

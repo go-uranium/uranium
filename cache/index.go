@@ -1,14 +1,14 @@
 package cache
 
 import (
-	"github.com/go-ushio/ushio/model/post"
+	"github.com/go-uranium/uranium/model/post"
 )
 
-func (cache *Cache) IndexPostInfo(page int64) ([]*post.Info,error) {
+func (cache *Cache) IndexPostInfo(page int64) ([]*post.Info, error) {
 	cache.indexRefresh.RLock()
 	defer cache.indexRefresh.RUnlock()
 	if page < 1 {
-		return nil,nil
+		return nil, nil
 	}
 
 	if page > cache.indexMaxSize {
@@ -19,11 +19,11 @@ func (cache *Cache) IndexPostInfo(page int64) ([]*post.Info,error) {
 	if cache.indexPostInfo[page-1] == nil {
 		err := cache.indexPostInfoRefresh(page)
 		if err != nil {
-			return nil,err
+			return nil, err
 		}
 	}
 
-	return cache.indexPostInfo[page-1],nil
+	return cache.indexPostInfo[page-1], nil
 }
 
 func (cache *Cache) IndexPostInfoRefresh() error {

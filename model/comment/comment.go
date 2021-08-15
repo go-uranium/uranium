@@ -4,8 +4,8 @@ import (
 	"html/template"
 	"time"
 
-	"github.com/go-ushio/ushio/model/markdown"
-	"github.com/go-ushio/ushio/model/user"
+	"github.com/go-uranium/uranium/model/markdown"
+	"github.com/go-uranium/uranium/model/user"
 )
 
 type Comment struct {
@@ -20,4 +20,3 @@ type Comment struct {
 	VotePos []int64 `json:"vote_pos"`
 	VoteNeg []int64 `json:"vote_neg"`
 }
-

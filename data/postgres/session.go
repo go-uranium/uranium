@@ -3,7 +3,7 @@ package postgres
 import (
 	"database/sql"
 
-	"github.com/go-ushio/ushio/model/session"
+	"github.com/go-uranium/uranium/model/session"
 )
 
 var (

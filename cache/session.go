@@ -3,7 +3,7 @@ package cache
 import (
 	"sync"
 
-	"github.com/go-ushio/ushio/model/session"
+	"github.com/go-uranium/uranium/model/session"
 )
 
 func (cache *Cache) Session(token string) (*session.Basic, error) {

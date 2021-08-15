@@ -3,9 +3,9 @@ package sign_up
 import (
 	"time"
 
-	"github.com/go-ushio/ushio/common/scan"
-	"github.com/go-ushio/ushio/utils/clean"
-	"github.com/go-ushio/ushio/utils/token"
+	"github.com/go-uranium/uranium/common/scan"
+	"github.com/go-uranium/uranium/utils/clean"
+	"github.com/go-uranium/uranium/utils/token"
 )
 
 type SignUp struct {

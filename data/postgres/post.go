@@ -6,7 +6,7 @@ import (
 
 	"github.com/lib/pq"
 
-	"github.com/go-ushio/ushio/model/post"
+	"github.com/go-uranium/uranium/model/post"
 )
 
 var (
@@ -166,7 +166,7 @@ func (pg *Postgres) PostsInfoByCommentCreator(size, offset, uid int64) ([]*post.
 }
 
 func (pg *Postgres) PostsInfoByUID(size, offset, uid int64) ([]*post.Info, error) {
-	rows, err := pg.db.Query(SQLPostsInfoByUID,size, offset, uid)
+	rows, err := pg.db.Query(SQLPostsInfoByUID, size, offset, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +180,6 @@ func (pg *Postgres) PostsInfoByUID(size, offset, uid int64) ([]*post.Info, error
 	}
 	return posts, nil
 }
-
 
 func (pg *Postgres) InsertPost(p *post.Post) (int64, error) {
 	var pid int64
@@ -259,4 +258,3 @@ func (pg *Postgres) PostRemoveNegVote(pid, uid int64) error {
 	_, err := pg.db.Exec(SQLPostRemoveNegVote, pid, uid)
 	return err
 }
-

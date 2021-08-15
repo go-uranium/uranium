@@ -1,12 +1,12 @@
 package data
 
 import (
-	"github.com/go-ushio/ushio/model/category"
-	"github.com/go-ushio/ushio/model/comment"
-	"github.com/go-ushio/ushio/model/post"
-	"github.com/go-ushio/ushio/model/session"
-	"github.com/go-ushio/ushio/model/sign_up"
-	"github.com/go-ushio/ushio/model/user"
+	"github.com/go-uranium/uranium/model/category"
+	"github.com/go-uranium/uranium/model/comment"
+	"github.com/go-uranium/uranium/model/post"
+	"github.com/go-uranium/uranium/model/session"
+	"github.com/go-uranium/uranium/model/sign_up"
+	"github.com/go-uranium/uranium/model/user"
 )
 
 type Provider interface {

@@ -12,10 +12,10 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 
-	"github.com/go-ushio/ushio/data/postgres"
-	"github.com/go-ushio/ushio/model/category"
-	"github.com/go-ushio/ushio/model/post"
-	"github.com/go-ushio/ushio/model/user"
+	"github.com/go-uranium/uranium/data/postgres"
+	"github.com/go-uranium/uranium/model/category"
+	"github.com/go-uranium/uranium/model/post"
+	"github.com/go-uranium/uranium/model/user"
 )
 
 type Faker struct {

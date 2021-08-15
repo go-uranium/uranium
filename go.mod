@@ -1,4 +1,4 @@
-module github.com/go-ushio/ushio
+module github.com/go-uranium/uranium
 
 go 1.15
 

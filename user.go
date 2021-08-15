@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"github.com/go-ushio/ushio/model/user"
+	"github.com/go-uranium/uranium/model/user"
 )
 
 func (ushio *Ushio) HandleUser(ctx *fiber.Ctx) error {
@@ -65,10 +65,10 @@ func (ushio *Ushio) HandleUser(ctx *fiber.Ctx) error {
 			Config:      *ushio.Config,
 			CurrentPage: fmt.Sprintf("%s (@%s)", u.Name, u.Username),
 		},
-		"Nav":   nav,
-		"User":  u,
-		"Posts": posts,
-		"Active":1,
+		"Nav":    nav,
+		"User":   u,
+		"Posts":  posts,
+		"Active": 1,
 	})
 }
 
@@ -127,9 +127,9 @@ func (ushio *Ushio) HandleUserComments(ctx *fiber.Ctx) error {
 			Config:      *ushio.Config,
 			CurrentPage: fmt.Sprintf("%s (@%s)", u.Name, u.Username),
 		},
-		"Nav":   nav,
-		"User":  u,
-		"Posts": posts,
-		"Active":2,
+		"Nav":    nav,
+		"User":   u,
+		"Posts":  posts,
+		"Active": 2,
 	})
 }

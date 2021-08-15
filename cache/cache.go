@@ -3,9 +3,9 @@ package cache
 import (
 	"sync"
 
-	"github.com/go-ushio/ushio/data"
-	"github.com/go-ushio/ushio/model/category"
-	"github.com/go-ushio/ushio/model/post"
+	"github.com/go-uranium/uranium/data"
+	"github.com/go-uranium/uranium/model/category"
+	"github.com/go-uranium/uranium/model/post"
 )
 
 type Cache struct {
