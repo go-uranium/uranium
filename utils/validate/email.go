@@ -7,7 +7,7 @@ import (
 )
 
 var EmailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-var EmailCheckMX = true
+var EmailCheckMX = false
 
 func Email(e string) bool {
 	// the shortest example: i@ai
@@ -20,6 +20,9 @@ func Email(e string) bool {
 	}
 	if EmailCheckMX {
 		parts := strings.Split(e, "@")
+		if len(parts) !=2{
+			return false
+		}
 		mx, err := net.LookupMX(parts[1])
 		if err != nil || len(mx) == 0 {
 			return false

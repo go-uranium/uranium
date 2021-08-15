@@ -19,6 +19,6 @@ func BenchmarkNew(b *testing.B) {
 
 func BenchmarkUUID(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		uuid.New().String()
+		_ = uuid.New().String()
 	}
 }

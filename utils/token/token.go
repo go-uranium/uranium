@@ -13,7 +13,15 @@ func New() string {
 	return base64.StdEncoding.EncodeToString(r)
 }
 
-func random(length int64) ([]byte, error) {
+func NewInt(l int) string {
+	r, err := random(l)
+	if err != nil {
+		panic(err)
+	}
+	return base64.StdEncoding.EncodeToString(r)
+}
+
+func random(length int) ([]byte, error) {
 	r := make([]byte, length)
 	_, err := rand.Read(r)
 	if err != nil {

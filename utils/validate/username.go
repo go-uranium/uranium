@@ -9,13 +9,13 @@ import (
 var UsernameRegex = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]{0,19}$`)
 var UsernameMax = 20
 
-func Username(u string) bool {
+func Username(u string) (bool,string) {
 	if len(u) < 1 || len(u) > UsernameMax {
-		return false
+		return false,""
 	}
-	u = clean.String(u)
+	u = clean.Username(u)
 	if !UsernameRegex.MatchString(u) {
-		return false
+		return false,""
 	}
-	return true
+	return true,u
 }
