@@ -3,7 +3,7 @@ package session
 import (
 	"time"
 
-	"github.com/go-uranium/uranium/common/scan"
+	"github.com/go-uranium/uranium/utils/scan"
 )
 
 type Session struct {

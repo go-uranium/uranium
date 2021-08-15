@@ -3,7 +3,8 @@ package sign_up
 import (
 	"time"
 
-	"github.com/go-uranium/uranium/common/scan"
+	"github.com/go-uranium/uranium/utils/scan"
+
 	"github.com/go-uranium/uranium/utils/clean"
 	"github.com/go-uranium/uranium/utils/token"
 )

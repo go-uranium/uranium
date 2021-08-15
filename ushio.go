@@ -8,7 +8,8 @@ import (
 	"github.com/go-uranium/uranium/utils/sendmail"
 
 	"github.com/go-uranium/uranium/cache"
-	"github.com/go-uranium/uranium/data"
+	"github.com/go-uranium/uranium/cache/memory"
+	"github.com/go-uranium/uranium/storage"
 	"github.com/go-uranium/uranium/utils/mdparse"
 )
 
@@ -20,17 +21,17 @@ type Config struct {
 
 // call uranium.Lock.Lock() before exiting
 type Ushio struct {
-	Data   data.Provider
+	Data   storage.Provider
 	Cache  cache.Cacher
 	Config *Config
 	Lock   *sync.RWMutex
 }
 
-func New(provider data.Provider, config *Config) (*Ushio, error) {
+func New(provider storage.Provider, config *Config) (*Ushio, error) {
 	if config.PageSize < 1 {
 		config.PageSize = 35
 	}
-	cc := cache.New(provider, config.PageSize)
+	cc := memory.New(provider, config.PageSize)
 	err := cc.Init()
 	if err != nil {
 		return &Ushio{}, err

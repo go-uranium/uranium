@@ -2,7 +2,7 @@ package flags
 
 import "strings"
 
-// Flags is a csv type data type for marking
+// Flags is a csv type storage type for marking
 type Flags string
 
 // New news a *Flags

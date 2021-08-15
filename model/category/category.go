@@ -3,7 +3,7 @@ package category
 import (
 	"github.com/lib/pq"
 
-	"github.com/go-uranium/uranium/common/scan"
+	"github.com/go-uranium/uranium/utils/scan"
 )
 
 type Category struct {
