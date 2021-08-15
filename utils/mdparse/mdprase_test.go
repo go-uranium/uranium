@@ -3,8 +3,6 @@ package mdparse_test
 import (
 	"fmt"
 	"testing"
-
-	"github.com/go-ushio/ushio/utils/mdparse"
 )
 
 func TestParse(t *testing.T) {
@@ -23,7 +21,7 @@ func TestParse(t *testing.T) {
 
 ` + "```"
 
-	html, err := mdparse.Parse(testStr)
+	html, err := Parse(testStr)
 	if err != nil {
 		t.Error(err)
 	}

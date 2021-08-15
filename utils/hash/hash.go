@@ -11,8 +11,8 @@ func SHA256(b []byte) []byte {
 	return h[:]
 }
 
-func SHA256Compare(hash []byte, b []byte) bool {
-	h := SHA256(b)
+func SHA256Validate(hash []byte, data []byte) bool {
+	h := SHA256(data)
 	if bytes.Compare(hash, h) == 0 {
 		return true
 	}

@@ -29,7 +29,7 @@ func Verify(grrc string) (bool, error) {
 	if len(grrc) == 0 {
 		return false, nil
 	}
-	response, err := VerifyFull(&Request{
+	response, err := VerifyRequest(&Request{
 		Secret:   DefaultSecret,
 		Response: grrc,
 	})
@@ -45,7 +45,7 @@ func Verify(grrc string) (bool, error) {
 	return response.Success, nil
 }
 
-func VerifyFull(req *Request) (*Response, error) {
+func VerifyRequest(req *Request) (*Response, error) {
 	resp, err := http.PostForm("https://www.google.com/recaptcha/api/siteverify", req.Values())
 	if err != nil {
 		return &Response{}, err
