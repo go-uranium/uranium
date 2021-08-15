@@ -29,16 +29,16 @@ func main() {
 		panic(err)
 	}
 
-	textRender, err := template.New("email.txt").ParseFiles("views/email.txt")
+	textRender, err := template.New("email.txt.tmpl").ParseFiles("views/email.txt.tmpl")
 	if err != nil {
 		log.Fatalln(err)
 		return
 	}
 
-	u, err := ushio.New(pg, &ushio.Config{
+	u, err := uranium.New(pg, &uranium.Config{
 		SiteName: "Ushio",
 		Sender: &sendmail.SMTPClient{
-			From:     "no-reply@ushio.zincic.com",
+			From:     "no-reply@uranium.zincic.com",
 			Password: os.Getenv("SMTP_PASSWORD"),
 			Host:     "smtp.mailgun.org",
 			Port:     "587",
@@ -52,7 +52,7 @@ func main() {
 		return
 	}
 
-	engine := html.New("./views", ".html")
+	engine := html.New("./views", ".tmpl")
 	engine.AddFunc("dateFormat", func(date time.Time) string {
 		sub := time.Now().Sub(date)
 		hours := sub.Hours()

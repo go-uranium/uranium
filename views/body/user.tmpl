@@ -1,0 +1,64 @@
+{{define "body/user"}}
+	<section class="section">
+		<div class="container pro-ctn">
+			<div class="pro-t is-hidden-mobile">
+				<div class="pro-t-pd"></div>
+				<div class="tabs" style="border-bottom: none;width: 75%;padding-left: 3%;">
+					<ul>
+						<li {{ if eq .Active 1 }}class="is-active"{{ end }} ><a href="/u/{{- .User.Username -}}">Posts</a></li>
+						<li {{ if eq .Active 2 }}class="is-active"{{ end }} ><a href="/u/{{- .User.Username -}}/comments">Comments</a></li>
+						<li {{ if eq .Active 3 }}class="is-active"{{ end }} ><a href="/u/{{- .User.Username -}}/likes">Likes</a></li>
+						<li {{ if eq .Active 4 }}class="is-active"{{ end }} ><a href="/u/{{- .User.Username -}}/badges">Badges</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="pro-cr">
+				<div class="pro-c">
+					<div class="pro-l">
+						<div class="pro-group">
+							<div>
+								<figure class="image">
+									<img class="is-rounded avatar"
+										 src="https://www.gravatar.com/avatar/{{ .User.Avatar }}?s=256&d=identicon">
+								</figure>
+							</div>
+							<div class="name-group">
+								<h1 class="pro-name">{{ .User.Name }}</h1>
+								<span class="pro-username">@{{ .User.Username }}</span>
+							</div>
+						</div>
+						<div class="block" style="padding:1em 0">
+                            {{ .User.Bio }}
+						</div>
+                        {{/*TODO: social*/}}
+					</div>
+					<div class="pro-m is-hidden-tablet">
+						<div class="tabs">
+							<ul>
+								<li {{ if eq .Active 1 }}class="is-active"{{ end }} ><a href="/u/{{- .User.Username -}}">Posts</a></li>
+								<li {{ if eq .Active 2 }}class="is-active"{{ end }} ><a href="/u/{{- .User.Username -}}/comments">Comments</a></li>
+								<li {{ if eq .Active 3 }}class="is-active"{{ end }} ><a href="/u/{{- .User.Username -}}/likes">Likes</a></li>
+								<li {{ if eq .Active 4 }}class="is-active"{{ end }} ><a href="/u/{{- .User.Username -}}/badges">Badges</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="pro-r">
+					<div class="container">
+						<table class="topic-list" style="margin-top: 1em">
+							<thead>
+							<tr>
+								<th class="top-t">Topic</th>
+								<th aria-label="Posters" class="top-p"></th>
+								<th class="top-r"><span class="is-hidden-mobile">Replies</span></th>
+								<th class="is-hidden-mobile top-v">Views</th>
+								<th class="is-hidden-mobile top-a">Activity</th>
+							</tr>
+							</thead>
+                            {{ template "topic-list" .Posts }}
+						</table>
+					</div>
+				</div>
+			</div>
+	</section>
+{{ end }}
