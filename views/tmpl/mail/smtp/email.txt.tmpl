@@ -1,0 +1,13 @@
+{{- $token := .Message -}}
+{{- $dst := .Destination -}}
+{{- $from := .From -}}
+{{- $url := printf "https://uranium.zincic.com/sign_up?token=%s&email=%s" $token $dst -}}
+From: "no-reply" <{{- $from -}}>
+To: "{{- $dst -}}" <{{- $dst -}}>
+Subject: Your verification code
+
+Hi, there
+Please continue your registration by open the link below.
+{{ $url }}
+Best Regards,
+Zincic Team
