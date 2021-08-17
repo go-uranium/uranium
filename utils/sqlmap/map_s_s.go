@@ -9,25 +9,25 @@ import (
 
 // stores as a json text in database
 // always not null
-type MapStringString struct {
+type StringString struct {
 	mp      map[string]string
 	mpReady bool
 	js      []byte
 	jsReady bool
 }
 
-func NewMapSS(m map[string]string) *MapStringString {
+func NewMapSS(m map[string]string) *StringString {
 	if m == nil {
 		m = map[string]string{}
 	}
-	return &MapStringString{
+	return &StringString{
 		mp:      m,
 		mpReady: true,
 	}
 }
 
 // Scan implements the Scanner interface.
-func (mss *MapStringString) Scan(value interface{}) error {
+func (mss *StringString) Scan(value interface{}) error {
 	ns := &sql.NullString{}
 	err := ns.Scan(value)
 	if err != nil {
@@ -42,7 +42,7 @@ func (mss *MapStringString) Scan(value interface{}) error {
 }
 
 // Value implements the driver Valuer interface.
-func (mss *MapStringString) Value() (driver.Value, error) {
+func (mss *StringString) Value() (driver.Value, error) {
 	if !mss.jsReady {
 		if !mss.mpReady {
 			mss.mp = map[string]string{}
@@ -59,7 +59,7 @@ func (mss *MapStringString) Value() (driver.Value, error) {
 	return ns.Value()
 }
 
-func (mss *MapStringString) MarshalJSON() ([]byte, error) {
+func (mss *StringString) MarshalJSON() ([]byte, error) {
 	// json is ready
 	// map is/not ready
 	if mss.jsReady {
@@ -81,12 +81,12 @@ func (mss *MapStringString) MarshalJSON() ([]byte, error) {
 	return []byte("{}"), nil
 }
 
-func (mss *MapStringString) UnmarshalJSON(b []byte) error {
+func (mss *StringString) UnmarshalJSON(b []byte) error {
 	mss.js = b
 	return nil
 }
 
-func (mss *MapStringString) Map() (map[string]string, error) {
+func (mss *StringString) Map() (map[string]string, error) {
 	if mss.mpReady {
 		return mss.mp, nil
 	}
@@ -100,7 +100,7 @@ func (mss *MapStringString) Map() (map[string]string, error) {
 	return map[string]string{}, nil
 }
 
-func (mss *MapStringString) jsFromMap() error {
+func (mss *StringString) jsFromMap() error {
 	if !mss.mpReady {
 		return errors.New("map status not ready")
 	}
@@ -113,7 +113,7 @@ func (mss *MapStringString) jsFromMap() error {
 	return nil
 }
 
-func (mss *MapStringString) mapFromJs() error {
+func (mss *StringString) mapFromJs() error {
 	if !mss.jsReady {
 		mss.mp = map[string]string{}
 		mss.mpReady = true

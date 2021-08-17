@@ -12,7 +12,7 @@ func TestMapStringString_MarshalJSON(t *testing.T) {
 	type T struct {
 		A string
 		B int
-		C *sqlmap.MapStringString
+		C *sqlmap.StringString
 	}
 	data := &T{
 		A: "aaaa",
@@ -49,7 +49,7 @@ func TestMapStringString_MarshalJSON(t *testing.T) {
 		return
 	}
 
-	data.C = &sqlmap.MapStringString{}
+	data.C = &sqlmap.StringString{}
 	_, err = json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		t.Error(err)
