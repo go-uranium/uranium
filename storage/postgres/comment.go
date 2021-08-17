@@ -9,9 +9,7 @@ import (
 )
 
 var (
-	SQLCommentsByPost = `SELECT comments.cid, comments.pid, comments.content, comments.markdown, users.uid,users.name,users.username,users.avatar, comments.created_at, last_mod, vote_pos, vote_neg FROM comments INNER JOIN users ON uid = creator WHERE pid = $1;`
-	SQLCommentByCID   = `SELECT comments.cid, comments.pid, comments.content, comments.markdown, users.uid,users.name,users.username,users.avatar, comments.created_at, last_mod, vote_pos, vote_neg FROM comments INNER JOIN users ON uid = creator WHERE cid = $1;`
-	SQLCommentsByUID  = `SELECT comments.cid, comments.pid, comments.content, comments.markdown, users.uid,users.name,users.username,users.avatar, comments.created_at, last_mod, vote_pos, vote_neg FROM comments INNER JOIN users ON uid = creator WHERE creator = $1;`
+	SQLCommentsByUID = `SELECT comments.cid, comments.pid, comments.content, comments.markdown, users.uid,users.name,users.username,users.avatar, comments.created_at, last_mod, vote_pos, vote_neg FROM comments INNER JOIN users ON uid = creator WHERE creator = $1;`
 
 	SQLInsertComment     = `INSERT INTO comments(pid, content, markdown, creator, created_at, last_mod, vote_pos, vote_neg) VALUES (pid = $1, content = $2, markdown = $3, creator= $4, created_at = $5, last_mod = $6, vote_pos = $7, vote_neg = $8) RETURNING cid;`
 	SQLUpdateComment     = `UPDATE comments SET pid = $2, content = $3, markdown = $4, creator= $5, created_at = $6, last_mod = $7, vote_pos = $8, vote_neg = $9 WHERE cid = $1;`
@@ -19,6 +17,8 @@ var (
 	SQLCommentNewPosVote = `UPDATE comments SET vote_pos = array_append(vote_pos, $2) WHERE cid = $1;`
 	SQLCommentNewNegVote = `UPDATE comments SET vote_neg = array_append(vote_neg, $2) WHERE cid = $1;`
 )
+
+var SQLCommentsByPost = `SELECT comments.cid, comments.pid, comments.content, comments.markdown, users.uid,users.name,users.username,users.avatar, comments.created_at, last_mod, vote_pos, vote_neg FROM comments INNER JOIN users ON uid = creator WHERE pid = $1;`
 
 func (pg *Postgres) CommentsByPost(pid int64) ([]*comment.Comment, error) {
 	row, err := pg.db.Query(SQLCommentsByPost, pid)
@@ -35,6 +35,12 @@ func (pg *Postgres) CommentsByPost(pid int64) ([]*comment.Comment, error) {
 	}
 	return cmts, nil
 }
+
+var SQLCommentByCID = `SELECT comments.cid, comments.pid, comments.content, 
+       comments.markdown, users.uid, users.name, users.username, 
+       users.avatar, comments.created_at, last_mod, 
+       vote_pos, vote_neg FROM comments INNER JOIN users 
+           ON uid = creator WHERE cid = $1;`
 
 func (pg *Postgres) CommentByCID(cid int64) (*comment.Comment, error) {
 	row := pg.db.QueryRow(SQLCommentByCID, cid)

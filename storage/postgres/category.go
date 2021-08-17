@@ -1,9 +1,11 @@
 package postgres
 
-import "github.com/go-uranium/uranium/model/category"
+import (
+	"github.com/go-uranium/uranium/model/category"
+)
 
 var (
-	SQLGetCategories = `SELECT tid, tname, name, color, admin FROM categories;`
+	SQLGetCategories = `SELECT tid, tname, name, color FROM categories;`
 )
 
 func (pg *Postgres) GetCategories() ([]*category.Category, error) {
@@ -13,7 +15,8 @@ func (pg *Postgres) GetCategories() ([]*category.Category, error) {
 	}
 	var cates []*category.Category
 	for rows.Next() {
-		cate, err := category.ScanCategory(rows)
+		cate := &category.Category{}
+		err := rows.Scan(&cate.TID, &cate.TName, &cate.Name, &cate.Color)
 		if err != nil {
 			return nil, err
 		}

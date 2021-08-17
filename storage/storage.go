@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"github.com/pkg/errors"
+
 	"github.com/go-uranium/uranium/model/category"
 	"github.com/go-uranium/uranium/model/comment"
 	"github.com/go-uranium/uranium/model/post"
@@ -8,6 +10,8 @@ import (
 	"github.com/go-uranium/uranium/model/sign_up"
 	"github.com/go-uranium/uranium/model/user"
 )
+
+var ErrAlreadyExists = errors.New("database already exists")
 
 type Provider interface {
 	PostByPID(pid int64) (*post.Post, error)
@@ -46,16 +50,25 @@ type Provider interface {
 	InsertSession(sess *session.Session) error
 	DeleteUserSessions(uid int64) error
 
-	UserByUID(uid int64) (*user.User, error)
+	// user insert
+	InsertUser(u *user.User) (int32, error)
+	InsertUserAuth(auth *user.Auth) error
+	InsertUserProfile(profile *user.Profile) error
+	// user query
+	UserByUID(uid int32) (*user.User, error)
 	UserByEmail(email string) (*user.User, error)
 	UserByUsername(username string) (*user.User, error)
-	UserAuthByUID(uid int64) (*user.Auth, error)
-	InsertUser(u *user.User) (int64, error)
-	InsertUserAuth(auth *user.Auth) error
+	UserAuthByUID(uid int32) (*user.Auth, error)
+	UserProfileByUID(uid int32) (*user.Profile, error)
+	// user update
 	UpdateUser(u *user.User) error
 	UpdateUserAuth(auth *user.Auth) error
-	AddArtifact(uid, add int64) error
-	DeleteUser(uid int64) error
+	UpdateUserProfile(profile *user.Profile) error
+	// user update shortcuts
+	AddElectrons(uid, add int32) error
+	// delete
+	DeleteUser(uid int32) error
+	// check if exist
 	UsernameExists(username string) (bool, error)
 	EmailExists(email string) (bool, error)
 	//UserFollow(op, target int64) error
@@ -72,5 +85,6 @@ type Provider interface {
 
 	GetCategories() ([]*category.Category, error)
 
+	Init() error
 	Close() error
 }
