@@ -40,7 +40,7 @@ func main() {
 		Sender: &sendmail.SMTPClient{
 			From:     "no-reply@uranium.zincic.com",
 			Password: os.Getenv("SMTP_PASSWORD"),
-			Host:     "smtp.mailgun.org",
+			Host:     "viasmtp.mailgun.org",
 			Port:     "587",
 			Subject:  "Verify your email address.",
 			Text:     textRender,
