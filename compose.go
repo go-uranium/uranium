@@ -62,7 +62,7 @@ func (ushio *Ushio) HandleCompose(ctx *fiber.Ctx) error {
 	}
 
 	if !nav.LoggedIn {
-		return ctx.Redirect("/", 303)
+		return ctx.Redirect("/", http.StatusSeeOther)
 	}
 
 	return ctx.Render("compose", fiber.Map{

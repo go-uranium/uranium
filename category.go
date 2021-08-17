@@ -1,6 +1,7 @@
 package uranium
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +18,7 @@ func (ushio *Ushio) HandleCategory(ctx *fiber.Ctx) error {
 	tname := ctx.Params("tname")
 	category := ushio.Cache.Category(tname)
 	if category == nil {
-		return fiber.NewError(404, "Category not found.")
+		return fiber.NewError(http.StatusNotFound, "Category not found.")
 	}
 
 	p := ctx.Query("p", "1")

@@ -1,6 +1,7 @@
 package uranium
 
 import (
+	"net/http"
 	"sync"
 
 	"github.com/gofiber/fiber/v2"
@@ -46,7 +47,7 @@ func New(provider storage.Provider, config *Config) (*Ushio, error) {
 
 func (ushio *Ushio) Configure(app *fiber.App) {
 	app.Get("/", func(ctx *fiber.Ctx) error {
-		return ctx.Redirect("/home", 307)
+		return ctx.Redirect("/home", http.StatusTemporaryRedirect)
 	})
 	app.Get("/home", ushio.HandleHome)
 	app.Get("/u/:name", ushio.HandleUser)
@@ -65,7 +66,7 @@ func (ushio *Ushio) Configure(app *fiber.App) {
 	app.Post("/vote/post", ushio.HandlePOSTVotePost)
 	app.Get("/logout", func(ctx *fiber.Ctx) error {
 		ctx.ClearCookie("token")
-		return ctx.Redirect("/", 307)
+		return ctx.Redirect("/", http.StatusTemporaryRedirect)
 	})
 
 	app.Post("/md_parse", func(ctx *fiber.Ctx) error {

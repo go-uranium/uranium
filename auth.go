@@ -76,7 +76,7 @@ func (ushio *Ushio) HandlePOSTLogin(ctx *fiber.Ctx) error {
 	}
 
 	if err != nil {
-		ctx.Status(401)
+		ctx.Status(http.StatusUnauthorized)
 		if err == sql.ErrNoRows {
 			return ctx.Render("login", fiber.Map{
 				"Meta": Meta{
@@ -130,9 +130,9 @@ func (ushio *Ushio) HandlePOSTLogin(ctx *fiber.Ctx) error {
 		}
 
 		ctx.Cookie(ck)
-		return ctx.Redirect("/home", 303)
+		return ctx.Redirect("/home", http.StatusSeeOther)
 	} else {
-		ctx.Status(401)
+		ctx.Status(http.StatusUnauthorized)
 		return ctx.Render("login", fiber.Map{
 			"Meta": Meta{
 				Config:      *ushio.Config,

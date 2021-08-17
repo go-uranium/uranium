@@ -2,6 +2,7 @@ package uranium
 
 import (
 	"database/sql"
+	"net/http"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,18 +18,18 @@ func (ushio *Ushio) HandlePost(ctx *fiber.Ctx) error {
 
 	postID := ctx.Params("post")
 	if len(postID) < 1 || len(postID) > 10 {
-		return fiber.NewError(400, "Invalid post id.")
+		return fiber.NewError(http.StatusBadRequest, "Invalid post id.")
 	}
 
 	pid, err := strconv.Atoi(postID)
 	if err != nil {
-		return fiber.NewError(400, "Invalid post id.")
+		return fiber.NewError(http.StatusBadRequest, "Invalid post id.")
 	}
 
 	post, err := ushio.Data.PostByPID(int64(pid))
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return fiber.NewError(404, "Post not found.")
+			return fiber.NewError(http.StatusNotFound, "Post not found.")
 		}
 		return err
 	}

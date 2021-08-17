@@ -3,6 +3,7 @@ package uranium
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,7 +16,7 @@ func (ushio *Ushio) HandleUser(ctx *fiber.Ctx) error {
 	// lock is unnecessary
 	name := ctx.Params("name")
 	if len(name) < 1 || len(name) > 20 {
-		return fiber.NewError(400, "Invalid username or uid.")
+		return fiber.NewError(http.StatusBadRequest, "Invalid username or uid.")
 	}
 
 	u := &user.User{}
@@ -24,16 +25,16 @@ func (ushio *Ushio) HandleUser(ctx *fiber.Ctx) error {
 		u, err = ushio.Data.UserByUID(int64(uid))
 		if err != nil {
 			if err == sql.ErrNoRows {
-				return fiber.NewError(404, "User not found.")
+				return fiber.NewError(http.StatusNotFound, "User not found.")
 			}
 			return err
 		}
-		return ctx.Redirect("/u/"+u.Username, 307)
+		return ctx.Redirect("/u/"+u.Username, http.StatusTemporaryRedirect)
 	} else {
 		u, err = ushio.Data.UserByUsername(name)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				return fiber.NewError(404, "User not found.")
+				return fiber.NewError(http.StatusNotFound, "User not found.")
 			}
 			return err
 		}
@@ -77,7 +78,7 @@ func (ushio *Ushio) HandleUserComments(ctx *fiber.Ctx) error {
 	// lock is unnecessary
 	name := ctx.Params("name")
 	if len(name) < 1 || len(name) > 20 {
-		return fiber.NewError(400, "Invalid username or uid.")
+		return fiber.NewError(http.StatusUnauthorized, "Invalid username or uid.")
 	}
 
 	u := &user.User{}
@@ -86,16 +87,16 @@ func (ushio *Ushio) HandleUserComments(ctx *fiber.Ctx) error {
 		u, err = ushio.Data.UserByUID(int64(uid))
 		if err != nil {
 			if err == sql.ErrNoRows {
-				return fiber.NewError(404, "User not found.")
+				return fiber.NewError(http.StatusNotFound, "User not found.")
 			}
 			return err
 		}
-		return ctx.Redirect("/u/"+u.Username+"/comments", 307)
+		return ctx.Redirect("/u/"+u.Username+"/comments", http.StatusTemporaryRedirect)
 	} else {
 		u, err = ushio.Data.UserByUsername(name)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				return fiber.NewError(404, "User not found.")
+				return fiber.NewError(http.StatusNotFound, "User not found.")
 			}
 			return err
 		}
