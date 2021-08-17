@@ -1,11 +1,13 @@
 package uranium
 
 import (
+	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/go-uranium/uranium/model/markdown"
 	"github.com/go-uranium/uranium/model/post"
 	"github.com/go-uranium/uranium/model/user"
 	"github.com/go-uranium/uranium/utils/mdparse"
@@ -20,7 +22,7 @@ func (ushio *Ushio) HandlePOSTCompose(ctx *fiber.Ctx) error {
 	}
 
 	if !nav.LoggedIn {
-		return ctx.Redirect("/", 303)
+		return ctx.Redirect("/", http.StatusSeeOther)
 	}
 
 	content, err := mdparse.Parse(ctx.FormValue("compose-content"))
@@ -32,13 +34,16 @@ func (ushio *Ushio) HandlePOSTCompose(ctx *fiber.Ctx) error {
 	p := &post.Post{
 		Info: &post.Info{
 			Title:     ctx.FormValue("title"),
-			Creator:   user.Simple{UID: nav.User.UID},
+			Creator:   user.Basic{UID: nav.User.UID},
 			CreatedAt: now,
 			LastMod:   now,
 			Activity:  now,
 		},
-		Content:  *content,
-		Markdown: ctx.FormValue("compose-content"),
+		Content: *content,
+		Markdown: &markdown.Markdown{
+			Type:    markdown.TYPE_POST,
+			Content: ctx.FormValue("compose-content"),
+		},
 	}
 	pid, err := ushio.Data.InsertPost(p)
 	if err != nil {
@@ -50,7 +55,7 @@ func (ushio *Ushio) HandlePOSTCompose(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.Redirect("/p/"+strconv.Itoa(int(pid)), 303)
+	return ctx.Redirect("/p/"+strconv.Itoa(int(pid)), http.StatusSeeOther)
 }
 
 func (ushio *Ushio) HandleCompose(ctx *fiber.Ctx) error {
