@@ -6,11 +6,11 @@ import (
 	"testing"
 )
 
-func TestDate(t *testing.T) {
+func TestDate_Now(t *testing.T) {
 	type T struct {
 		A int
 		B string
-		C Date
+		C *Date
 	}
 	data := &T{
 		A: 2021,
@@ -39,6 +39,43 @@ func TestDate(t *testing.T) {
 	}
 
 	fmt.Println(*data1)
+}
+
+func TestDate_Encode(t *testing.T) {
+	d := Now()
+	e := d.Encode()
+	d1 := New(e)
+	fmt.Println(d, e, d1)
+}
+
+func TestDate_Compare(t *testing.T) {
+	d1 := &Date{
+		Year:  2021,
+		Month: 07,
+		Day:   30,
+	}
+
+	d2 := &Date{
+		Year:  2001,
+		Month: 12,
+		Day:   1,
+	}
+
+	d3 := &Date{
+		Year:  2001,
+		Month: 12,
+		Day:   31,
+	}
+
+	if d1.Compare(d1) != 0 {
+		t.Error("expected: 0")
+	}
+	if d3.Compare(d1) != -1 {
+		t.Error("expected: 1")
+	}
+	if d3.Compare(d2) != 1 {
+		t.Error("expected: -1")
+	}
 }
 
 func BenchmarkDate_UnmarshalJSON(b *testing.B) {

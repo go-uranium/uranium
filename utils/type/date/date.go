@@ -24,9 +24,9 @@ type Date struct {
 }
 
 // Now returns a current Date struct.
-func Now() Date {
+func Now() *Date {
 	now := time.Now()
-	return Date{
+	return &Date{
 		Year:  uint16(now.Year()),
 		Month: uint8(now.Month()),
 		Day:   uint8(now.Day()),
@@ -34,8 +34,8 @@ func Now() Date {
 }
 
 // New decodes the int32 type to a date.
-func New(c int32) Date {
-	return Date{
+func New(c int32) *Date {
+	return &Date{
 		Year:  uint16((uint32(c) & 0xFFFF0000) >> 16),
 		Month: uint8((c & 0xFF00) >> 8),
 		Day:   uint8(c & 0xFF),
@@ -44,10 +44,63 @@ func New(c int32) Date {
 
 // Encode encodes the date to an int32 type
 func (d *Date) Encode() int32 {
-	return (int32(d.Year) << 16) & (int32(d.Month) << 8) & int32(d.Day)
+	return (int32(d.Year) << 16) | (int32(d.Month) << 8) | int32(d.Day)
 }
 
-func (d *Date) JSONStringJoin() ([]byte, error) {
+func (d *Date) Before(u *Date) bool {
+	if d.Year < u.Year {
+		return true
+	} else if d.Year == u.Year {
+		if d.Month < d.Month {
+			return true
+		} else if d.Year == u.Year {
+			if d.Day < u.Day {
+				return true
+			} else {
+				return false
+			}
+		} else {
+			return false
+		}
+	} else {
+		return false
+	}
+}
+
+func (d *Date) After(u *Date) bool {
+	if d.Year > u.Year {
+		return true
+	} else if d.Year == u.Year {
+		if d.Month > d.Month {
+			return true
+		} else if d.Year == u.Year {
+			if d.Day > u.Day {
+				return true
+			} else {
+				return false
+			}
+		} else {
+			return false
+		}
+	} else {
+		return false
+	}
+}
+
+func (d *Date) Equal(u *Date) bool {
+	return d.Year == u.Year && d.Month == u.Month && d.Day == u.Day
+}
+
+func (d *Date) Compare(u *Date) int {
+	if d.Equal(u) {
+		return 0
+	} else if d.Before(u) {
+		return -1
+	}
+	return 1
+}
+
+func (d *Date) MarshalJSON() ([]byte, error) {
 	return d.marshalJSONStringJoin()
 }
 
