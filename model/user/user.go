@@ -110,7 +110,7 @@ type Auth struct {
 
 	// note: SecurityEmail is an alternative address for user verification,
 	//       and it receives a copy of security alert.
-	// value: SecurityEmail is a string type, which can bu null.
+	// value: SecurityEmail is a string, which can bu null.
 	// regex: ^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$
 	// default: /
 	// length: [4,320]
@@ -121,14 +121,28 @@ type Auth struct {
 
 	// if user is locked
 	// not null
+
+	// note: When Locked == true, user cannot login, or perform any actions.
+	// value: Locked is a boolean, which means that the user has been locked.
+	// regex: /
+	// default: false
+	// length: /
+	// not null
 	Locked bool `json:"locked"`
 
-	// lock user until
-	// must >= current time
-	// otherwise, Locked would be set to false
+	// note: LockedTill only works if Locked == true
+	// value: LockedTill is a timestamp, after which Locked should be set to false.
+	// regex: /
+	// default: null
+	// length: /
+	// /
 	LockedTill sqlnull.Time `json:"locked_till"`
 
-	// if user is disabled
+	// note: When Disabled == true, user cannot login, or perform any actions.
+	// value: Disabled is a boolean, which means that the user has been disabled.
+	// regex: /
+	// default: false
+	// length: /
 	// not null
 	Disabled bool `json:"disabled"`
 }
@@ -137,23 +151,39 @@ type Profile struct {
 	// reference: user.User.UID
 	UID int32 `json:"uid"`
 
-	// "name" here stands for "display name"
-	// not null
+	// note: Name is the name displayed on user profile page.
+	// value: Name is a string, which should be UTF-8 chars.
+	// regex: /
+	// default: /
 	// length: [1,30]
+	// not null
 	Name string `json:"name"`
 
-	// bio
-	// can be null
-	// length: (0,255]
+	// note: Bio is the bio displayed on user profile page.
+	// value: Bio is a string, which should be UTF-8 chars.
+	// regex: /
+	// default: null
+	// length: [1,255]
+	// /
 	Bio sqlnull.String `json:"bio"`
 
-	// geolocation
-	// can be null
+	// note: Location(geolocation) is the location displayed on user profile page.
+	// value: Location is a string, which should be UTF-8 chars.
+	// regex: /
+	// default: null
 	// length: [1,15]
+	// /
 	Location sqlnull.String `json:"location"`
 
 	// birthday
 	// can be null
+
+	// note: Birthday is the birthday displayed on user profile page.
+	// value: Location is a string, which should be UTF-8 chars.
+	// regex: /
+	// default: null
+	// length: [1,15]
+	// /
 	Birthday sqlnull.Time `json:"birthday"`
 
 	// email to be displayed
