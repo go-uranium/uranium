@@ -45,20 +45,20 @@ type User struct {
 	Electrons int32 `json:"electrons"`
 
 	// note: /
-	// value: IsMod is an boolean, which indicates whether the user is a mod.
+	// value: Mod is an boolean, which indicates whether the user is a mod.
 	// regex: /
 	// default: false
 	// length: /
 	// not null
-	IsMod bool `json:"is_mod"`
+	Mod bool `json:"mod"`
 
-	// note: ModPermission works only if IsMod == true
-	// value: ModPermission is an unsigned integer, which indicates the permission of the mod.
+	// note: /
+	// value: Admin is an boolean, which indicates whether the user is an admin.
 	// regex: /
-	// default: 0
+	// default: false
 	// length: /
 	// not null
-	ModPermission uint8 `json:"mod_permission"`
+	Admin uint8 `json:"admin"`
 
 	// note: /
 	// value: CreatedAt is a timestamp, which records the date when the user registered.
@@ -83,9 +83,8 @@ type Basic struct {
 	UID               int32  `json:"uid"`
 	Username          string `json:"username"`
 	UsernameLowercase string `json:"username_lowercase"`
-	IsMod             bool   `json:"is_mod"`
-	// In case of some situations.
-	Deleted bool `json:"deleted"`
+	Mod               bool   `json:"mod"`
+	Admin             bool   `json:"admin"`
 }
 
 type Auth struct {
