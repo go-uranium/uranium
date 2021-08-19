@@ -1,24 +1,28 @@
 # [WIP] [DRAFT] USER API DEFINITION
 
-|ID|Method|URL|Permission|Explain|
-|---|---|---|---|---|
-|10101|GET|/get/user/:id/info|11111|Get user.User|
-|10102|GET|/get/user/:id/basic|11111|Get user.Basic|
-|10103|GET|/get/user/:id/profile|11111|Get user.Profile|
-|10104|GET|/get/user/:id/sudo/auth|00101|Get user.Auth|
-|20101|POST|/update/user/:id/username|00101|Update user.User.Username|
-|20102|POST|/update/user/:id/avatar|01101|Update user.User.Avatar|
-|20103|POST|/update/user/:id/profile|01101|Update user.Profile|
-|20104|POST|/update/user/:id/sudo/email|00101|Update user.Auth.Email|
-|20105|POST|/update/user/:id/sudo/password|00101|Update user.Auth.Password|
-|20106|POST|/update/user/:id/sudo/security_email|00101|Update user.Auth.SecurityEmail|
-|20107|POST|/update/user/:id/mod/locked|00011|Update user.User.Locked and <br/> Update user.User.LockedTill|
-|20108|POST|/update/user/:id/admin/disabled|00011|Update user.User.Disabled|
-|20109|POST|/update/user/:id/admin/electrons|00001|Update user.User.Electrons|
-|20110|POST|/update/user/:id/admin/mod|00001|Update user.User.Mod|
-|30101|DELETE|/delete/user/:id/sudo/user|00101|Delete user(multi actions)|
-## /get/user/:id/
-### [10101] GET /get/user/:id/info
+Var:
+
+|Name|Value|Explanation|
+|---|---|---|
+|id|uid|id == 0 stands for current user(self)|
+|username|username|username only|
+|user|username or email|for login|
+
+
+## GET /user/
+### GET /user/webauthn/new
+
+## POST /user/
+### POST /user/login
+### POST /user/signup/start
+### POST /user/signup/finish
+### POST /user/new
+### POST /user/forget
+
+## /user/:id/
+### GET /user/:id/info
+Permission:
+
 |Role|Access|
 |---|---|
 |User|true|
@@ -27,7 +31,36 @@
 |Mod|true|
 |Admin|true|
 
-### [10102] GET /get/user/:id/basic
+Success:
+```json
+{
+	"uid": 6,
+	"username": "Richard",
+	"username_lowercase": "richard",
+	"electrons": 8963,
+	"mod": true,
+	"admin": true,
+	"created_at": "2021-08-19T03:46:14.188311914Z"
+}
+```
+
+Failed:
+```json
+{
+	"err": true,
+	"msg": "User not found."
+}
+```
+```json
+{
+	"err": true,
+	"msg": "Invalid UID."
+}
+```
+...
+
+
+### GET /user/:id/basic
 |Role|Access|
 |---|---|
 |User|true|
@@ -36,7 +69,7 @@
 |Mod|true|
 |Admin|true|
 
-### [10103] GET /get/user/:id/profile
+### GET /user/:id/profile
 |Role|Access|
 |---|---|
 |User|true|
@@ -44,7 +77,51 @@
 |Self(sudo)|true|
 |Mod|true|
 |Admin|true|
-### [10104] GET /get/user/:id/sudo/auth
+
+### GET /user/:user/auth_methods
+Permission:
+
+|Role|Access|
+|---|---|
+|User|true|
+|Self|true|
+|Self(sudo)|true|
+|Mod|true|
+|Admin|true|
+
+
+Params:
+
+|Key|Value|Explanation|
+|---|---|---|
+|type|user, mod, admin|auth type|
+
+
+Success:
+```json
+{
+	"password": true,
+	"webauthn": true
+}
+```
+```json
+{
+	"password": true,
+	"webauthn": false
+}
+```
+...
+
+Failed:
+```json
+{
+	"err": true,
+	"msg": "User not found."
+}
+```
+...
+
+### GET /user/:id/sudo/auth
 |Role|Access|
 |---|---|
 |User|false|
@@ -53,9 +130,7 @@
 |Mod|false|
 |Admin|true|
 
-
-## /update/user/:id/
-### [20101] POST /update/user/:id/username
+### GET /user/:id/sudo/totp
 |Role|Access|
 |---|---|
 |User|false|
@@ -64,7 +139,31 @@
 |Mod|false|
 |Admin|true|
 
-### [20102] POST /update/user/:id/avatar
+### GET /user/:id/sudo/webauthn
+|Role|Access|
+|---|---|
+|User|false|
+|Self|false|
+|Self(sudo)|true|
+|Mod|false|
+|Admin|true|
+
+## GET /user/username/:username/
+### GET /user/username/:username/info
+### GET /user/username/:username/basic
+### GET /user/username/:username/profile
+
+## /user/:id/
+### POST /user/:id/username
+|Role|Access|
+|---|---|
+|User|false|
+|Self|false|
+|Self(sudo)|true|
+|Mod|false|
+|Admin|true|
+
+### POST /user/:id/avatar
 |Role|Access|
 |---|---|
 |User|false|
@@ -73,7 +172,7 @@
 |Mod|false|
 |Admin|true|
 
-### [20103] POST /update/user/:id/profile
+### POST /user/:id/profile
 |Role|Access|
 |---|---|
 |User|false|
@@ -82,7 +181,7 @@
 |Mod|false|
 |Admin|true|
 
-### [20104] POST /update/user/:id/sudo/email
+### POST /user/:id/sudo/email
 |Role|Access|
 |---|---|
 |User|false|
@@ -91,7 +190,7 @@
 |Mod|false|
 |Admin|true|
 
-### [20105] POST /update/user/:id/sudo/password
+### POST /user/:id/sudo/password
 |Role|Access|
 |---|---|
 |User|false|
@@ -100,7 +199,7 @@
 |Mod|false|
 |Admin|true|
 
-### [20106] POST /update/user/:id/sudo/security_email
+### POST /user/:id/sudo/security_email
 |Role|Access|
 |---|---|
 |User|false|
@@ -109,7 +208,11 @@
 |Mod|false|
 |Admin|true|
 
-### [20107] POST /update/user/:id/mod/locked
+### POST /user/:id/sudo/totp
+
+### POST /user/:id/sudo/totp
+
+### POST /user/:id/mod/locked
 |Role|Access|
 |---|---|
 |User|false|
@@ -118,7 +221,7 @@
 |Mod|true|
 |Admin|true|
 
-### [20108] POST /update/user/:id/admin/disabled
+### POST /user/:id/admin/disabled
 |Role|Access|
 |---|---|
 |User|false|
@@ -127,7 +230,7 @@
 |Mod|true|
 |Admin|true|
 
-### [20109] POST /update/user/:id/admin/electrons
+### POST /user/:id/admin/electrons
 |Role|Access|
 |---|---|
 |User|false|
@@ -136,7 +239,7 @@
 |Mod|false|
 |Admin|true|
 
-### [20110] POST /update/user/:id/admin/mod
+### POST /user/:id/admin/mod
 |Role|Access|
 |---|---|
 |User|false|
@@ -145,13 +248,8 @@
 |Mod|false|
 |Admin|true|
 
-## POST /create/user/
-### POST /create/user/signup
-### POST /create/user/user
-### POST /create/user/forget
-
-## DELETE /delete/user/:id/
-### [40101] DELETE /delete/user/:id/sudo/user
+## DELETE /user/:id/
+### DELETE /user/:id/sudo/user
 |Role|Access|
 |---|---|
 |User|false|
