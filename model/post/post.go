@@ -9,32 +9,34 @@ import (
 	"github.com/go-uranium/uranium/model/user"
 )
 
+// Info is stored in storage
 type Info struct {
-	PID      int64             `json:"pid"`
-	Title    string            `json:"title"`
-	Category category.Category `json:"category"`
-	Creator  user.Basic        `json:"creator"`
-	Views    int64             `json:"views"`
-	Replies  int64             `json:"replies"`
-	Activity time.Time         `json:"activity"`
+	PID       int64             `json:"pid"`
+	Title     string            `json:"title"`
+	Category  category.Category `json:"category"`
+	Creator   user.Basic        `json:"creator"`
+	Statistic *Statistic        `json:"statistic"`
+	Limit     int32             `json:"limit"`
+	Hidden    bool              `json:"hidden"`
+	Modified  time.Time         `json:"modified"`
+	Created   time.Time         `json:"created"`
+}
+
+// Statistic is stored in Cache
+type Statistic struct {
+	Views    int64     `json:"views"`
+	Replies  int64     `json:"replies"`
+	Activity time.Time `json:"activity"`
 	// uid list
 	VotePos []int64 `json:"vote_pos"`
 	// uid list
 	VoteNeg []int64 `json:"vote_neg"`
-	// if user.permission < postInfo.permission &&
-	//    user.permission >= 0  {
-	//      // no access to thread/post
-	// }
-	//
-	Permission int32     `json:"limit"`
-	Hidden     bool      `json:"hidden"`
-	CreatedAt  time.Time `json:"created_at"`
-	LastMod    time.Time `json:"last_mod"`
 }
 
 type Post struct {
 	PID      int64              `json:"pid"`
 	Info     *Info              `json:"info"`
+	Mention  user.BasicList     `json:"mention"`
 	Content  template.HTML      `json:"content"`
 	Markdown *markdown.Markdown `json:"markdown"`
 }
