@@ -101,7 +101,7 @@ func (d *Date) Compare(u *Date) int {
 }
 
 func (d *Date) MarshalJSON() ([]byte, error) {
-	return d.marshalJSONStringJoin()
+	return d.marshalJSONByteJoin()
 }
 
 func (d *Date) UnmarshalJSON(b []byte) error {
@@ -135,6 +135,30 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 func (d *Date) marshalJSONStringJoin() ([]byte, error) {
 	return []byte(`{"year":` + strconv.Itoa(int(d.Year)) + `,"month":` +
 		strconv.Itoa(int(d.Month)) + `,"day":` + strconv.Itoa(int(d.Day)) + `}`), nil
+}
+
+const (
+	jsY = `{"year":`
+	jsM = `,"month":`
+	jsD = `,"day":`
+	jsE = `}`
+)
+
+var jsPL = len(jsY) + len(jsM) + len(jsD) + len(jsE)
+
+func (d *Date) marshalJSONByteJoin() ([]byte, error) {
+	y := strconv.Itoa(int(d.Year))
+	m := strconv.Itoa(int(d.Month))
+	day := strconv.Itoa(int(d.Day))
+	js := make([]byte, 0, jsPL+len(y)+len(m)+len(day))
+	js = append(js, jsY...)
+	js = append(js, y...)
+	js = append(js, jsM...)
+	js = append(js, m...)
+	js = append(js, jsD...)
+	js = append(js, day...)
+	js = append(js, jsE...)
+	return js, nil
 }
 
 func (d *Date) marshalJSONFmt() ([]byte, error) {

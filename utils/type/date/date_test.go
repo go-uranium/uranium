@@ -104,6 +104,13 @@ func BenchmarkDate_marshalJSONStringJoin(b *testing.B) {
 	}
 }
 
+func BenchmarkDate_marshalJSONByteJoin(b *testing.B) {
+	d := Now()
+	for n := 0; n < b.N; n++ {
+		_, _ = d.marshalJSONByteJoin()
+	}
+}
+
 func BenchmarkDate_jsonUnmarshal(b *testing.B) {
 	js, err := json.MarshalIndent(Now(), "", "\t")
 	if err != nil {
