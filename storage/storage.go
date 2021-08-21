@@ -61,6 +61,7 @@ type Provider interface {
 	UserAuthByUID(uid int32) (*user.Auth, error)
 	UserProfileByUID(uid int32) (*user.Profile, error)
 	UserBasicByUID(uid int32) (*user.Basic, error)
+	UserUIDByLowercase(lowercase string) (int32, error)
 	// user update
 	UpdateUser(u *user.User) error
 	UpdateUserAuth(auth *user.Auth) error
