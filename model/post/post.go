@@ -5,13 +5,12 @@ import (
 	"time"
 
 	"github.com/go-uranium/uranium/model/category"
-	"github.com/go-uranium/uranium/model/markdown"
 	"github.com/go-uranium/uranium/model/user"
 )
 
 // Info is stored in storage
 type Info struct {
-	PID       int64             `json:"pid"`
+	PID       int32             `json:"pid"`
 	Title     string            `json:"title"`
 	Category  category.Category `json:"category"`
 	Creator   user.Basic        `json:"creator"`
@@ -24,21 +23,22 @@ type Info struct {
 
 // Statistic is stored in Cache
 type Statistic struct {
-	Views    int64     `json:"views"`
-	Replies  int64     `json:"replies"`
+	PID      int32     `json:"pid"`
+	Views    int32     `json:"views"`
+	Replies  int32     `json:"replies"`
 	Activity time.Time `json:"activity"`
-	// uid list
-	VotePos []int64 `json:"vote_pos"`
-	// uid list
-	VoteNeg []int64 `json:"vote_neg"`
+	VotePos  []int32   `json:"vote_pos"`
+	VoteNeg  []int32   `json:"vote_neg"`
 }
 
 type Post struct {
-	PID      int64              `json:"pid"`
-	Info     *Info              `json:"info"`
-	Mention  user.BasicList     `json:"mention"`
-	Content  template.HTML      `json:"content"`
-	Markdown *markdown.Markdown `json:"markdown"`
+	PID     int64          `json:"pid"`
+	Info    *Info          `json:"info"`
+	Mention user.BasicList `json:"mention"`
+	Content template.HTML  `json:"content"`
+}
+
+type RawContent struct {
 }
 
 func (info *Info) VotePosContains(uid int64) bool {
