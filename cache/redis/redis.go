@@ -32,8 +32,9 @@ func New(opt *redis.Options, ttl *TTLConfig, storage storage.Provider) (*RCache,
 	ccim := CacheCategoryInMem
 
 	return &RCache{
-		rdb:     rdb,
-		ttl:     ttl,
-		storage: storage,
+		rdb:                rdb,
+		ttl:                ttl,
+		storage:            storage,
+		cacheCategoryInMem: ccim,
 	}, nil
 }
