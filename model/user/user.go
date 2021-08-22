@@ -73,7 +73,7 @@ type User struct {
 
 func (u *User) Basic() *Basic {
 	return &Basic{
-		basic: basic{
+		basic: &BasicCore{
 			UID:      u.UID,
 			Username: u.Username,
 			Admin:    u.Admin,

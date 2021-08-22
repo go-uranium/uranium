@@ -6,7 +6,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-type basic struct {
+type BasicCore struct {
 	UID      int32  `json:"uid"`
 	Username string `json:"username"`
 	Admin    int16  `json:"admin"`
@@ -16,7 +16,7 @@ type basic struct {
 // ! Basic is read-only !
 type Basic struct {
 	UID        int32 `json:"_"`
-	basic      basic
+	basic      *BasicCore
 	basicReady bool
 	js         []byte
 	jsReady    bool
@@ -26,6 +26,13 @@ type BasicList struct {
 	bl      []*Basic
 	current int
 	length  int
+}
+
+func NewBasicFromCore(c *BasicCore) *Basic {
+	return &Basic{
+		basic:      c,
+		basicReady: true,
+	}
 }
 
 func NewEmptyBasicList(list []int32) *BasicList {
