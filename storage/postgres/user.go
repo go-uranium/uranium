@@ -1,34 +1,57 @@
 package postgres
 
-import "github.com/go-uranium/uranium/model/user"
+import (
+	"strings"
 
-var SQLUserByUID = `SELECT uid, username, lowercase, electrons, admin, created, deleted FROM "user" WHERE uid = $1;`
+	"github.com/go-uranium/uranium/model/user"
+	"github.com/go-uranium/uranium/utils/sqlnull"
+)
+
+var SQLUserInsertUser = `INSERT INTO "user" VALUES 
+                          (username = $1, lowercase = $2, electrons = $3, admin = $4, 
+                           created = $5, deleted = $6) RETURNING uid;`
+
+func (pg *Postgres) UserInsertUser(u *user.User) (int32, error) {
+	var uid int32
+	err := pg.db.QueryRow(SQLUserInsertUser, u.Username, strings.ToLower(u.Username),
+		u.Electrons, u.Admin, u.Created, u.Deleted).Scan(&uid)
+	return uid, err
+}
+
+var SQLUserInsertUserAuth = `INSERT INTO user_auth VALUES (uid = $1, email = $2, password = $3, 
+                              security_email = $4, two_factor = $5, locked = $6, locked_till = $7);`
+
+func (pg *Postgres) UserInsertUserAuth(auth *user.Auth) error {
+	_, err := pg.db.Exec(SQLUserInsertUserAuth, &auth.UID, &auth.Email, &auth.Password,
+		&auth.SecurityEmail, &auth.TwoFactor, &auth.Locked, &auth.LockedTill)
+	return err
+}
+
+var SQLUserInsertUserProfile = `INSERT INTO user_profile VALUES (uid = $1, name = $2, 
+                                 bio = $3, location = $4, birthday = $5, email = $6, social = $7);`
+
+func (pg *Postgres) UserInsertUserProfile(profile *user.Profile) error {
+	_, err := pg.db.Exec(SQLUserInsertUserProfile, &profile.UID, &profile.Name,
+		&profile.Bio, &profile.Location, &profile.Birthday, &profile.Email, &profile.Social)
+	return err
+}
+
+var SQLUserByUID = `SELECT uid, username, electrons, admin, created, deleted FROM "user" WHERE uid = $1;`
 
 func (pg *Postgres) UserByUID(uid int32) (*user.User, error) {
 	u := &user.User{}
 	err := pg.db.QueryRow(SQLUserByUID, uid).
-		Scan(&u.UID, &u.Username, &u.Lowercase, &u.Electrons, &u.Admin, &u.Created, &u.Deleted)
+		Scan(&u.UID, &u.Username, &u.Electrons, &u.Admin, &u.Created, &u.Deleted)
 	return u, err
 }
 
-func (pg *Postgres) UserByEmail(email string) (*user.User, error) {
-	return nil, nil
+var SQLUserBasicByUID = `SELECT uid, username, admin FROM "user" WHERE uid = $1;`
 
-}
-
-func (pg *Postgres) UserByUsername(username string) (*user.User, error) {
-	return nil, nil
-
-}
-
-var SQLUserAuthByUID = `SELECT uid, email, password, security_email, two_factor, locked, locked_till, disabled FROM user_auth WHERE uid = $1;`
-
-func (pg *Postgres) UserAuthByUID(uid int32) (*user.Auth, error) {
-	au := &user.Auth{}
-	err := pg.db.QueryRow(SQLUserAuthByUID, uid).
-		Scan(&au.UID, &au.Email, &au.Password, &au.SecurityEmail, &au.TwoFactor,
-			&au.Locked, &au.LockedTill, &au.Disabled)
-	return au, err
+func (pg *Postgres) UserBasicByUID(uid int32) (*user.Basic, error) {
+	bc := &user.BasicCore{}
+	err := pg.db.QueryRow(SQLUserBasicByUID, uid).
+		Scan(&bc.UID, &bc.Username, &bc.Admin)
+	return user.NewBasicFromCore(bc), err
 }
 
 var SQLUserProfileByUID = `SELECT uid, name, bio, location, birthday, email, social FROM user_profile WHERE uid = $1;`
@@ -41,210 +64,138 @@ func (pg *Postgres) UserProfileByUID(uid int32) (*user.Profile, error) {
 	return pf, err
 }
 
-var SQLUserBasicByUID = `SELECT uid, username, admin FROM "user" WHERE uid = $1;`
+var SQLUserAuthByUID = `SELECT uid, email, password, security_email, two_factor, locked, locked_till, disabled FROM user_auth WHERE uid = $1;`
 
-func (pg *Postgres) UserBasicByUID(uid int32) (*user.Basic, error) {
+func (pg *Postgres) UserAuthByUID(uid int32) (*user.Auth, error) {
+	au := &user.Auth{}
+	err := pg.db.QueryRow(SQLUserAuthByUID, uid).
+		Scan(&au.UID, &au.Email, &au.Password, &au.SecurityEmail, &au.TwoFactor,
+			&au.Locked, &au.LockedTill, &au.Disabled)
+	return au, err
+}
+
+var SQLUserByUsername = `SELECT uid, username, electrons, admin, created, deleted FROM "user" WHERE lowercase = $1;`
+
+func (pg *Postgres) UserByUsername(username string) (*user.User, error) {
+	u := &user.User{}
+	err := pg.db.QueryRow(SQLUserByUsername, strings.ToLower(username)).
+		Scan(&u.UID, &u.Username, &u.Electrons, &u.Admin, &u.Created, &u.Deleted)
+	return u, err
+}
+
+var SQLUserByEmail = `SELECT uid, username, electrons, admin, created, deleted FROM "user" WHERE uid IN (SELECT uid FROM user_auth WHERE user_auth.uid = $1);`
+
+func (pg *Postgres) UserByEmail(email string) (*user.User, error) {
+	u := &user.User{}
+	err := pg.db.QueryRow(SQLUserByEmail, email).
+		Scan(&u.UID, &u.Username, &u.Electrons, &u.Admin, &u.Created, &u.Deleted)
+	return u, err
+}
+
+var SQLUserBasicByUsername = `SELECT uid, username, admin FROM "user" WHERE lowercase = $1;`
+
+func (pg *Postgres) UserBasicByUsername(username string) (*user.Basic, error) {
 	bc := &user.BasicCore{}
-	err := pg.db.QueryRow(SQLUserBasicByUID, uid).
+	err := pg.db.QueryRow(SQLUserBasicByUsername, strings.ToLower(username)).
 		Scan(&bc.UID, &bc.Username, &bc.Admin)
 	return user.NewBasicFromCore(bc), err
 }
 
-func (pg *Postgres) UserUIDByLowercase(lowercase string) (int32, error) {
-	return 0, nil
+var SQLUserUIDByUsername = `SELECT uid FROM "user" WHERE lowercase = $1;`
 
+func (pg *Postgres) UserUIDByUsername(username string) (int32, error) {
+	var uid int32
+	err := pg.db.QueryRow(SQLUserUIDByUsername, strings.ToLower(username)).
+		Scan(&uid)
+	return uid, err
 }
 
-//var (
-//	SQLUserByUID      = `SELECT uid, name, username, email, avatar, bio, created_at, artifact FROM users WHERE uid = $1;`
-//	SQLUserByEmail    = `SELECT uid, name, username, email, avatar, bio, created_at, artifact FROM users WHERE email = $1;`
-//	SQLUserByUsername = `SELECT uid, name, username, email, avatar, bio, created_at, artifact FROM users WHERE username = $1;`
-//	SQLUserAuthByUID  = `SELECT uid, password, locked, security_email FROM user_auth WHERE uid = $1;`
-//
-//	SQLInsertUser     = `INSERT INTO users(name, username, email, avatar, bio, created_at, artifact) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING uid;`
-//	SQLInsertUserAuth = `INSERT INTO user_auth(uid, password, locked, security_email) VALUES ($1, $2, $3, $4);`
-//
-//	SQLUpdateUser     = `UPDATE users SET name = $2, username = $3, email = $4, avatar = $5, bio = $6, created_at = $7, artifact = $8 WHERE uid = $1;`
-//	SQLUpdateUserAuth = `UPDATE user_auth SET password = $2, locked = $3, security_email = $4 WHERE uid = $1;`
-//
-//	SQLAddArtifact = `UPDATE users SET artifact = artifact + $2 WHERE uid = $1;`
-//
-//	SQLDeleteUser = `DELETE FROM user_auth WHERE uid = $1;DELETE FROM session WHERE uid = $1; DELETE FROM users WHERE uid = $1; UPDATE post_info SET creator = 0 WHERE creator = $1; UPDATE comments SET creator = 0 WHERE creator = $1;`
-//
-//	SQLUsernameExists = `SELECT EXISTS(SELECT uid FROM users WHERE username = $1);`
-//	SQLEmailExists    = `SELECT EXISTS(SELECT uid FROM users WHERE email = $1);`
-//
-//	//SQLUserFollow      = `UPDATE "user" SET following = array_append(following, $2) WHERE uid = $1;`
-//	//SQLUserUnFollow    = `UPDATE "user" SET following = array_remove(following, $2) WHERE uid = $1;`
-//	//SQLAlreadyFollow   = `SELECT $2 = ANY ((SELECT following FROM "user" WHERE uid = $1)::int[]);`
-//	//SQLFollowings      = `SELECT uid, name, username, email, avatar, bio, created_at, artifact, following FROM user WHERE uid = ANY ((SELECT following FROM "user" WHERE uid = 2)::int[]);`
-//	//SQLFollowers       = `SELECT uid, name, username, email, avatar, bio, created_at, artifact, following FROM "user" WHERE $1 = ANY(following);`
-//)
-//
-//func (pg *Postgres) UserByUID(uid int64) (*user.User, error) {
-//	row := pg.db.QueryRow(SQLUserByUID, uid)
-//	u, err := user.ScanUser(row)
-//	if err != nil {
-//		//if err == sql.ErrNoRows {
-//		//	return nil, nil
-//		//}
-//		return &user.User{}, err
-//	}
-//	u.Tidy()
-//	return u, nil
-//}
-//
-//func (pg *Postgres) UserByEmail(email string) (*user.User, error) {
-//	email = clean.String(email)
-//	row := pg.db.QueryRow(SQLUserByEmail, email)
-//	u, err := user.ScanUser(row)
-//	if err != nil {
-//		//if err == sql.ErrNoRows {
-//		//	return nil, nil
-//		//}
-//		return &user.User{}, err
-//	}
-//	u.Tidy()
-//	return u, nil
-//}
-//
-//func (pg *Postgres) UserByUsername(username string) (*user.User, error) {
-//	username = clean.String(username)
-//	row := pg.db.QueryRow(SQLUserByUsername, username)
-//	u, err := user.ScanUser(row)
-//	if err != nil {
-//		//if err == sql.ErrNoRows {
-//		//	return nil, nil
-//		//}
-//		return &user.User{}, err
-//	}
-//	u.Tidy()
-//	return u, nil
-//}
-//
-//func (pg *Postgres) UserAuthByUID(uid int64) (*user.Auth, error) {
-//	row := pg.db.QueryRow(SQLUserAuthByUID, uid)
-//	auth, err := user.ScanAuth(row)
-//	if err != nil {
-//		//if err == sql.ErrNoRows {
-//		//	return nil, nil
-//		//}
-//		return &user.Auth{}, err
-//	}
-//	return auth, nil
-//}
-//
-//func (pg *Postgres) InsertUser(u *user.User) (int64, error) {
-//	u.Tidy()
-//	var uid int64
-//	err := pg.db.QueryRow(SQLInsertUser, u.Name,
-//		u.Username, u.Email, u.Avatar, u.Bio,
-//		u.CreatedAt, u.Artifact).Scan(&uid)
-//	if err != nil {
-//		return 0, err
-//	}
-//	return uid, nil
-//}
-//
-//func (pg *Postgres) InsertUserAuth(auth *user.Auth) error {
-//	_, err := pg.db.Exec(SQLInsertUserAuth, auth.UID,
-//		auth.Password, auth.Locked, auth.SecurityEmail)
-//	return err
-//}
-//
-//func (pg *Postgres) UpdateUser(u *user.User) error {
-//	u.Tidy()
-//	_, err := pg.db.Exec(SQLUpdateUser, u.UID, u.Name,
-//		u.Username, u.Email, u.Avatar, u.Bio, u.CreatedAt,
-//		u.Artifact)
-//	return err
-//}
-//
-//func (pg *Postgres) UpdateUserAuth(auth *user.Auth) error {
-//	_, err := pg.db.Exec(SQLUpdateUserAuth, auth.UID,
-//		auth.Password, auth.Locked, auth.SecurityEmail)
-//	return err
-//}
-//
-//func (pg *Postgres) AddArtifact(uid, add int64) error {
-//	_, err := pg.db.Exec(SQLAddArtifact, uid, add)
-//	return err
-//}
-//
-//func (pg *Postgres) DeleteUser(uid int64) error {
-//	_, err := pg.db.Exec(SQLDeleteUser, uid)
-//	return err
-//}
-//
-//func (pg *Postgres) UsernameExists(username string) (bool, error) {
-//	username = strings.ToLower(username)
-//	row := pg.db.QueryRow(SQLUsernameExists, username)
-//	e := true
-//	err := row.Scan(&e)
-//	if err != nil {
-//		return true, err
-//	}
-//	return e, nil
-//}
-//
-//func (pg *Postgres) EmailExists(email string) (bool, error) {
-//	email = strings.ToLower(email)
-//	row := pg.db.QueryRow(SQLEmailExists, email)
-//	e := true
-//	err := row.Scan(&e)
-//	if err != nil {
-//		return true, err
-//	}
-//	return e, nil
-//}
+var SQLUserUsernameExists = `SELECT exists(SELECT uid FROM "user" WHERE lowercase = $1);`
 
-//func (pg *Postgres) UserFollow(op, target int64) error {
-//	_, err := pg.db.Exec(SQLUserFollow, op, target)
-//	return err
-//}
-//
-//func (pg *Postgres) UserUnFollow(op, target int64) error {
-//	_, err := pg.db.Exec(SQLUserUnFollow, op, target)
-//	return err
-//}
-//
-//func (pg *Postgres) AlreadyFollow(op, target int64) (bool, error) {
-//	already := true
-//	err := pg.db.QueryRow(SQLAlreadyFollow, op, target).Scan(&already)
-//	if err != nil {
-//		return true, err
-//	}
-//	return already, nil
-//}
-//
-//func (pg *Postgres) Followings(uid int64) ([]*user.User, error) {
-//	rows, err := pg.db.Query(SQLFollowings, uid)
-//	if err != nil {
-//		return nil, err
-//	}
-//	var followings []*user.User
-//	for rows.Next() {
-//		u, err := user.ScanUser(rows)
-//		if err != nil {
-//			return nil, err
-//		}
-//		followings = append(followings, u)
-//	}
-//	return followings, nil
-//}
-//
-//func (pg *Postgres) Followers(uid int64) ([]*user.User, error) {
-//	rows, err := pg.db.Query(SQLFollowers, uid)
-//	if err != nil {
-//		return nil, err
-//	}
-//	var followers []*user.User
-//	for rows.Next() {
-//		u, err := user.ScanUser(rows)
-//		if err != nil {
-//			return nil, err
-//		}
-//		followers = append(followers, u)
-//	}
-//	return followers, nil
-//}
+func (pg *Postgres) UserUsernameExists(username string) (bool, error) {
+	exists := true
+	err := pg.db.QueryRow(SQLUserUsernameExists, strings.ToLower(username)).
+		Scan(&exists)
+	return exists, err
+}
+
+var SQLUserEmailExists = `SELECT exists(SELECT uid FROM user_auth WHERE email = $1);`
+
+func (pg *Postgres) UserEmailExists(email string) (bool, error) {
+	exists := true
+	err := pg.db.QueryRow(SQLUserEmailExists, email).
+		Scan(&exists)
+	return exists, err
+}
+
+var SQLUserUpdateUsername = `UPDATE "user" SET username = $2, lowercase = $3 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdateUsername(uid int32, username string) error {
+	_, err := pg.db.Exec(SQLUserUpdateUsername, uid, username, strings.ToLower(username))
+	return err
+}
+
+var SQLUserUpdateEmail = `UPDATE user_auth SET email = $2 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdateEmail(uid int32, email string) error {
+	_, err := pg.db.Exec(SQLUserUpdateEmail, uid, email)
+	return err
+}
+
+var SQLUserUpdatePassword = `UPDATE user_auth SET password = $2 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdatePassword(uid int32, hashed []byte) error {
+	_, err := pg.db.Exec(SQLUserUpdatePassword, uid, hashed)
+	return err
+}
+
+var SQLUserUpdateProfile = `UPDATE user_profile SET name = $2, bio = $3, location = $4, 
+                        birthday = $5, email = $6, social = $7 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdateProfile(uid int32, profile *user.Profile) error {
+	_, err := pg.db.Exec(SQLUserUpdateProfile, uid, &profile.Name,
+		&profile.Bio, &profile.Location, &profile.Birthday, &profile.Email, &profile.Social)
+	return err
+}
+
+var SQLUserUpdateSecurityEmail = `UPDATE user_auth SET security_email = $2 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdateSecurityEmail(uid int32, se sqlnull.String) error {
+	_, err := pg.db.Exec(SQLUserUpdateSecurityEmail, uid, se)
+	return err
+}
+
+var SQLUserUpdateLocked = `UPDATE user_auth SET locked = $2, locked_till = $3 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdateLocked(uid int32, locked bool, till sqlnull.Time) error {
+	_, err := pg.db.Exec(SQLUserUpdateLocked, uid, locked, till)
+	return err
+}
+
+var SQLUserUpdateDisabled = `UPDATE user_auth SET disabled = $2 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdateDisabled(uid int32, disabled bool) error {
+	_, err := pg.db.Exec(SQLUserUpdateDisabled, uid, disabled)
+	return err
+}
+
+var SQLUserUpdateElectrons = `UPDATE "user" SET electrons = $2 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdateElectrons(uid int32, electrons int32) error {
+	_, err := pg.db.Exec(SQLUserUpdateElectrons, uid, electrons)
+	return err
+}
+
+var SQLUserUpdateDeltaElectrons = `UPDATE "user" SET electrons = electrons + $2 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdateDeltaElectrons(uid int32, delta int32) error {
+	_, err := pg.db.Exec(SQLUserUpdateDeltaElectrons, uid, delta)
+	return err
+}
+
+var SQLUserUpdateAdmin = `UPDATE "user" SET admin = $2 WHERE uid = $1;`
+
+func (pg *Postgres) UserUpdateAdmin(uid int32, admin int16) error {
+	_, err := pg.db.Exec(SQLUserUpdateAdmin, uid, admin)
+	return err
+}
