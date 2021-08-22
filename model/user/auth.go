@@ -28,7 +28,7 @@ type Auth struct {
 	// default: /
 	// length: 32
 	// not null
-	Password []byte `json:"_"`
+	Password []byte `json:"-"`
 
 	// note: SecurityEmail is an alternative address for user verification,
 	//       and it receives a copy of security alert.
