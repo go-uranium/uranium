@@ -56,7 +56,7 @@ func (r *RCache) RefreshCategory() error {
 }
 
 func (r *RCache) refreshCategoryInMem() error {
-	categories, err := r.storage.GetCategories()
+	categories, err := r.storage.Categories()
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func (r *RCache) refreshCategoryInMem() error {
 }
 
 func (r *RCache) refreshCategoryInRedis() error {
-	categories, err := r.storage.GetCategories()
+	categories, err := r.storage.Categories()
 	if err != nil {
 		return err
 	}
