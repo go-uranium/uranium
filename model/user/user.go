@@ -29,14 +29,6 @@ type User struct {
 	// not null, unique
 	Username string `json:"username"`
 
-	// note: /
-	// value: Lowercase = Lowercase(Username)
-	// regex: ^(?=.{1,20}$)(?!-)[a-z0-9-]{0,19}[a-z0-9]$
-	// default: Lowercase(Username)
-	// length: [1,20]
-	// not null, unique
-	Lowercase string `json:"lowercase"`
-
 	// note: Electrons is something like "karma" in Reddit or "coin" in V2EX
 	// value: Electrons is an integer, which can be less than zero.
 	// regex: /
