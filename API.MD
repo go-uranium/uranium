@@ -19,8 +19,8 @@ Var:
 ### POST /user/new
 ### POST /user/forget
 
-## /user/:id/
-### GET /user/:id/info
+## /user/:uid/
+### GET /user/:uid/info
 Permission:
 
 |Role|Access|
@@ -60,7 +60,7 @@ Failed:
 ...
 
 
-### GET /user/:id/basic
+### GET /user/:uid/basic
 |Role|Access|
 |---|---|
 |User|true|
@@ -69,7 +69,7 @@ Failed:
 |Mod|true|
 |Admin|true|
 
-### GET /user/:id/profile
+### GET /user/:uid/profile
 |Role|Access|
 |---|---|
 |User|true|
@@ -121,7 +121,7 @@ Failed:
 ```
 ...
 
-### GET /user/:id/sudo/auth
+### GET /user/:uid/sudo/auth
 |Role|Access|
 |---|---|
 |User|false|
@@ -130,7 +130,7 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-### GET /user/:id/sudo/totp
+### GET /user/:uid/sudo/totp
 |Role|Access|
 |---|---|
 |User|false|
@@ -139,7 +139,7 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-### GET /user/:id/sudo/webauthn
+### GET /user/:uid/sudo/webauthn
 |Role|Access|
 |---|---|
 |User|false|
@@ -153,8 +153,8 @@ Failed:
 ### GET /user/username/:username/basic
 ### GET /user/username/:username/profile
 
-## /user/:id/
-### POST /user/:id/username
+## /user/:uid/
+### POST /user/:uid/username
 |Role|Access|
 |---|---|
 |User|false|
@@ -163,7 +163,7 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-### POST /user/:id/avatar
+### POST /user/:uid/avatar
 |Role|Access|
 |---|---|
 |User|false|
@@ -172,7 +172,7 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-### POST /user/:id/profile
+### POST /user/:uid/profile
 |Role|Access|
 |---|---|
 |User|false|
@@ -181,7 +181,7 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-### POST /user/:id/sudo/email
+### POST /user/:uid/sudo/email
 |Role|Access|
 |---|---|
 |User|false|
@@ -190,7 +190,7 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-### POST /user/:id/sudo/password
+### POST /user/:uid/sudo/password
 |Role|Access|
 |---|---|
 |User|false|
@@ -199,7 +199,7 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-### POST /user/:id/sudo/security_email
+### POST /user/:uid/sudo/security_email
 |Role|Access|
 |---|---|
 |User|false|
@@ -208,11 +208,11 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-### POST /user/:id/sudo/totp
+### POST /user/:uid/sudo/totp
 
-### POST /user/:id/sudo/totp
+### POST /user/:uid/sudo/totp
 
-### POST /user/:id/mod/locked
+### POST /user/:uid/mod/locked
 |Role|Access|
 |---|---|
 |User|false|
@@ -221,7 +221,7 @@ Failed:
 |Mod|true|
 |Admin|true|
 
-### POST /user/:id/admin/disabled
+### POST /user/:uid/admin/disabled
 |Role|Access|
 |---|---|
 |User|false|
@@ -230,7 +230,7 @@ Failed:
 |Mod|true|
 |Admin|true|
 
-### POST /user/:id/admin/electrons
+### POST /user/:uid/admin/electrons
 |Role|Access|
 |---|---|
 |User|false|
@@ -239,7 +239,7 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-### POST /user/:id/admin/mod
+### POST /user/:uid/admin/mod
 |Role|Access|
 |---|---|
 |User|false|
@@ -248,8 +248,8 @@ Failed:
 |Mod|false|
 |Admin|true|
 
-## DELETE /user/:id/
-### DELETE /user/:id/sudo/user
+## DELETE /user/:uid/
+### DELETE /user/:uid/sudo/user
 |Role|Access|
 |---|---|
 |User|false|
