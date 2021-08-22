@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-uranium/uranium/model/category"
 	"github.com/go-uranium/uranium/model/user"
+	"github.com/go-uranium/uranium/utils/sqlnull"
 )
 
 var ErrAlreadyExists = errors.New("database already exists")
@@ -47,17 +48,32 @@ type Provider interface {
 	//DeleteUserSessions(uid int64) error
 
 	//// user insert
-	//InsertUser(u *user.User) (int32, error)
-	//InsertUserAuth(auth *user.Auth) error
-	//InsertUserProfile(profile *user.Profile) error
+	UserInsertUser(u *user.User) (int32, error)
+	UserInsertUserAuth(auth *user.Auth) error
+	UserInsertUserProfile(profile *user.Profile) error
 	// user query
 	UserByUID(uid int32) (*user.User, error)
-	UserByEmail(email string) (*user.User, error)
-	UserByUsername(username string) (*user.User, error)
-	UserAuthByUID(uid int32) (*user.Auth, error)
-	UserProfileByUID(uid int32) (*user.Profile, error)
 	UserBasicByUID(uid int32) (*user.Basic, error)
-	UserUIDByLowercase(lowercase string) (int32, error)
+	UserProfileByUID(uid int32) (*user.Profile, error)
+	UserAuthByUID(uid int32) (*user.Auth, error)
+	UserByUsername(username string) (*user.User, error)
+	UserByEmail(email string) (*user.User, error)
+	UserBasicByUsername(username string) (*user.Basic, error)
+	UserUIDByUsername(username string) (int32, error)
+	UserUsernameExists(username string) (bool, error)
+	UserEmailExists(email string) (bool, error)
+
+	UserUpdateUsername(uid int32, username string) error
+	UserUpdateEmail(uid int32, email string) error
+	UserUpdatePassword(uid int32, hashed []byte) error
+	UserUpdateProfile(uid int32, profile *user.Profile) error
+	UserUpdateSecurityEmail(uid int32, se sqlnull.String) error
+	UserUpdateLocked(uid int32, locked bool, till sqlnull.Time) error
+	UserUpdateDisabled(uid int32, disabled bool) error
+	UserUpdateElectrons(uid int32, electrons int32) error
+	UserUpdateDeltaElectrons(uid int32, delta int32) error
+	UserUpdateAdmin(uid int32, admin int16) error
+
 	//// user update
 	//UpdateUser(u *user.User) error
 	//UpdateUserAuth(auth *user.Auth) error
@@ -67,8 +83,7 @@ type Provider interface {
 	//// delete
 	//DeleteUser(uid int32) error
 	//// check if exist
-	//UsernameExists(username string) (bool, error)
-	//EmailExists(email string) (bool, error)
+
 	//UserFollow(op, target int64) error
 	//UserUnFollow(op, target int64) error
 	//AlreadyFollow(op, target int64) (bool, error)
