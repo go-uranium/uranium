@@ -7,9 +7,12 @@ import (
 
 type Cacher interface {
 	UserBasicByUID(uid int32) (*user.Basic, error)
-	UserUIDByLowercase(lowercase string) (int32, error)
+	UserUIDByUsername(username string) (int32, error)
 	RefreshUserBasicByUID(uid int32) (*user.Basic, error)
-	RefreshUserUIDByLowercase(lowercase string) (int32, error)
+	RefreshUserUIDByUsername(username string) (int32, error)
+
+	ValidSessionByToken(token string) (*session.Cache, error)
+	RefreshValidSessionByToken(token string) (*session.Cache, error)
 
 	CategoryByTName(tname string) (*category.Category, error)
 	RefreshCategory() error
