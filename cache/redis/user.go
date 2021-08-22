@@ -2,6 +2,7 @@ package rcache
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/go-redis/redis/v8"
 
@@ -34,11 +35,11 @@ func (r *RCache) RefreshUserBasicByUID(uid int32) (*user.Basic, error) {
 	return basic, nil
 }
 
-func (r *RCache) UserUIDByLowercase(lowercase string) (int32, error) {
-	result, err := r.rdb.Get(ctx, "uid:"+lowercase).Result()
+func (r *RCache) UserUIDByUsername(username string) (int32, error) {
+	result, err := r.rdb.Get(ctx, "uid:"+strings.ToLower(username)).Result()
 	if err != nil {
 		if err == redis.Nil {
-			uid, err := r.RefreshUserUIDByLowercase(lowercase)
+			uid, err := r.RefreshUserUIDByUsername(username)
 			if err != nil {
 				return 0, err
 			}
@@ -52,13 +53,13 @@ func (r *RCache) UserUIDByLowercase(lowercase string) (int32, error) {
 	return int32(uid), err
 }
 
-func (r *RCache) RefreshUserUIDByLowercase(lowercase string) (int32, error) {
-	uid, err := r.storage.UserUIDByLowercase(lowercase)
+func (r *RCache) RefreshUserUIDByUsername(username string) (int32, error) {
+	uid, err := r.storage.UserUIDByUsername(username)
 	if err != nil {
 		return 0, err
 	}
 	uidStr := strconv.Itoa(int(uid))
-	_, err = r.rdb.Set(ctx, "uid:"+lowercase, uidStr, r.ttl.UserUID).Result()
+	_, err = r.rdb.Set(ctx, "uid:"+strings.ToLower(username), uidStr, r.ttl.UserUID).Result()
 	if err != nil {
 		return 0, err
 	}
