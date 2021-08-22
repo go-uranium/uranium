@@ -2,6 +2,7 @@ package cache
 
 import (
 	"github.com/go-uranium/uranium/model/category"
+	"github.com/go-uranium/uranium/model/session"
 	"github.com/go-uranium/uranium/model/user"
 )
 
