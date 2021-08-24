@@ -21,6 +21,7 @@ const (
 )
 
 type Session struct {
+	// length: 32
 	Token   string
 	UID     int32
 	Mode    int16
@@ -38,9 +39,10 @@ type Basic struct {
 }
 
 type Cache struct {
-	Token string
-	UID   int32
-	Mode  int16
+	UID  int32
+	Mode int16
+	// if not expired
+	Valid bool
 }
 
 func (sess *Session) Valid() bool {
