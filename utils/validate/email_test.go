@@ -1,16 +1,70 @@
 package validate_test
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/go-uranium/uranium/utils/validate"
 )
 
 func TestEmail(t *testing.T) {
-	fmt.Println(Email("i@ai"))
-	fmt.Println(Email("i@iochen.com"))
-	fmt.Println(Email("iochen.com@gmail.com"))
-	fmt.Println(Email("i+uranium@iochen.com"))
-	fmt.Println(Email("i@nomx.iochen.com"))
-	fmt.Println(Email("我@iochen.com"))
-	fmt.Println(Email("thesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseen@iochen.com"))
+	validate.EmailCheckMX = false
+
+	if !validate.Email("i@ai") {
+		t.Error("expected true, got false")
+	}
+	if !validate.Email("i@iochen.com") {
+		t.Error("expected true, got false")
+	}
+	if !validate.Email("iochen.com@gmail.com") {
+		t.Error("expected true, got false")
+	}
+	if !validate.Email("i+uranium@iochen.com") {
+		t.Error("expected true, got false")
+	}
+	if !validate.Email("i@nomx.iochen.com") {
+		t.Error("expected true, got false")
+	}
+	if !validate.Email("thelongestdomainnameandemailaddress.thatyoucaneverfindintheworld@thelongestdomainnameandemailaddressthatyoucaneverfindintheworld.thelongestdomainnameandemailaddressthatyoucaneverfindintheworld.thelongestdomainnameandaddressthatyoucanfindintheworld.thelongestdomainnameandemailaddressthatyoucaneverfindintheworld.com") {
+		t.Error("expected true, got false")
+	}
+
+	if validate.Email("ai") {
+		t.Error("expected false, got true")
+	}
+	if validate.Email("i@i") {
+		t.Error("expected false, got true")
+	}
+	if validate.Email("@ai.com") {
+		t.Error("expected false, got true")
+	}
+	if validate.Email("我@iochen.com") {
+		t.Error("expected false, got true")
+	}
+	if validate.Email("thesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseen@iochen.com") {
+		t.Error("expected false, got true")
+	}
+}
+
+func TestEmailWithMX(t *testing.T) {
+	validate.EmailCheckMX = true
+
+	if !validate.Email("i@iochen.com") {
+		t.Error("expected true, got false")
+	}
+	if !validate.Email("iochen.com@gmail.com") {
+		t.Error("expected true, got false")
+	}
+	if !validate.Email("thelongestdomainnameandemailaddress.thatyoucaneverfindintheworld@thelongestdomainnameandemailaddressthatyoucaneverfindintheworld.thelongestdomainnameandemailaddressthatyoucaneverfindintheworld.thelongestdomainnameandaddressthatyoucanfindintheworld.thelongestdomainnameandemailaddressthatyoucaneverfindintheworld.com") {
+		t.Error("expected true, got false")
+	}
+
+	if validate.Email("i@nomx.iochen.com") {
+		t.Error("expected false, got true")
+	}
+	if validate.Email("google@nomx.iochen.com") {
+		t.Error("expected false, got true")
+	}
+	if validate.Email("thesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseenthesuperlongemailaddressihaveeverseen@iochen.com") {
+		t.Error("expected false, got true")
+	}
 }

@@ -1,20 +1,44 @@
 package validate_test
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/go-uranium/uranium/utils/validate"
 )
 
 func TestUsername(t *testing.T) {
-	fmt.Println(Username("i"))
-	fmt.Println(Username("iochen"))
-	fmt.Println(Username("longusername"))
-	fmt.Println(Username("i1_1li"))
-	fmt.Println(Username("___"))
-	fmt.Println(Username("_i1l"))
-	fmt.Println(Username("_un"))
-	fmt.Println(Username("1"))
-	fmt.Println(Username("1admin"))
-	fmt.Println(Username("0"))
+	if !validate.Username("iochen") {
+		t.Error("expected true, got false")
+	}
+	if !validate.Username("1admin1") {
+		t.Error("expected true, got false")
+	}
+	if !validate.Username("i1-1li") {
+		t.Error("expected true, got false")
+	}
 
+	if validate.Username("i") {
+		t.Error("expected false, got true")
+	}
+	if validate.Username("long-username-that-not-allowed") {
+		t.Error("expected false, got true")
+	}
+	if validate.Username("---") {
+		t.Error("expected false, got true")
+	}
+	if validate.Username("-i1l") {
+		t.Error("expected false, got true")
+	}
+	if validate.Username("-ness") {
+		t.Error("expected false, got true")
+	}
+	if validate.Username("anti-") {
+		t.Error("expected false, got true")
+	}
+	if validate.Username("r chen") {
+		t.Error("expected false, got true")
+	}
+	if validate.Username("") {
+		t.Error("expected false, got true")
+	}
 }
