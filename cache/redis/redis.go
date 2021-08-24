@@ -13,6 +13,7 @@ type TTLConfig struct {
 	UserBasic time.Duration
 	UserUID   time.Duration
 	Category  time.Duration
+	Session   time.Duration
 }
 
 type RCache struct {

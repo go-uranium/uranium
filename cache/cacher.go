@@ -7,14 +7,14 @@ import (
 )
 
 type Cacher interface {
-	UserBasicByUID(uid int32) (*user.Basic, error)
-	UserUIDByUsername(username string) (int32, error)
+	UserBasicByUID(uid int32) (*user.Basic, bool, error)
+	UserUIDByUsername(username string) (int32, bool, error)
 	RefreshUserBasicByUID(uid int32) (*user.Basic, error)
 	RefreshUserUIDByUsername(username string) (int32, error)
 
-	ValidSessionByToken(token string) (*session.Cache, error)
+	ValidSessionByToken(token string) (*session.Cache, bool, error)
 	RefreshValidSessionByToken(token string) (*session.Cache, error)
 
-	CategoryByTName(tname string) (*category.Category, error)
+	CategoryByTName(tname string) (*category.Category, bool, error)
 	RefreshCategory() error
 }
