@@ -23,9 +23,9 @@ type User struct {
 	//       When user is deleted, username would not be released automatically.
 	// value: Username is a string, which only contains alphanumeric characters or single hyphens,
 	//        and cannot begin or end with a hyphen.
-	// regex: ^(?=.{1,20}$)(?!-)[a-zA-Z0-9-]{0,19}[a-zA-Z0-9]$
+	// regex: ^[a-zA-Z0-9][a-zA-Z0-9-]{0,18}[a-zA-Z0-9]$
 	// default: /
-	// length: [1,20]
+	// length: [2,20]
 	// not null, unique
 	Username string `json:"username"`
 
