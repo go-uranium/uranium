@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/go-uranium/uranium/model/category"
+	"github.com/go-uranium/uranium/model/session"
 	"github.com/go-uranium/uranium/model/user"
 	"github.com/go-uranium/uranium/utils/sqlnull"
 )
@@ -41,10 +42,10 @@ type Provider interface {
 	//CommentNewPosVote(cid, uid int64) error
 	//CommentNewNegVote(cid, uid int64) error
 	//
-	//SessionByToken(token string) (*session.Session, error)
+	SessionBasicByToken(token string) (*session.Basic, error)
 	//SessionsByUID(uid int64) ([]*session.Session, error)
 	//SessionBasicByToken(token string) (*session.Basic, error)
-	//InsertSession(sess *session.Session) error
+	SessionInsertSession(sess *session.Session) error
 	//DeleteUserSessions(uid int64) error
 
 	//// user insert

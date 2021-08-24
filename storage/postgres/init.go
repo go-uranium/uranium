@@ -5,6 +5,10 @@ func (pg *Postgres) Init() error {
 	if err != nil {
 		return err
 	}
+	err = pg.initSession()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -43,9 +47,18 @@ func (pg *Postgres) initUser() error {
 	return err
 }
 
-var SQLInitPost = ``
+var SQLInitSession = `CREATE TABLE IF NOT EXISTS session ( 
+    	token CHAR(32) PRIMARY KEY NOT NULL,
+    	uid SERIAL REFERENCES "user" NOT NULL,
+    	mode int2 NOT NULL,
+    	ua text NOT NULL,
+    	ip VARCHAR(39) NOT NULL,
+    	created timestamptz NOT NULL,
+    	expire timestamptz NOT NULL
+    );
+`
 
-func (pg *Postgres) initPost() error {
-	_, err := pg.db.Exec(SQLInitPost)
+func (pg *Postgres) initSession() error {
+	_, err := pg.db.Exec(SQLInitSession)
 	return err
 }
