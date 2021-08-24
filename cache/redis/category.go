@@ -19,30 +19,30 @@ var (
 	categoriesInMemLock = &sync.RWMutex{}
 )
 
-func (r *RCache) CategoryByTName(tname string) (*category.Category, error) {
+func (r *RCache) CategoryByTName(tname string) (*category.Category, bool, error) {
 	if r.cacheCategoryInMem {
 		categoriesInMemLock.RLock()
 		defer categoriesInMemLock.RUnlock()
 		cate, ok := categoriesInMem[tname]
 		if !ok {
-			return nil, sql.ErrNoRows
+			return nil, false, sql.ErrNoRows
 		}
-		return cate, nil
+		return cate, true, nil
 	}
 	c, err := r.rdb.Get(ctx, "category:"+tname).Result()
 	if err != nil {
-		return &category.Category{}, err
+		return &category.Category{}, false, err
 	}
 	parts := strings.Split(c, ",")
 	if len(parts) != 2 {
-		return nil,
+		return nil, false,
 			errors.New("unexpected length when splitting marshaled category in redis")
 	}
 	return &category.Category{
 		TName: tname,
 		Name:  parts[0],
 		Color: parts[1],
-	}, nil
+	}, true, nil
 }
 
 func (r *RCache) RefreshCategory() error {
