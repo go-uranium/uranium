@@ -17,4 +17,8 @@ type Cacher interface {
 
 	CategoryByTName(tname string) (*category.Category, bool, error)
 	RefreshCategory() error
+
+	FlushAll() error
+	Close() error
+	Ping() (string, error)
 }

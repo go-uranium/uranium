@@ -38,3 +38,19 @@ func New(opt *redis.Options, ttl *TTLConfig, storage storage.Provider) (*RCache,
 		cacheCategoryInMem: ccim,
 	}, nil
 }
+
+func (r *RCache) FlushAll() error {
+	return r.rdb.FlushAll(ctx).Err()
+}
+
+func (r *RCache) Close() error {
+	return r.rdb.Close()
+}
+
+func (r *RCache) Ping() (string, error) {
+	return r.rdb.Ping(ctx).Result()
+}
+
+func (r *RCache) RedisClient() *redis.Client {
+	return r.rdb
+}
