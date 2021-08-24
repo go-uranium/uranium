@@ -2,8 +2,7 @@ package user
 
 import (
 	"encoding/json"
-
-	"github.com/pkg/errors"
+	"errors"
 )
 
 type BasicCore struct {

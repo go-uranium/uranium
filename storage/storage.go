@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"github.com/pkg/errors"
+	"errors"
 
 	"github.com/go-uranium/uranium/model/category"
 	"github.com/go-uranium/uranium/model/session"

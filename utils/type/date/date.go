@@ -2,14 +2,13 @@ package date
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
-var ErrExpectedJson = errors.New("unexpected type date.Date in json format.")
+var ErrExpectedJson = errors.New("unexpected type date.Date in json format")
 
 type Date struct {
 	// safe between 0 to 32767

@@ -2,10 +2,9 @@ package rcache_test
 
 import (
 	"database/sql"
+	"errors"
 	"strconv"
 	"testing"
-
-	"github.com/pkg/errors"
 
 	"github.com/go-uranium/uranium/model/user"
 	"github.com/go-uranium/uranium/utils/sqlnull"

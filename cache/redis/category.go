@@ -2,10 +2,9 @@ package rcache
 
 import (
 	"database/sql"
+	"errors"
 	"strings"
 	"sync"
-
-	"github.com/pkg/errors"
 
 	"github.com/go-uranium/uranium/model/category"
 )

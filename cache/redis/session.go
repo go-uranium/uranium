@@ -2,11 +2,11 @@ package rcache
 
 import (
 	"database/sql"
+	"errors"
 	"strconv"
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/pkg/errors"
 
 	"github.com/go-uranium/uranium/model/session"
 )
