@@ -2,7 +2,6 @@ package sqlmap_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/go-uranium/uranium/utils/sqlmap"
@@ -61,13 +60,4 @@ func TestMapStringString_MarshalJSON(t *testing.T) {
 		t.Error(err)
 		return
 	}
-}
-
-func TestName(t *testing.T) {
-	bytes, err := json.Marshal(`a\a\ad\aaa`)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	fmt.Println(string(bytes))
 }
