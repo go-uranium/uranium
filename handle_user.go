@@ -14,8 +14,13 @@ var (
 )
 
 func (uranium *Uranium) HandleUserInfoByUID(ctx *fiber.Ctx) error {
-	uid, err := strconv.Atoi(ctx.Params("uid"))
+	if err := uranium.PublicAuth(ctx); err != nil {
+		return err
+	}
 
+	// Process request
+	// get params
+	uid, err := strconv.Atoi(ctx.Params("uid"))
 	if err != nil {
 		return ErrInvalidUID
 	}
@@ -30,10 +35,16 @@ func (uranium *Uranium) HandleUserInfoByUID(ctx *fiber.Ctx) error {
 }
 
 func (uranium *Uranium) HandleUserBasicByUID(ctx *fiber.Ctx) error {
+	if err := uranium.PublicAuth(ctx); err != nil {
+		return err
+	}
+
+	// Process request
 	uid, err := strconv.Atoi(ctx.Params("uid"))
 	if err != nil {
 		return ErrInvalidUID
 	}
+	// query from cache
 	userb, err := uranium.cache.UserBasicByUID(int32(uid))
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -45,6 +56,10 @@ func (uranium *Uranium) HandleUserBasicByUID(ctx *fiber.Ctx) error {
 }
 
 func (uranium *Uranium) HandleUserProfileByUID(ctx *fiber.Ctx) error {
+	if err := uranium.PublicAuth(ctx); err != nil {
+		return err
+	}
+
 	uid, err := strconv.Atoi(ctx.Params("uid"))
 	if err != nil {
 		return ErrInvalidUID
@@ -60,6 +75,10 @@ func (uranium *Uranium) HandleUserProfileByUID(ctx *fiber.Ctx) error {
 }
 
 func (uranium *Uranium) HandleUserAuthByUID(ctx *fiber.Ctx) error {
+	if err := uranium.PublicAuth(ctx); err != nil {
+		return err
+	}
+
 	uid, err := strconv.Atoi(ctx.Params("uid"))
 	if err != nil {
 		return ErrInvalidUID
