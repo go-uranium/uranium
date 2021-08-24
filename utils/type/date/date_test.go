@@ -2,7 +2,6 @@ package date
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 )
 
@@ -22,14 +21,12 @@ func TestDate_Now(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	fmt.Println(string(bytes))
 
 	bytes, err = json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	fmt.Println(string(bytes))
 
 	data1 := &T{}
 	err = json.Unmarshal(bytes, data1)
@@ -37,15 +34,15 @@ func TestDate_Now(t *testing.T) {
 		t.Error(err)
 		return
 	}
-
-	fmt.Println(*data1)
 }
 
 func TestDate_Encode(t *testing.T) {
 	d := Now()
 	e := d.Encode()
 	d1 := New(e)
-	fmt.Println(d, e, d1)
+	if !d.Equal(d1) {
+		t.Error("date not equal")
+	}
 }
 
 func TestDate_Compare(t *testing.T) {
