@@ -92,3 +92,48 @@ func (b *Basic) MarshalJSON() ([]byte, error) {
 	b.jsReady = true
 	return data, nil
 }
+
+func (b *Basic) Core() *BasicCore {
+	if !b.basicReady {
+		if !b.jsReady {
+			return &BasicCore{}
+		}
+		if err := b.parseJs(); err != nil {
+			return &BasicCore{}
+		}
+	}
+	return b.basic
+}
+
+func (b *Basic) parseJs() error {
+	b.basic = &BasicCore{}
+	err := json.Unmarshal(b.js, b.basic)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (b *Basic) Equal(b1 *Basic) bool {
+	if !b.basicReady {
+		if !b.jsReady {
+			return false
+		}
+		if err := b.parseJs(); err != nil {
+			return false
+		}
+	}
+
+	if !b1.basicReady {
+		if !b1.jsReady {
+			return false
+		}
+		if err := b1.parseJs(); err != nil {
+			return false
+		}
+	}
+
+	return b.basic.UID == b1.basic.UID &&
+		b.basic.Admin == b1.basic.Admin &&
+		b.basic.Username == b1.basic.Username
+}
