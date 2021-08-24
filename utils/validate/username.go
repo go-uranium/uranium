@@ -2,20 +2,18 @@ package validate
 
 import (
 	"regexp"
-
-	"github.com/go-uranium/uranium/utils/clean"
+	"strings"
 )
 
-var UsernameRegex = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]{0,19}$`)
-var UsernameMax = 20
+var UsernameRegex = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9-]{0,18}[a-zA-Z0-9]$`)
 
-func Username(u string) (bool, string) {
-	if len(u) < 1 || len(u) > UsernameMax {
-		return false, ""
+func Username(u string) bool {
+	u = strings.TrimSpace(u)
+	if len(u) < 1 || len(u) > 20 {
+		return false
 	}
-	u = clean.Username(u)
 	if !UsernameRegex.MatchString(u) {
-		return false, ""
+		return false
 	}
-	return true, u
+	return true
 }

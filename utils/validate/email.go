@@ -12,7 +12,7 @@ var EmailCheckMX = false
 func Email(e string) bool {
 	// the shortest example: i@ai
 	// which is still a valid email address
-	if len(e) < 4 || len(e) > 255 {
+	if len(e) < 4 || len(e) > 320 {
 		return false
 	}
 	if !EmailRegex.MatchString(e) {
@@ -20,7 +20,7 @@ func Email(e string) bool {
 	}
 	if EmailCheckMX {
 		parts := strings.Split(e, "@")
-		if len(parts) !=2{
+		if len(parts) != 2 {
 			return false
 		}
 		mx, err := net.LookupMX(parts[1])
