@@ -31,6 +31,7 @@ func main() {
 		UserBasic: 2 * time.Hour,
 		UserUID:   5 * time.Hour,
 		Category:  0,
+		Session:   1 * time.Hour,
 	}, pg)
 	if err != nil {
 		panic(err)
@@ -50,7 +51,7 @@ func main() {
 		ErrorHandler: func(ctx *fiber.Ctx, e error) error {
 			switch e.(type) {
 			case *uranium.Error:
-				ctx.Status(e.(*uranium.Error).Code)
+				ctx.Status(e.(*uranium.Error).StatusCode)
 				return ctx.JSON(e)
 			default:
 				ctx.Status(http.StatusInternalServerError)

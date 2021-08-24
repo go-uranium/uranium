@@ -2,12 +2,15 @@ package uranium
 
 import (
 	"sync"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/go-uranium/uranium/cache"
+	"github.com/go-uranium/uranium/model/session"
 	"github.com/go-uranium/uranium/storage"
 	"github.com/go-uranium/uranium/utils/sendmail"
+	"github.com/go-uranium/uranium/utils/token"
 )
 
 type Config struct {
@@ -23,10 +26,16 @@ type Uranium struct {
 	lock    *sync.RWMutex
 }
 
+var WipeToken = &fiber.Cookie{
+	Name:    "token",
+	Value:   "",
+	Expires: time.Date(2000, 0, 0, 0, 0, 0, 0, time.UTC),
+}
+
 type Error struct {
-	Code int    `json:"-"`
-	Err  bool   `json:"err"`
-	Msg  string `json:"msg"`
+	StatusCode int    `json:"-"`
+	Err        bool   `json:"err"`
+	Msg        string `json:"msg"`
 }
 
 func (e *Error) Error() string {
@@ -35,9 +44,9 @@ func (e *Error) Error() string {
 
 func NewError(status int, msg string) *Error {
 	return &Error{
-		Code: status,
-		Err:  true,
-		Msg:  msg,
+		StatusCode: status,
+		Err:        true,
+		Msg:        msg,
 	}
 }
 
@@ -66,6 +75,32 @@ func (uranium *Uranium) RouteForFiber(app *fiber.App) {
 	//app.Get("/user/username/:username/info",uranium.HandleUserInfoByUID)
 	//app.Get("/user/username/:username/basic",uranium.HandleUserInfoByUID)
 	//app.Get("/user/username/:username/profile",uranium.HandleUserInfoByUID)
+
+	app.Get("/test/token", uranium.HandleTestSession)
+}
+
+func (uranium *Uranium) HandleTestSession(ctx *fiber.Ctx) error {
+	now := time.Now()
+	expireAt := now.Add(15 * time.Minute)
+	sess := &session.Session{
+		Token:   token.New(),
+		UID:     1,
+		Mode:    session.USER,
+		UA:      ctx.Get("User-Agent"),
+		IP:      ctx.IP(),
+		Created: now,
+		Expire:  expireAt.Add(5 * time.Minute),
+	}
+	err := uranium.storage.SessionInsertSession(sess)
+	if err != nil {
+		return err
+	}
+	ctx.Cookie(&fiber.Cookie{
+		Name:    "token",
+		Value:   sess.Token + "notwork",
+		Expires: expireAt,
+	})
+	return ctx.SendString("ok")
 }
 
 //type Config struct {
