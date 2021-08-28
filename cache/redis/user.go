@@ -3,11 +3,11 @@ package rcache
 import (
 	"database/sql"
 	"strconv"
-	"strings"
 
 	"github.com/go-redis/redis/v8"
 
 	"github.com/go-uranium/uranium/model/user"
+	"github.com/go-uranium/uranium/utils/clean"
 )
 
 func (r *RCache) UserBasicByUID(uid int32) (*user.Basic, bool, error) {
@@ -49,7 +49,7 @@ func (r *RCache) RefreshUserBasicByUID(uid int32) (*user.Basic, error) {
 }
 
 func (r *RCache) UserUIDByUsername(username string) (int32, bool, error) {
-	result, err := r.rdb.Get(ctx, "uid:"+strings.ToLower(username)).Result()
+	result, err := r.rdb.Get(ctx, "uid:"+clean.Lowercase(username)).Result()
 	if err != nil {
 		if err == redis.Nil {
 			return r.refreshUserUIDByUsername(username)
@@ -69,7 +69,7 @@ func (r *RCache) refreshUserUIDByUsername(username string) (int32, bool, error) 
 		return 0, false, err
 	}
 	uidStr := strconv.Itoa(int(uid))
-	_, err = r.rdb.Set(ctx, "uid:"+strings.ToLower(username), uidStr, r.ttl.UserUID).Result()
+	_, err = r.rdb.Set(ctx, "uid:"+clean.Lowercase(username), uidStr, r.ttl.UserUID).Result()
 	if err != nil {
 		return 0, false, err
 	}
@@ -79,7 +79,7 @@ func (r *RCache) refreshUserUIDByUsername(username string) (int32, bool, error) 
 func (r *RCache) RefreshUserUIDByUsername(username string) (int32, error) {
 	uid, _, err := r.refreshUserUIDByUsername(username)
 	if err == sql.ErrNoRows {
-		_, err := r.rdb.Del(ctx, "uid:"+strings.ToLower(username)).Result()
+		_, err := r.rdb.Del(ctx, "uid:"+clean.Lowercase(username)).Result()
 		if err != nil {
 			return 0, err
 		}

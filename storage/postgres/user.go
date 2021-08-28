@@ -78,7 +78,7 @@ var SQLUserByUsername = `SELECT uid, username, electrons, admin, created, delete
 
 func (pg *Postgres) UserByUsername(username string) (*user.User, error) {
 	u := &user.User{}
-	err := pg.db.QueryRow(SQLUserByUsername, strings.ToLower(username)).
+	err := pg.db.QueryRow(SQLUserByUsername, clean.Lowercase(username)).
 		Scan(&u.UID, &u.Username, &u.Electrons, &u.Admin, &u.Created, &u.Deleted)
 	return u, err
 }
@@ -96,7 +96,7 @@ var SQLUserBasicByUsername = `SELECT uid, username, admin FROM "user" WHERE lowe
 
 func (pg *Postgres) UserBasicByUsername(username string) (*user.Basic, error) {
 	bc := &user.BasicCore{}
-	err := pg.db.QueryRow(SQLUserBasicByUsername, strings.ToLower(username)).
+	err := pg.db.QueryRow(SQLUserBasicByUsername, clean.Lowercase(username)).
 		Scan(&bc.UID, &bc.Username, &bc.Admin)
 	return user.NewBasicFromCore(bc), err
 }
@@ -105,7 +105,7 @@ var SQLUserUIDByUsername = `SELECT uid FROM "user" WHERE lowercase = $1;`
 
 func (pg *Postgres) UserUIDByUsername(username string) (int32, error) {
 	var uid int32
-	err := pg.db.QueryRow(SQLUserUIDByUsername, strings.ToLower(username)).
+	err := pg.db.QueryRow(SQLUserUIDByUsername, clean.Lowercase(username)).
 		Scan(&uid)
 	return uid, err
 }
@@ -131,7 +131,7 @@ func (pg *Postgres) UserEmailExists(email string) (bool, error) {
 var SQLUserUpdateUsername = `UPDATE "user" SET username = $2, lowercase = $3 WHERE uid = $1;`
 
 func (pg *Postgres) UserUpdateUsername(uid int32, username string) error {
-	_, err := pg.db.Exec(SQLUserUpdateUsername, uid, username, strings.ToLower(username))
+	_, err := pg.db.Exec(SQLUserUpdateUsername, uid, username, clean.Lowercase(username))
 	return err
 }
 
