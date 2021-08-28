@@ -9,13 +9,16 @@ import (
 	"github.com/go-uranium/uranium/cache"
 	"github.com/go-uranium/uranium/model/session"
 	"github.com/go-uranium/uranium/storage"
+	"github.com/go-uranium/uranium/utils/hash"
 	"github.com/go-uranium/uranium/utils/sendmail"
 	"github.com/go-uranium/uranium/utils/token"
 )
 
 type Config struct {
-	SiteName string
-	SiteURL  string
+	SiteName        string
+	SiteURL         string
+	LoginRecaptcha  bool
+	SignUpRecaptcha bool
 }
 
 type Uranium struct {
@@ -26,27 +29,13 @@ type Uranium struct {
 	lock    *sync.RWMutex
 }
 
-var WipeToken = &fiber.Cookie{
-	Name:    "token",
-	Value:   "",
-	Expires: time.Date(2000, 0, 0, 0, 0, 0, 0, time.UTC),
-}
+var WipeCookieExpires = time.Date(2000, 1, 1, 8, 0, 0, 0, time.UTC)
 
-type Error struct {
-	StatusCode int    `json:"-"`
-	Err        bool   `json:"err"`
-	Msg        string `json:"msg"`
-}
-
-func (e *Error) Error() string {
-	return e.Msg
-}
-
-func NewError(status int, msg string) *Error {
-	return &Error{
-		StatusCode: status,
-		Err:        true,
-		Msg:        msg,
+func wipeCookie(name string) *fiber.Cookie {
+	return &fiber.Cookie{
+		Name:    name,
+		Value:   "",
+		Expires: WipeCookieExpires,
 	}
 }
 
@@ -65,6 +54,7 @@ func New(s storage.Provider, c cache.Cacher, mail sendmail.Sender, conf Config) 
 }
 
 func (uranium *Uranium) RouteForFiber(app *fiber.App) {
+	app.Post("/user/login", uranium.HandleUserLogin)
 	app.Get("/user/:uid/info", uranium.HandleUserInfoByUID)
 	app.Get("/user/:uid/basic", uranium.HandleUserBasicByUID)
 	app.Get("/user/:uid/profile", uranium.HandleUserProfileByUID)
@@ -72,11 +62,24 @@ func (uranium *Uranium) RouteForFiber(app *fiber.App) {
 	//app.Get("/user/:user/auth_methods",uranium.HandleUserInfoByUID)
 	//app.Get("/user/:uid/sudo/totp",uranium.HandleUserInfoByUID)
 	//app.Get("/user/:uid/sudo/webauthn",uranium.HandleUserInfoByUID)
-	//app.Get("/user/username/:username/info",uranium.HandleUserInfoByUID)
+	app.Get("/user/username/:username/info", uranium.HandleUserInfoByUsername)
 	//app.Get("/user/username/:username/basic",uranium.HandleUserInfoByUID)
-	//app.Get("/user/username/:username/profile",uranium.HandleUserInfoByUID)
+	app.Get("/user/username/:username/profile", uranium.HandleUserProfileByUsername)
 
 	app.Get("/test/token", uranium.HandleTestSession)
+	app.Get("/test/clear", func(ctx *fiber.Ctx) error {
+		ctx.Cookie(wipeCookie("token"))
+		return nil
+	})
+	app.Get("/test/p", uranium.HandleTestPassword)
+}
+
+func (uranium *Uranium) HandleTestPassword(ctx *fiber.Ctx) error {
+	err := uranium.storage.UserUpdatePassword(1, hash.SHA256([]byte("admin")))
+	if err != nil {
+		return err
+	}
+	return ctx.SendString("ok")
 }
 
 func (uranium *Uranium) HandleTestSession(ctx *fiber.Ctx) error {
