@@ -12,7 +12,7 @@ var ErrExpectedJson = errors.New("unexpected type date.Date in json format")
 
 type Date struct {
 	// safe between 0 to 32767
-	// but should be 0 to 9999
+	// but should be 1000 to 9999
 	Year uint16 `json:"year"`
 	// safe between 0 to 255
 	// but should be 0 to 12
