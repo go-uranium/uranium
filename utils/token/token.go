@@ -10,7 +10,7 @@ func New() string {
 	if err != nil {
 		panic(err)
 	}
-	return base64.StdEncoding.EncodeToString(r)
+	return base64.URLEncoding.EncodeToString(r)
 }
 
 func NewInt(l int) string {
