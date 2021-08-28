@@ -2,6 +2,8 @@ package session
 
 import (
 	"time"
+
+	"github.com/go-uranium/uranium/model/user"
 )
 
 const (
@@ -43,6 +45,28 @@ type Cache struct {
 	Mode int16
 	// if not expired
 	Valid bool
+}
+
+func CleanTypeWithDefault(t int16) int16 {
+	// 1, 2, 3, 4
+	if t >= 1 && t <= 4 {
+		return t
+	}
+	// default
+	return 1
+}
+
+func ValidSessionType(userType, sessType int16) bool {
+	switch userType {
+	case user.USER:
+		return sessType == USER || sessType == SUDO
+	case user.MODERATOR:
+		return sessType == USER || sessType == SUDO || sessType == MODERATOR
+	case user.ADMIN:
+		return sessType == USER || sessType == SUDO || sessType == MODERATOR || sessType == ADMIN
+	default:
+		return false
+	}
 }
 
 func (sess *Session) Valid() bool {
