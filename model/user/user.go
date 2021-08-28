@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	ADMIN_NOT_ADMIN int16 = 0
-	ADMIN_MODERATOR int16 = 1
-	ADMIN_WEBMASTER int16 = 2
+	USER      int16 = 0
+	MODERATOR int16 = 1
+	ADMIN     int16 = 2
 )
 
 type User struct {
