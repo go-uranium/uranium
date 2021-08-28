@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/go-uranium/uranium/model/user"
+	"github.com/go-uranium/uranium/utils/clean"
 	"github.com/go-uranium/uranium/utils/sqlnull"
 )
 
@@ -115,7 +116,7 @@ var SQLUserUsernameExists = `SELECT exists(SELECT uid FROM "user" WHERE lowercas
 
 func (pg *Postgres) UserUsernameExists(username string) (bool, error) {
 	exists := true
-	err := pg.db.QueryRow(SQLUserUsernameExists, strings.ToLower(username)).
+	err := pg.db.QueryRow(SQLUserUsernameExists, clean.Lowercase(username)).
 		Scan(&exists)
 	return exists, err
 }
