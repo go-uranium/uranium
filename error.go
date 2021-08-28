@@ -2,6 +2,39 @@ package uranium
 
 import "net/http"
 
+type SuccessResp struct {
+	Success bool `json:"success"`
+}
+
+type Error struct {
+	StatusCode int    `json:"-"`
+	Code       int    `json:"code"`
+	Err        bool   `json:"err"`
+	Msg        string `json:"msg"`
+}
+
+func (e *Error) Error() string {
+	return e.Msg
+}
+
+func NewError(code, status int, msg string) *Error {
+	return &Error{
+		Code:       code,
+		StatusCode: status,
+		Err:        true,
+		Msg:        msg,
+	}
+}
+
+// ========================= AUTH =============================
+var (
+	ErrRecaptchaFailed  = NewError(1001, http.StatusBadRequest, "Recaptcha failed.")
+	ErrUsernameNotFound = NewError(1002, http.StatusNotFound, "Username(email) not found.")
+	ErrWrongPassword    = NewError(1003, http.StatusUnauthorized, "Password is not correct.")
+	ErrUserLocked       = NewError(1004, http.StatusUnauthorized, "User has been locked or disabled.")
+	ErrInvalidTokenType = NewError(1005, http.StatusUnauthorized, "Invalid token type.")
+)
+
 // ========================= TOKEN =============================
 // In normal cases, user shouldn't meet these errors,
 // unless they have modified their cookies.
