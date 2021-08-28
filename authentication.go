@@ -39,9 +39,40 @@ func (uranium *Uranium) AuthUser(ctx *fiber.Ctx) error {
 	return nil
 }
 
-// SudoAuth validates the cookie "token_sudo" and "token_admin",
+func (uranium *Uranium) AuthAdminOnly(ctx *fiber.Ctx) error {
+	// try to get admin token
+	adminToken := ctx.Cookies("token_admin")
+	// if not found
+	if len(adminToken) == 0 {
+		return ErrAdminTokenRequired
+	}
+
+	// try to find admin token in db
+	adminSess, _, err := uranium.cache.ValidSessionByToken(adminToken)
+	if err != nil {
+		// admin token not found in db
+		if err == sql.ErrNoRows {
+			// wipe admin token to avoid too many invalid requests
+			ctx.Cookie(wipeCookie("token_admin"))
+			return ErrInvalidAdminToken
+		}
+		// unexpected error
+		return err
+	}
+
+	// admin token has been expired
+	if !adminSess.Valid {
+		// wipe admin token to avoid too many invalid requests
+		ctx.Cookie(wipeCookie("token_admin"))
+		return ErrAdminTokenExpired
+	}
+	// pass
+	return nil
+}
+
+// AuthSudoAndAdmin validates the cookie "token_sudo" and "token_admin",
 // it matches the resource which can be accessed by user in sudo mode and super admin.
-func (uranium *Uranium) SudoAuth(ctx *fiber.Ctx) (int16, error) {
+func (uranium *Uranium) AuthSudoAndAdmin(ctx *fiber.Ctx) (int16, error) {
 	// try to get sudo token
 	sudoToken := ctx.Cookies("token_sudo")
 	// try to get admin token
