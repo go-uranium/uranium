@@ -23,7 +23,7 @@ func (uranium *Uranium) AuthUser(ctx *fiber.Ctx) error {
 		// if token not found in db
 		if err == sql.ErrNoRows {
 			// wipe client token to avoid too many invalid request
-			ctx.Cookie(WipeToken)
+			ctx.Cookie(wipeCookie("token"))
 			return ErrInvalidToken
 		}
 		// unexpected error
@@ -32,7 +32,7 @@ func (uranium *Uranium) AuthUser(ctx *fiber.Ctx) error {
 	// if token has been expired
 	if !cache.Valid {
 		// wipe client token to avoid too many invalid request
-		ctx.Cookie(WipeToken)
+		ctx.Cookie(wipeCookie("token"))
 		return ErrTokenExpired
 	}
 	// pass
@@ -59,7 +59,7 @@ func (uranium *Uranium) SudoAuth(ctx *fiber.Ctx) (int16, error) {
 			// admin token not found in db
 			if err == sql.ErrNoRows {
 				// wipe admin token to avoid too many invalid requests
-				ctx.ClearCookie("token_admin")
+				ctx.Cookie(wipeCookie("token_admin"))
 				return session.UNKNOWN, ErrInvalidAdminToken
 			}
 			// unexpected error
@@ -68,7 +68,7 @@ func (uranium *Uranium) SudoAuth(ctx *fiber.Ctx) (int16, error) {
 		// admin token has been expired
 		if !adminSess.Valid {
 			// wipe admin token to avoid too many invalid requests
-			ctx.ClearCookie("token_admin")
+			ctx.Cookie(wipeCookie("token_admin"))
 			return session.UNKNOWN, ErrAdminTokenExpired
 		}
 		// pass as admin
@@ -82,7 +82,7 @@ func (uranium *Uranium) SudoAuth(ctx *fiber.Ctx) (int16, error) {
 		// sudo token not found in db
 		if err == sql.ErrNoRows {
 			// wipe sudo token to avoid too much invalid requests
-			ctx.ClearCookie("token_sudo")
+			ctx.Cookie(wipeCookie("token_sudo"))
 			return session.UNKNOWN, ErrInvalidSudoToken
 		}
 		// unexpected error
@@ -91,7 +91,7 @@ func (uranium *Uranium) SudoAuth(ctx *fiber.Ctx) (int16, error) {
 	// sudo token has been expired
 	if !sudoSess.Valid {
 		// wipe sudo token to avoid too much invalid requests
-		ctx.ClearCookie("token_sudo")
+		ctx.Cookie(wipeCookie("token_sudo"))
 		return session.UNKNOWN, ErrSudoTokenExpired
 	}
 	// pass as user in sudo mode
