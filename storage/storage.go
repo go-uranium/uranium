@@ -58,7 +58,7 @@ type Provider interface {
 	UserProfileByUID(uid int32) (*user.Profile, error)
 	UserAuthByUID(uid int32) (*user.Auth, error)
 	UserByUsername(username string) (*user.User, error)
-	UserByEmail(email string) (*user.User, error)
+	UserAuthByEmail(email string) (*user.Auth, error)
 	UserBasicByUsername(username string) (*user.Basic, error)
 	UserUIDByUsername(username string) (int32, error)
 	UserUsernameExists(username string) (bool, error)

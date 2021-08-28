@@ -83,13 +83,14 @@ func (pg *Postgres) UserByUsername(username string) (*user.User, error) {
 	return u, err
 }
 
-var SQLUserByEmail = `SELECT uid, username, electrons, admin, created, deleted FROM "user" WHERE uid IN (SELECT uid FROM user_auth WHERE user_auth.uid = $1);`
+var SQLUserByEmail = `SELECT uid, email, password, security_email, two_factor, locked, locked_till, disabled FROM user_auth WHERE email = $1;`
 
-func (pg *Postgres) UserByEmail(email string) (*user.User, error) {
-	u := &user.User{}
-	err := pg.db.QueryRow(SQLUserByEmail, email).
-		Scan(&u.UID, &u.Username, &u.Electrons, &u.Admin, &u.Created, &u.Deleted)
-	return u, err
+func (pg *Postgres) UserAuthByEmail(email string) (*user.Auth, error) {
+	au := &user.Auth{}
+	err := pg.db.QueryRow(SQLUserByEmail, clean.Email(email)).
+		Scan(&au.UID, &au.Email, &au.Password, &au.SecurityEmail, &au.TwoFactor,
+			&au.Locked, &au.LockedTill, &au.Disabled)
+	return au, err
 }
 
 var SQLUserBasicByUsername = `SELECT uid, username, admin FROM "user" WHERE lowercase = $1;`
