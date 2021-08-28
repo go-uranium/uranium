@@ -2,19 +2,127 @@ package uranium
 
 import (
 	"database/sql"
-	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+
+	"github.com/go-uranium/uranium/model/session"
+	"github.com/go-uranium/uranium/model/user"
+	"github.com/go-uranium/uranium/utils/recaptcha"
+	"github.com/go-uranium/uranium/utils/token"
 )
 
-var (
-	ErrInvalidUID   = NewError(http.StatusBadRequest, "Invalid UID.")
-	ErrUserNotFound = NewError(http.StatusNotFound, "User not found.")
-)
+type UserLoginReq struct {
+	Username  string `json:"username"`
+	Password  []byte `json:"password"`
+	IsEmail   bool   `json:"is_email"`
+	Remember  bool   `json:"remember"`
+	Recaptcha string `json:"recaptcha"`
+	Type      int16  `json:"type"`
+}
+
+func (uranium *Uranium) HandleUserLogin(ctx *fiber.Ctx) error {
+	req := &UserLoginReq{}
+	if err := ctx.BodyParser(req); err != nil {
+		return err
+	}
+	if uranium.config.LoginRecaptcha {
+		passed, err := recaptcha.Verify(req.Recaptcha)
+		if err != nil {
+			return err
+		}
+		if !passed {
+			return ErrRecaptchaFailed
+		}
+	}
+	var auth *user.Auth
+	var err error
+	if req.IsEmail {
+		auth, err = uranium.storage.UserAuthByEmail(req.Username)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return ErrUsernameNotFound
+			}
+			return err
+		}
+	} else {
+		uid, err := uranium.storage.UserUIDByUsername(req.Username)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return ErrUsernameNotFound
+			}
+			return err
+		}
+		auth, err = uranium.storage.UserAuthByUID(uid)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return ErrUsernameNotFound
+			}
+			return err
+		}
+	}
+	if auth.LockedOrDisabled() {
+		return ErrUserLocked
+	}
+	if !auth.PasswordValid(req.Password) {
+		return ErrWrongPassword
+	}
+	req.Type = session.CleanTypeWithDefault(req.Type)
+	b, err := uranium.storage.UserBasicByUID(auth.UID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return ErrUsernameNotFound
+		}
+		return err
+	}
+	bc := b.Core()
+	if !session.ValidSessionType(bc.Admin, req.Type) {
+		return ErrInvalidTokenType
+	}
+	now := time.Now()
+	sess := &session.Session{
+		Token:   token.New(),
+		UID:     bc.UID,
+		Mode:    req.Type,
+		UA:      ctx.Get("User-Agent"),
+		IP:      ctx.IP(),
+		Created: now,
+	}
+	cookie := &fiber.Cookie{
+		Value: sess.Token,
+	}
+	switch req.Type {
+	case session.USER:
+		cookie.Name = "token"
+		if req.Remember {
+			cookie.Expires = now.Add(30 * 24 * time.Hour)
+			sess.Expire = cookie.Expires.Add(5 * time.Minute)
+		} else {
+			sess.Expire = now.Add(24 * time.Hour)
+		}
+	case session.SUDO:
+		cookie.Name = "token_sudo"
+		sess.Expire = cookie.Expires.Add(20 * time.Minute)
+	case session.MODERATOR:
+		cookie.Name = "token_mod"
+		sess.Expire = cookie.Expires.Add(20 * time.Minute)
+	case session.ADMIN:
+		cookie.Name = "token_admin"
+		sess.Expire = cookie.Expires.Add(20 * time.Minute)
+	}
+	err = uranium.storage.SessionInsertSession(sess)
+	if err != nil {
+		return err
+	}
+	ctx.Cookie(cookie)
+	return ctx.JSON(&SuccessResp{
+		Success: true,
+	})
+}
 
 func (uranium *Uranium) HandleUserInfoByUID(ctx *fiber.Ctx) error {
-	if err := uranium.PublicAuth(ctx); err != nil {
+	if err := uranium.AuthUser(ctx); err != nil {
 		return err
 	}
 
@@ -24,18 +132,18 @@ func (uranium *Uranium) HandleUserInfoByUID(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ErrInvalidUID
 	}
-	user, err := uranium.storage.UserByUID(int32(uid))
+	u, err := uranium.storage.UserByUID(int32(uid))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return ErrUserNotFound
 		}
 		return err
 	}
-	return ctx.JSON(user)
+	return ctx.JSON(u)
 }
 
 func (uranium *Uranium) HandleUserBasicByUID(ctx *fiber.Ctx) error {
-	if err := uranium.PublicAuth(ctx); err != nil {
+	if err := uranium.AuthUser(ctx); err != nil {
 		return err
 	}
 
@@ -45,7 +153,7 @@ func (uranium *Uranium) HandleUserBasicByUID(ctx *fiber.Ctx) error {
 		return ErrInvalidUID
 	}
 	// query from cache
-	userb, err := uranium.cache.UserBasicByUID(int32(uid))
+	userb, _, err := uranium.cache.UserBasicByUID(int32(uid))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return ErrUserNotFound
@@ -56,7 +164,7 @@ func (uranium *Uranium) HandleUserBasicByUID(ctx *fiber.Ctx) error {
 }
 
 func (uranium *Uranium) HandleUserProfileByUID(ctx *fiber.Ctx) error {
-	if err := uranium.PublicAuth(ctx); err != nil {
+	if err := uranium.AuthUser(ctx); err != nil {
 		return err
 	}
 
@@ -75,7 +183,7 @@ func (uranium *Uranium) HandleUserProfileByUID(ctx *fiber.Ctx) error {
 }
 
 func (uranium *Uranium) HandleUserAuthByUID(ctx *fiber.Ctx) error {
-	if err := uranium.PublicAuth(ctx); err != nil {
+	if err := uranium.AuthUser(ctx); err != nil {
 		return err
 	}
 
@@ -91,6 +199,47 @@ func (uranium *Uranium) HandleUserAuthByUID(ctx *fiber.Ctx) error {
 		return err
 	}
 	return ctx.JSON(auth)
+}
+
+func (uranium *Uranium) HandleUserInfoByUsername(ctx *fiber.Ctx) error {
+	if err := uranium.AuthUser(ctx); err != nil {
+		return err
+	}
+
+	// Process request
+	// get params
+	username := ctx.Params("username")
+	u, err := uranium.storage.UserByUsername(username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return ErrUserNotFound
+		}
+		return err
+	}
+	return ctx.JSON(u)
+}
+
+func (uranium *Uranium) HandleUserProfileByUsername(ctx *fiber.Ctx) error {
+	if err := uranium.AuthUser(ctx); err != nil {
+		return err
+	}
+
+	username := ctx.Params("username")
+	uid, _, err := uranium.cache.UserUIDByUsername(username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return ErrUserNotFound
+		}
+		return err
+	}
+	profile, err := uranium.storage.UserProfileByUID(uid)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return ErrUserNotFound
+		}
+		return err
+	}
+	return ctx.JSON(profile)
 }
 
 //func (ushio *Ushio) HandleUser(ctx *fiber.Ctx) error {
