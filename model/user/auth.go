@@ -1,10 +1,7 @@
 package user
 
 import (
-	"net/http"
 	"time"
-
-	"github.com/gofiber/fiber/v2"
 
 	"github.com/go-uranium/uranium/utils/hash"
 	"github.com/go-uranium/uranium/utils/sqlnull"
@@ -71,16 +68,6 @@ type Auth struct {
 	// length: /
 	// not null
 	Disabled bool `json:"disabled"`
-}
-
-func (auth *Auth) Valid(password []byte) error {
-	if auth.LockedOrDisabled() {
-		return fiber.NewError(http.StatusUnauthorized, "User has been locked or disabled.")
-	}
-	if !auth.PasswordValid(password) {
-		return fiber.NewError(http.StatusUnauthorized, "User password is wrong.")
-	}
-	return nil
 }
 
 // Valid checks whether user password info is valid
