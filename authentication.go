@@ -8,9 +8,9 @@ import (
 	"github.com/go-uranium/uranium/model/session"
 )
 
-// PublicAuth validates the cookie "token",
+// AuthUser validates the cookie "token",
 // it matches the resource which can be accessed by every user.
-func (uranium *Uranium) PublicAuth(ctx *fiber.Ctx) error {
+func (uranium *Uranium) AuthUser(ctx *fiber.Ctx) error {
 	// try to find token in cookie
 	token := ctx.Cookies("token")
 	// no token found
